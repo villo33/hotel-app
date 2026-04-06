@@ -83,13 +83,12 @@ input {
 
 <script>
 
-
 // 🔥 URL DINÁMICA (LOCAL + WEB)
 const API = window.location.origin;
 
-// 🔥 FUNCIONES NAV
+// 🔥 NAVEGACIÓN CORREGIDA
 function irInicio() {
-  window.location.href = "/app/index.html";
+  window.location.href = "/";
 }
 
 function logout() {
@@ -213,7 +212,7 @@ function calcularTotalFila(fila) {
   fila.querySelector(".total").innerText = total;
 }
 
-// 🔥 GUARDAR (YA FUNCIONA EN WEB)
+// 🔥 GUARDAR
 function guardarFila(btn) {
 
   const fila = btn.closest("tr");
@@ -283,7 +282,7 @@ function eliminarFila(btn) {
     });
 }
 
-// 🔥 CARGAR DATOS
+// 🔥 CARGAR
 function cargarFilasGuardadas() {
 
   fetch(`${API}/habitaciones`)

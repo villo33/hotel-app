@@ -106,12 +106,12 @@ td, th{
 
 <script>
 
-// 🔥 API DINÁMICA (LOCAL + WEB)
+// 🔥 API DINÁMICA
 const API = window.location.origin;
 
-// 🔥 NAVEGACIÓN
+// 🔥 NAVEGACIÓN (CORREGIDO)
 function irInicio() {
-    window.location.href = "/app/index.html";
+    window.location.href = "/";
 }
 
 function logout() {
@@ -135,9 +135,7 @@ function logout() {
     </select>
 
     <input type="date" id="fecha">
-
     <input type="text" id="empleado" placeholder="Empleado">
-
     <textarea id="observacion" placeholder="Observación"></textarea>
 
     <button onclick="guardar()">Guardar</button>
@@ -145,18 +143,18 @@ function logout() {
 </div>
 
 <table>
-    <thead>
-        <tr>
-            <th>Habitación</th>
-            <th>Acción</th>
-            <th>Fecha</th>
-            <th>Empleado</th>
-            <th>Observación</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody id="tabla"></tbody>
+<thead>
+<tr>
+    <th>Habitación</th>
+    <th>Acción</th>
+    <th>Fecha</th>
+    <th>Empleado</th>
+    <th>Observación</th>
+    <th>Estado</th>
+    <th>Acciones</th>
+</tr>
+</thead>
+<tbody id="tabla"></tbody>
 </table>
 
 <script>
@@ -178,10 +176,10 @@ async function guardar(){
         return;
     }
 
-    if(editando){
+    try {
 
         await fetch(`${API}/limpieza`, {
-            method: 'PUT',
+            method: editando ? 'PUT' : 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 id: idEditar,
@@ -196,24 +194,13 @@ async function guardar(){
         editando = false;
         idEditar = null;
 
-    } else {
+        limpiarFormulario();
+        cargar();
 
-        await fetch(`${API}/limpieza`, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                habitacion,
-                tipo_accion,
-                fecha,
-                empleado,
-                observacion
-            })
-        });
-
+    } catch (error) {
+        alert("Error guardando ❌");
+        console.log(error);
     }
-
-    limpiarFormulario();
-    cargar();
 }
 
 // 🔥 LIMPIAR
@@ -230,11 +217,16 @@ async function eliminar(id){
 
     if(!confirm("¿Eliminar registro?")) return;
 
-    await fetch(`${API}/limpieza/` + id, {
-        method: 'DELETE'
-    });
+    try {
+        await fetch(`${API}/limpieza/` + id, {
+            method: 'DELETE'
+        });
 
-    cargar();
+        cargar();
+
+    } catch (error) {
+        alert("Error eliminando ❌");
+    }
 }
 
 // 🔥 EDITAR
@@ -253,40 +245,47 @@ function editar(id, habitacion, tipo_accion, fecha, empleado, observacion){
 // 🔥 CARGAR
 async function cargar(){
 
-    const res = await fetch(`${API}/limpieza`);
-    const data = await res.json();
+    try {
 
-    let tabla = document.getElementById("tabla");
-    tabla.innerHTML = "";
+        const res = await fetch(`${API}/limpieza`);
+        const data = await res.json();
 
-    if(data.length === 0){
-        tabla.innerHTML = `
-            <tr>
-                <td colspan="7">No hay registros aún</td>
-            </tr>
-        `;
-        return;
+        let tabla = document.getElementById("tabla");
+        tabla.innerHTML = "";
+
+        if(data.length === 0){
+            tabla.innerHTML = `<tr><td colspan="7">No hay registros aún</td></tr>`;
+            return;
+        }
+
+        data.forEach(item => {
+
+            // 🔥 EVITA ERRORES CON COMILLAS
+            const empleado = (item.empleado || '').replace(/'/g, "\\'");
+            const obs = (item.observacion || '').replace(/'/g, "\\'");
+
+            let fechaFormateada = new Date(item.fecha).toLocaleDateString();
+
+            tabla.innerHTML += `
+                <tr>
+                    <td>${item.habitacion}</td>
+                    <td>${item.tipo_accion}</td>
+                    <td>${fechaFormateada}</td>
+                    <td>${item.empleado}</td>
+                    <td>${item.observacion || ''}</td>
+                    <td>${item.estado}</td>
+                    <td>
+                        <button onclick="editar(${item.id}, '${item.habitacion}', '${item.tipo_accion}', '${item.fecha}', '${empleado}', '${obs}')">✏️</button>
+                        <button onclick="eliminar(${item.id})">🗑</button>
+                    </td>
+                </tr>
+            `;
+        });
+
+    } catch (error) {
+        alert("Error cargando datos ❌");
+        console.log(error);
     }
-
-    data.forEach(item => {
-
-        let fechaFormateada = new Date(item.fecha).toLocaleDateString();
-
-        tabla.innerHTML += `
-            <tr>
-                <td>${item.habitacion}</td>
-                <td>${item.tipo_accion}</td>
-                <td>${fechaFormateada}</td>
-                <td>${item.empleado}</td>
-                <td>${item.observacion || ''}</td>
-                <td>${item.estado}</td>
-                <td>
-                    <button onclick="editar(${item.id}, '${item.habitacion}', '${item.tipo_accion}', '${item.fecha}', '${item.empleado}', '${item.observacion || ''}')">✏️</button>
-                    <button onclick="eliminar(${item.id})">🗑</button>
-                </td>
-            </tr>
-        `;
-    });
 }
 
 // 🔥 INICIO

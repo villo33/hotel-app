@@ -94,12 +94,12 @@ th, td {
 
 <script>
 
-// 🔥 API DINÁMICA (FUNCIONA LOCAL + WEB)
+// 🔥 API DINÁMICA (LOCAL + WEB)
 const API = window.location.origin;
 
 // 🔥 NAVEGACIÓN
 function irInicio() {
-  window.location.href = "/app/index.html";
+  window.location.href = "/";
 }
 
 function logout() {
@@ -140,77 +140,104 @@ let editId = null;
 
 // 🔥 CARGAR
 async function cargar() {
-  const res = await fetch(`${API}/inventario`);
-  const data = await res.json();
+  try {
+    const res = await fetch(`${API}/inventario`);
+    const data = await res.json();
 
-  let html = '';
+    let html = '';
 
-  if (data.length === 0) {
-    html = '<tr><td colspan="6">Sin datos</td></tr>';
+    if (data.length === 0) {
+      html = '<tr><td colspan="6">Sin datos</td></tr>';
+    }
+
+    data.forEach(item => {
+
+      // 🔥 ESCAPAR TEXTO (SOLUCIÓN ERROR COMILLAS)
+      const nombre = item.nombre.replace(/'/g, "\\'");
+      const encargado = (item.encargado || '').replace(/'/g, "\\'");
+
+      html += `
+        <tr>
+          <td>${item.id}</td>
+          <td>${item.nombre}</td>
+          <td>${item.cantidad}</td>
+          <td>${item.encargado || ''}</td>
+          <td>${item.fecha ? item.fecha.split('T')[0] : ''}</td>
+          <td>
+            <button class="btn-editar"
+              onclick="editar(${item.id}, '${nombre}', ${item.cantidad}, '${encargado}', '${item.fecha}')">
+              ✏️
+            </button>
+            <button class="btn-eliminar" onclick="eliminar(${item.id})">
+              ❌
+            </button>
+          </td>
+        </tr>
+      `;
+    });
+
+    document.getElementById('tabla').innerHTML = html;
+
+  } catch (error) {
+    alert("Error cargando datos ❌");
+    console.log(error);
   }
-
-  data.forEach(item => {
-    html += `
-      <tr>
-        <td>${item.id}</td>
-        <td>${item.nombre}</td>
-        <td>${item.cantidad}</td>
-        <td>${item.encargado || ''}</td>
-        <td>${item.fecha ? item.fecha.split('T')[0] : ''}</td>
-        <td>
-          <button class="btn-editar"
-            onclick="editar(${item.id}, '${item.nombre}', ${item.cantidad}, '${item.encargado}', '${item.fecha}')">
-            ✏️
-          </button>
-          <button class="btn-eliminar" onclick="eliminar(${item.id})">
-            ❌
-          </button>
-        </td>
-      </tr>
-    `;
-  });
-
-  document.getElementById('tabla').innerHTML = html;
 }
 
 // 🔥 GUARDAR / EDITAR
 async function guardar() {
+
   const nombre = document.getElementById('producto').value;
   const cantidad = document.getElementById('cantidad').value;
   const encargado = document.getElementById('encargado').value;
   const fecha = document.getElementById('fecha').value;
 
-  let url = `${API}/inventario`;
-  let method = 'POST';
-
-  if (editId) {
-    url = `${API}/inventario`;
-    method = 'PUT';
+  if (!nombre || !cantidad) {
+    alert("Completa los campos obligatorios");
+    return;
   }
 
-  const res = await fetch(url, {
-    method,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id: editId, nombre, cantidad, encargado, fecha })
-  });
+  try {
+    const res = await fetch(`${API}/inventario`, {
+      method: editId ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: editId,
+        nombre,
+        cantidad,
+        encargado,
+        fecha
+      })
+    });
 
-  alert(await res.text());
+    alert(await res.text());
 
-  editId = null;
-  limpiar();
-  cargar();
+    editId = null;
+    limpiar();
+    cargar();
+
+  } catch (error) {
+    alert("Error guardando ❌");
+    console.log(error);
+  }
 }
 
 // 🔥 ELIMINAR
 async function eliminar(id) {
   if (!confirm("¿Eliminar?")) return;
 
-  const res = await fetch(`${API}/inventario/` + id, {
-    method: 'DELETE'
-  });
+  try {
+    const res = await fetch(`${API}/inventario/` + id, {
+      method: 'DELETE'
+    });
 
-  alert(await res.text());
-  cargar();
+    alert(await res.text());
+    cargar();
+
+  } catch (error) {
+    alert("Error eliminando ❌");
+    console.log(error);
+  }
 }
 
 // 🔥 EDITAR

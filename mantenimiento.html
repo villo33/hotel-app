@@ -97,15 +97,6 @@ td {
 
 <body>
 
-<script>
-
-
-// 🔹 IR AL PANEL (NO LOGIN)
-function irInicio() {
-  window.location.href = "/index.html";
-}
-</script>
-
 <div class="header">
 🛠️ Mantenimiento CASA NOA
 </div>
@@ -114,6 +105,23 @@ function irInicio() {
   <button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>
   <button class="btn-logout" onclick="logout()">🚪 Cerrar sesión</button>
 </div>
+
+<script>
+
+// 🔥 API DINÁMICA (IMPORTANTE)
+const API = window.location.origin;
+
+// 🔥 NAVEGACIÓN CORREGIDA
+function irInicio() {
+  window.location.href = "/";
+}
+
+function logout() {
+  localStorage.removeItem('logueado');
+  window.location.href = '/';
+}
+
+</script>
 
 <div class="form">
   <select id="habitacion">
@@ -148,8 +156,7 @@ let editandoId = null;
 
 // 🔹 FORMATO FECHA
 function formatearFecha(fecha) {
-  const f = new Date(fecha);
-  return f.toLocaleDateString();
+  return new Date(fecha).toLocaleDateString();
 }
 
 // 🔹 HABITACIONES
@@ -170,46 +177,62 @@ function cargarHabitaciones() {
   });
 }
 
-// 🔹 CARGAR DATOS
-function cargar() {
-  fetch('/mantenimiento')
-    .then(res => res.json())
-    .then(data => {
+// 🔹 CARGAR
+async function cargar() {
+  try {
 
-      data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    const res = await fetch(`${API}/mantenimiento`);
+    const data = await res.json();
 
-      const tabla = document.getElementById('tabla');
-      tabla.innerHTML = '';
+    data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
-      if (data.length === 0) {
-        tabla.innerHTML = `<tr><td colspan="6">Sin datos</td></tr>`;
-        return;
-      }
+    const tabla = document.getElementById('tabla');
+    tabla.innerHTML = '';
 
-      data.forEach(item => {
-        const fila = document.createElement('tr');
+    if (data.length === 0) {
+      tabla.innerHTML = `<tr><td colspan="6">Sin datos</td></tr>`;
+      return;
+    }
 
-        fila.innerHTML = `
-          <td>${item.id}</td>
-          <td>${item.habitacion}</td>
-          <td class="descripcion" title="${item.descripcion}">
-            ${item.descripcion}
-          </td>
-          <td>${item.encargado}</td>
-          <td>${formatearFecha(item.fecha)}</td>
-          <td>
-            <button class="btn-editar" onclick="editar(${item.id})">✏️</button>
-            <button class="btn-eliminar" onclick="eliminar(${item.id})">❌</button>
-          </td>
-        `;
+    data.forEach(item => {
 
-        tabla.appendChild(fila);
-      });
+      // 🔥 EVITA ERRORES CON COMILLAS
+      const desc = (item.descripcion || '').replace(/'/g, "\\'");
+      const encargado = (item.encargado || '').replace(/'/g, "\\'");
+
+      const fila = document.createElement('tr');
+
+      fila.innerHTML = `
+        <td>${item.id}</td>
+        <td>${item.habitacion}</td>
+        <td class="descripcion" title="${item.descripcion}">
+          ${item.descripcion}
+        </td>
+        <td>${item.encargado}</td>
+        <td>${formatearFecha(item.fecha)}</td>
+        <td>
+          <button class="btn-editar"
+            onclick="editar(${item.id}, '${item.habitacion}', '${desc}', '${encargado}', '${item.fecha}')">
+            ✏️
+          </button>
+          <button class="btn-eliminar" onclick="eliminar(${item.id})">
+            ❌
+          </button>
+        </td>
+      `;
+
+      tabla.appendChild(fila);
     });
+
+  } catch (error) {
+    alert("Error cargando datos ❌");
+    console.log(error);
+  }
 }
 
 // 🔹 GUARDAR
-function guardar() {
+async function guardar() {
+
   const habitacion = document.getElementById('habitacion').value;
   const descripcion = document.getElementById('descripcion').value;
   const encargado = document.getElementById('encargado').value;
@@ -220,47 +243,54 @@ function guardar() {
     return;
   }
 
-  fetch('/mantenimiento', {
-    method: editandoId ? 'PUT' : 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      id: editandoId,
-      habitacion,
-      descripcion,
-      encargado,
-      fecha
-    })
-  })
-  .then(() => {
+  try {
+
+    await fetch(`${API}/mantenimiento`, {
+      method: editandoId ? 'PUT' : 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: editandoId,
+        habitacion,
+        descripcion,
+        encargado,
+        fecha
+      })
+    });
+
     limpiar();
     cargar();
-  });
+
+  } catch (error) {
+    alert("Error guardando ❌");
+  }
 }
 
-// 🔹 EDITAR
-function editar(id) {
-  fetch('/mantenimiento')
-    .then(res => res.json())
-    .then(data => {
-      const item = data.find(i => i.id === id);
+// 🔹 EDITAR (MEJORADO)
+function editar(id, habitacion, descripcion, encargado, fecha) {
 
-      document.getElementById('habitacion').value = item.habitacion;
-      document.getElementById('descripcion').value = item.descripcion;
-      document.getElementById('encargado').value = item.encargado;
-      document.getElementById('fecha').value = item.fecha.split('T')[0];
+  document.getElementById('habitacion').value = habitacion;
+  document.getElementById('descripcion').value = descripcion;
+  document.getElementById('encargado').value = encargado;
+  document.getElementById('fecha').value = fecha.split('T')[0];
 
-      editandoId = id;
-    });
+  editandoId = id;
 }
 
 // 🔹 ELIMINAR
-function eliminar(id) {
+async function eliminar(id) {
+
   if (!confirm("¿Eliminar?")) return;
 
-  fetch(`/mantenimiento/${id}`, {
-    method: 'DELETE'
-  })
-  .then(() => cargar());
+  try {
+    await fetch(`${API}/mantenimiento/${id}`, {
+      method: 'DELETE'
+    });
+
+    cargar();
+
+  } catch (error) {
+    alert("Error eliminando ❌");
+  }
 }
 
 // 🔹 LIMPIAR

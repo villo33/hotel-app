@@ -8,7 +8,8 @@ const app = express();
 // ================= CONFIG =================
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname));
+
+// 🔥 SOLO ESTA LÍNEA (IMPORTANTE)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ================= MYSQL =================
@@ -37,25 +38,25 @@ db.connect(err => {
 
 // ================= VISTAS =================
 
-// 🔥 AHORA EL INICIO ES EL PANEL (SIN LOGIN)
+// 🔥 PANEL PRINCIPAL (SIN LOGIN)
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
 app.get('/inventario-vista', (req, res) => {
-  res.sendFile(path.join(__dirname, 'inventario.html'));
+  res.sendFile(path.join(__dirname, 'public/inventario.html'));
 });
 
 app.get('/mantenimiento-vista', (req, res) => {
-  res.sendFile(path.join(__dirname, 'mantenimiento.html'));
+  res.sendFile(path.join(__dirname, 'public/mantenimiento.html'));
 });
 
 app.get('/habitaciones-vista', (req, res) => {
-  res.sendFile(path.join(__dirname, 'habitaciones.html'));
+  res.sendFile(path.join(__dirname, 'public/habitaciones.html'));
 });
 
 app.get('/limpieza-vista', (req, res) => {
-  res.sendFile(path.join(__dirname, 'limpieza.html'));
+  res.sendFile(path.join(__dirname, 'public/limpieza.html'));
 });
 
 // ================= INVENTARIO =================
