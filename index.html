@@ -93,15 +93,12 @@ h1 {
 
 <!-- 🔐 PROTECCIÓN LOGIN -->
 <script>
-if (localStorage.getItem('logueado') !== 'true') {
-    window.location.href = '/';
-}
+
 </script>
 
 <div class="container">
 
-    <!-- 🔴 CERRAR SESIÓN -->
-    <button class="logout-btn" onclick="logout()">🚪</button>
+    
 
     <h1>🏨 CASA NOA</h1>
 
@@ -119,10 +116,7 @@ if (localStorage.getItem('logueado') !== 'true') {
 </div>
 
 <script>
-function logout() {
-    localStorage.removeItem('logueado');
-    window.location.href = '/';
-}
+
 </script>
 
 </body>

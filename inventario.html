@@ -93,10 +93,6 @@ th, td {
 </div>
 
 <script>
-// 🔐 PROTECCIÓN LOGIN
-if (localStorage.getItem('logueado') !== 'true') {
-    window.location.href = '/';
-}
 
 // 🔥 API DINÁMICA (FUNCIONA LOCAL + WEB)
 const API = window.location.origin;

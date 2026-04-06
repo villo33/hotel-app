@@ -98,16 +98,7 @@ td {
 <body>
 
 <script>
-// 🔐 PROTECCIÓN LOGIN
-if (localStorage.getItem('logueado') !== 'true') {
-  window.location.href = '/';
-}
 
-// 🔐 LOGOUT
-function logout() {
-  localStorage.removeItem('logueado');
-  window.location.href = '/';
-}
 
 // 🔹 IR AL PANEL (NO LOGIN)
 function irInicio() {

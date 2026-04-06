@@ -82,10 +82,7 @@ input {
 </div>
 
 <script>
-// 🔐 PROTECCIÓN LOGIN
-if (localStorage.getItem('logueado') !== 'true') {
-    window.location.href = '/';
-}
+
 
 // 🔥 URL DINÁMICA (LOCAL + WEB)
 const API = window.location.origin;
