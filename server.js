@@ -11,10 +11,6 @@ app.use(express.json());
 app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ================= DEBUG =================
-console.log("📦 VARIABLES MYSQL:");
-console.log("MYSQL_URL:", process.env.MYSQL_URL);
-
 // ================= MYSQL =================
 let db;
 
@@ -39,41 +35,10 @@ db.connect(err => {
   }
 });
 
-// ================= LOGIN =================
-app.post('/login', (req, res) => {
-  const { usuario, password } = req.body;
-
-  if (!usuario || !password) {
-    return res.json({ success: false });
-  }
-
-  db.query(
-    'SELECT * FROM usuarios WHERE usuario=? AND password=?',
-    [usuario, password],
-    (err, result) => {
-      if (err) {
-        console.log(err);
-        return res.status(500).send('Error servidor');
-      }
-
-      if (result.length > 0) {
-        res.json({ success: true });
-      } else {
-        res.json({ success: false });
-      }
-    }
-  );
-});
-
 // ================= VISTAS =================
 
-// LOGIN
+// 🔥 AHORA EL INICIO ES EL PANEL (SIN LOGIN)
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
-});
-
-// PANEL PRINCIPAL (IMPORTANTE 🔥)
-app.get('/index', (req, res) => {
   res.sendFile(path.join(__dirname, 'index.html'));
 });
 
