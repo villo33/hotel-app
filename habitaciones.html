@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Habitaciones</title>
+
+<style>
+body {
+  font-family: Arial;
+  text-align: center;
+  font-size: 14px;
+}
+
+.btn-inicio {
+  background: #28a745;
+  color: white;
+  margin-top: 15px;
+}
+
+button {
+  padding: 8px 12px;
+  margin: 2px;
+  background: #28a745;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+table {
+  margin: auto;
+  margin-top: 20px;
+  border-collapse: collapse;
+  width: 98%;
+  font-size: 12px;
+}
+
+th {
+  background: #007BFF;
+  color: white;
+  padding: 8px;
+}
+
+td {
+  border: 1px solid #ccc;
+  padding: 5px;
+}
+
+input {
+  width: 90px;
+  font-size: 11px;
+  padding: 3px;
+}
+
+.total {
+  color: blue;
+  font-weight: bold;
+}
+</style>
+</head>
+
+<body>
+
+<button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>
+
+<h2>CONTROL DE HABITACIONES SERGIO***** OVIDIO</h2>
+
+<button onclick="agregarFila()">➕ Agregar Día</button>
+
+<table>
+<thead>
+<tr>
+  <th>ID</th>
+  <th>Encargado / Fecha</th>
+
+  <th>101</th><th>102</th><th>103</th><th>104</th><th>105</th><th>106</th><th>107</th>
+  <th>201</th><th>202</th><th>203</th><th>204</th><th>205</th><th>206</th><th>207</th>
+  <th>301</th><th>302</th><th>303</th><th>304</th><th>305</th><th>306</th>
+
+  <th>Total</th>
+  <th>Acciones</th>
+</tr>
+</thead>
+
+<tbody id="cuerpo"></tbody>
+</table>
+
+<script>
+
+function irInicio() {
+  window.location.href = "/";
+}
+
+const habitaciones = [
+  101,102,103,104,105,106,107,
+  201,202,203,204,205,206,207,
+  301,302,303,304,305,306
+];
+
+let contadorId = 1;
+
+// 🔵 AGREGAR FILA
+function agregarFila() {
+
+  const tabla = document.getElementById("cuerpo");
+  const fila = document.createElement("tr");
+
+  const id = contadorId++;
+
+  let html = `
+    <td>${id}</td>
+    <td>
+      <input class="encargado" placeholder="Encargado"><br>
+      <input type="color" class="color"><br>
+      <input type="date" class="fechaPrincipal">
+    </td>
+  `;
+
+  habitaciones.forEach(() => {
+    html += `
+      <td>
+        <input type="date" class="inicio"><br>
+        <input type="date" class="fin"><br>
+        <div class="dias">0</div>
+      </td>
+    `;
+  });
+
+  html += `<td class="total">0</td>`;
+
+  html += `
+    <td>
+      <button onclick="guardarFila(this)">💾</button>
+      <button onclick="editarFila(this)">✏️</button>
+      <button onclick="eliminarFila(this)">❌</button>
+    </td>
+  `;
+
+  fila.innerHTML = html;
+  tabla.appendChild(fila);
+
+  activarEventos(fila);
+}
+
+// 🔵 EVENTOS
+function activarEventos(fila) {
+
+  const celdas = fila.querySelectorAll("td");
+
+  for (let i = 2; i <= 21; i++) {
+
+    const inicio = celdas[i].querySelector(".inicio");
+    const fin = celdas[i].querySelector(".fin");
+    const diasDiv = celdas[i].querySelector(".dias");
+
+    function calcular() {
+
+      if (inicio.value && fin.value) {
+        const f1 = new Date(inicio.value);
+        const f2 = new Date(fin.value);
+        const diff = (f2 - f1) / (1000 * 60 * 60 * 24);
+        diasDiv.innerText = diff > 0 ? diff : 0;
+      }
+
+      calcularTotalFila(fila);
+    }
+
+    inicio.addEventListener("change", calcular);
+    fin.addEventListener("change", calcular);
+  }
+}
+
+// 🔵 TOTAL
+function calcularTotalFila(fila) {
+
+  let total = 0;
+
+  fila.querySelectorAll(".dias").forEach(d => {
+    if (parseInt(d.innerText) > 0) total++;
+  });
+
+  fila.querySelector(".total").innerText = total;
+}
+
+// 🔥 GUARDAR FILA (CORREGIDO)
+function guardarFila(btn) {
+
+  const fila = btn.closest("tr");
+
+  const encargado = fila.querySelector(".encargado").value;
+  const fecha = fila.querySelector(".fechaPrincipal").value;
+  const color = fila.querySelector(".color").value;
+
+  if (!encargado || !fecha) {
+    alert("Falta encargado o fecha");
+    return;
+  }
+
+  const celdas = fila.querySelectorAll("td");
+
+  for (let i = 2; i <= 21; i++) {
+
+    const inicio = celdas[i].querySelector(".inicio").value;
+    const fin = celdas[i].querySelector(".fin").value;
+
+    if (inicio && fin) {
+
+      fetch('http://localhost:3000/habitaciones', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          habitacion: habitaciones[i-2],
+          encargado,
+          fecha,
+          color,
+          inicio,
+          fin
+        })
+      });
+
+    }
+  }
+
+  alert("Fila guardada ✅");
+}
+
+// 🔵 EDITAR
+function editarFila(btn) {
+
+  const fila = btn.closest("tr");
+  const inputs = fila.querySelectorAll("input");
+
+  const bloqueado = inputs[0].disabled;
+
+  inputs.forEach(input => {
+    input.disabled = !bloqueado;
+  });
+
+  btn.textContent = bloqueado ? "💾" : "✏️";
+}
+
+// 🔥 ELIMINAR (BORRA TAMBIÉN EN MYSQL)
+function eliminarFila(btn) {
+
+  if (!confirm("¿Eliminar esta fila completa?")) return;
+
+  const fila = btn.closest("tr");
+
+  const encargado = fila.querySelector(".encargado").value;
+  const fecha = fila.querySelector(".fechaPrincipal").value;
+
+  fetch('http://localhost:3000/habitaciones')
+    .then(res => res.json())
+    .then(data => {
+
+      const eliminar = data.filter(d =>
+        d.encargado === encargado && d.fecha.includes(fecha)
+      );
+
+      eliminar.forEach(item => {
+        fetch(`http://localhost:3000/habitaciones/${item.id}`, {
+          method: 'DELETE'
+        });
+      });
+
+      fila.remove();
+    });
+}
+
+// 🔥 CARGAR EXACTO COMO GUARDADO
+function cargarFilasGuardadas() {
+
+  fetch('http://localhost:3000/habitaciones')
+    .then(res => res.json())
+    .then(data => {
+
+      const grupos = {};
+
+      data.forEach(item => {
+
+        const key = item.encargado + "_" + item.fecha;
+
+        if (!grupos[key]) {
+          grupos[key] = {
+            encargado: item.encargado,
+            fecha: item.fecha,
+            color: item.color || "#000000",
+            habitaciones: []
+          };
+        }
+
+        grupos[key].habitaciones.push(item);
+      });
+
+      let resultado = Object.values(grupos);
+
+      resultado.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+      resultado.forEach(grupo => {
+
+        agregarFila();
+
+        const filas = document.querySelectorAll("#cuerpo tr");
+        const fila = filas[filas.length - 1];
+
+        fila.querySelector(".encargado").value = grupo.encargado;
+        fila.querySelector(".encargado").style.color = grupo.color;
+        fila.querySelector(".color").value = grupo.color;
+        fila.querySelector(".fechaPrincipal").value = grupo.fecha.split('T')[0];
+
+        const celdas = fila.querySelectorAll("td");
+
+        grupo.habitaciones.forEach(h => {
+
+          const index = habitaciones.indexOf(h.habitacion);
+
+          if (index !== -1) {
+
+            const inicio = celdas[index + 2].querySelector(".inicio");
+            const fin = celdas[index + 2].querySelector(".fin");
+
+            inicio.value = h.inicio?.split('T')[0] || "";
+            fin.value = h.fin?.split('T')[0] || "";
+
+            const diff = (new Date(h.fin) - new Date(h.inicio)) / (1000*60*60*24);
+            celdas[index + 2].querySelector(".dias").innerText = diff > 0 ? diff : 0;
+          }
+
+        });
+
+        calcularTotalFila(fila);
+
+      });
+
+    });
+
+}
+
+// 🔥 COLOR EN TIEMPO REAL
+document.addEventListener("input", function(e) {
+  if (e.target.classList.contains("color")) {
+    const fila = e.target.closest("tr");
+    fila.querySelector(".encargado").style.color = e.target.value;
+  }
+});
+
+// 🔥 INICIO
+cargarFilasGuardadas();
+
+</script>
+
+</body>
+</html>

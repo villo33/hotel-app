@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mantenimiento</title>
+
+  <style>
+  
+    body {
+      font-family: Arial;
+      text-align: center;
+    }
+
+    h2 {
+      margin-top: 10px;
+    }
+
+    .btn-inicio {
+      background: #28a745;
+      margin-top: 15px;
+      border-radius: 5px;
+    }
+
+    input, select {
+      padding: 8px;
+      margin: 5px;
+      width: 150px;
+    }
+
+    button {
+      padding: 8px 15px;
+      background: green;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+
+    table {
+      margin: auto;
+      margin-top: 20px;
+      border-collapse: collapse;
+      width: 80%;
+    }
+
+    th {
+      background: blue;
+      color: white;
+      padding: 10px;
+    }
+
+    td {
+      padding: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .descripcion {
+      max-width: 200px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn-editar {
+      background: orange;
+    }
+
+    .btn-eliminar {
+      background: red;
+    }
+  </style>
+</head>
+
+<body>
+
+<button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>
+
+<h2>MANTENIMIENTO CASA NOA SERGIO***** OVIDIO</h2>
+
+<select id="habitacion">
+  <option value="">Habitación</option>
+</select>
+
+<input type="text" id="descripcion" placeholder="Descripción">
+<input type="text" id="encargado" placeholder="Encargado">
+<input type="date" id="fecha">
+
+<button onclick="guardar()">Guardar</button>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Habitación</th>
+      <th>Descripción</th>
+      <th>Encargado</th>
+      <th>Fecha</th>
+      <th>Acciones</th>
+    </tr>
+  </thead>
+
+  <tbody id="tabla"></tbody>
+</table>
+
+<script>
+
+let editandoId = null;
+
+/* 🔥 IR AL INICIO */
+function irInicio() {
+  window.location.href = "/";
+}
+
+/* 🔥 FORMATO DE FECHA */
+function formatearFecha(fecha) {
+  const f = new Date(fecha);
+
+  const dia = String(f.getDate()).padStart(2, '0');
+  const mes = String(f.getMonth() + 1).padStart(2, '0');
+  const año = f.getFullYear();
+
+  return `${dia}/${mes}/${año}`;
+}
+
+/* 🔥 CARGAR HABITACIONES */
+function cargarHabitaciones() {
+  const select = document.getElementById("habitacion");
+
+  const habitaciones = [
+    101,102,103,104,105,106,107,
+    201,202,203,204,205,206,207,
+    301,302,303,304,305,306
+  ];
+
+  habitaciones.forEach(h => {
+    const option = document.createElement("option");
+    option.value = h;
+    option.textContent = h;
+    select.appendChild(option);
+  });
+}
+
+/* 🔥 CARGAR DATOS (MEJORADO) */
+function cargar() {
+  fetch('/mantenimiento')
+    .then(res => res.json())
+    .then(data => {
+
+      // 🔥 ORDENAR POR FECHA (MÁS RECIENTE PRIMERO)
+      data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+      const tabla = document.getElementById('tabla');
+      tabla.innerHTML = '';
+
+      data.forEach(item => {
+        const fila = document.createElement('tr');
+
+        fila.innerHTML = `
+          <td>${item.id}</td>
+          <td>${item.habitacion}</td>
+          <td class="descripcion" title="${item.descripcion}">
+            ${item.descripcion}
+          </td>
+          <td>${item.encargado}</td>
+          <td>${formatearFecha(item.fecha)}</td>
+          <td>
+            <button class="btn-editar" onclick="editar(${item.id})">✏️</button>
+            <button class="btn-eliminar" onclick="eliminar(${item.id})">❌</button>
+          </td>
+        `;
+
+        tabla.appendChild(fila);
+      });
+    });
+}
+
+/* 🔥 GUARDAR */
+function guardar() {
+  const habitacion = document.getElementById('habitacion').value;
+  const descripcion = document.getElementById('descripcion').value;
+  const encargado = document.getElementById('encargado').value;
+  const fecha = document.getElementById('fecha').value;
+
+  fetch('/mantenimiento', {
+    method: editandoId ? 'PUT' : 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      id: editandoId,
+      habitacion,
+      descripcion,
+      encargado,
+      fecha
+    })
+  })
+  .then(() => {
+    limpiar();
+    cargar();
+  });
+}
+
+/* 🔥 EDITAR */
+function editar(id) {
+  fetch('/mantenimiento')
+    .then(res => res.json())
+    .then(data => {
+      const item = data.find(i => i.id === id);
+
+      document.getElementById('habitacion').value = item.habitacion;
+      document.getElementById('descripcion').value = item.descripcion;
+      document.getElementById('encargado').value = item.encargado;
+      document.getElementById('fecha').value = item.fecha.split('T')[0];
+
+      editandoId = id;
+    });
+}
+
+/* 🔥 ELIMINAR */
+function eliminar(id) {
+  if (!confirm("¿Seguro que quieres eliminar?")) return;
+
+  fetch(`/mantenimiento/${id}`, {
+    method: 'DELETE'
+  })
+  .then(() => cargar());
+}
+
+/* 🔥 LIMPIAR */
+function limpiar() {
+  document.getElementById('habitacion').value = '';
+  document.getElementById('descripcion').value = '';
+  document.getElementById('encargado').value = '';
+  document.getElementById('fecha').value = '';
+
+  editandoId = null;
+}
+
+/* 🔥 INICIO */
+cargarHabitaciones();
+cargar();
+
+</script>
+
+</body>
+</html>

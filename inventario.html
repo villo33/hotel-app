@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Inventario </title>
+
+<style>
+  
+body {
+  font-family: Arial;
+  background: #f4f6f9;
+  text-align: center;
+}
+
+/* 🔥 BOTÓN INICIO */
+.btn-inicio {
+  background: #28a745;
+  margin-top: 15px;
+  border-radius: 5px;
+}
+
+.container {
+  width: 80%;
+  margin: auto;
+}
+
+h2 {
+  margin-top: 10px;
+}
+
+.form {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px;
+}
+
+input {
+  padding: 8px;
+  width: 150px;
+}
+
+button {
+  padding: 8px 15px;
+  border: none;
+  cursor: pointer;
+  color: white;
+}
+
+.btn-guardar { background: #007BFF; }
+.btn-editar { background: orange; }
+.btn-eliminar { background: red; }
+
+table {
+  width: 100%;
+  background: white;
+  border-collapse: collapse;
+}
+
+th {
+  background: #007BFF;
+  color: white;
+}
+
+th, td {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+</style>
+</head>
+
+<body>
+
+<!-- 🔥 BOTÓN INICIO -->
+<button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>
+
+<div class="container">
+  <h2>📦 Inventario CASA NOA</h2>
+
+  <div class="form">
+    <input id="producto" placeholder="Producto">
+    <input id="cantidad" type="number" placeholder="Cantidad">
+    <input id="encargado" placeholder="Encargado">
+    <input id="fecha" type="date">
+    <button class="btn-guardar" onclick="guardar()">Guardar</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Encargado</th>
+        <th>Fecha</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="tabla"></tbody>
+  </table>
+</div>
+
+<script>
+
+let editId = null;
+
+/* 🔥 IR AL INICIO */
+function irInicio() {
+  window.location.href = "/";
+}
+
+// CARGAR
+async function cargar() {
+  const res = await fetch('/inventario');
+  const data = await res.json();
+
+  let html = '';
+
+  if (data.length === 0) {
+    html = '<tr><td colspan="6">Sin datos</td></tr>';
+  }
+
+  data.forEach(item => {
+    html += `
+      <tr>
+        <td>${item.id}</td>
+        <td>${item.nombre}</td>
+        <td>${item.cantidad}</td>
+        <td>${item.encargado || ''}</td>
+        <td>${item.fecha ? item.fecha.split('T')[0] : ''}</td>
+        <td>
+          <button class="btn-editar"
+            onclick="editar(${item.id}, '${item.nombre}', ${item.cantidad}, '${item.encargado}', '${item.fecha}')">
+            ✏️
+          </button>
+          <button class="btn-eliminar" onclick="eliminar(${item.id})">
+            ❌
+          </button>
+        </td>
+      </tr>
+    `;
+  });
+
+  document.getElementById('tabla').innerHTML = html;
+}
+
+// GUARDAR / EDITAR
+async function guardar() {
+  const nombre = document.getElementById('producto').value;
+  const cantidad = document.getElementById('cantidad').value;
+  const encargado = document.getElementById('encargado').value;
+  const fecha = document.getElementById('fecha').value;
+
+  let url = '/inventario';
+  let method = 'POST';
+
+  if (editId) {
+    url = '/inventario/' + editId;
+    method = 'PUT';
+  }
+
+  const res = await fetch(url, {
+    method,
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ nombre, cantidad, encargado, fecha })
+  });
+
+  alert(await res.text());
+
+  editId = null;
+  limpiar();
+  cargar();
+}
+
+// ELIMINAR
+async function eliminar(id) {
+  if (!confirm("¿Eliminar?")) return;
+
+  const res = await fetch('/inventario/' + id, {
+    method: 'DELETE'
+  });
+
+  alert(await res.text());
+  cargar();
+}
+
+// EDITAR
+function editar(id, nombre, cantidad, encargado, fecha) {
+  document.getElementById('producto').value = nombre;
+  document.getElementById('cantidad').value = cantidad;
+  document.getElementById('encargado').value = encargado;
+  document.getElementById('fecha').value = fecha ? fecha.split('T')[0] : '';
+
+  editId = id;
+}
+
+// LIMPIAR
+function limpiar() {
+  document.getElementById('producto').value = '';
+  document.getElementById('cantidad').value = '';
+  document.getElementById('encargado').value = '';
+  document.getElementById('fecha').value = '';
+}
+
+cargar();
+
+</script>
+
+</body>
+</html>
