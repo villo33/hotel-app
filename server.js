@@ -13,17 +13,29 @@ app.use(express.static(__dirname));
 // 🔥 NUEVO (NO BORRA LO TUYO)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// MYSQL
+// ================= 🔥 AÑADIDO (DEBUG VARIABLES) =================
+console.log("📦 VARIABLES MYSQL:");
+console.log("HOST:", process.env.MYSQLHOST);
+console.log("USER:", process.env.MYSQLUSER);
+console.log("DB:", process.env.MYSQLDATABASE);
+
+// ================= MYSQL =================
+
+// 🔥 AÑADIDO: conexión inteligente (local + web)
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: 'Angel13#',
-  database: 'hotel'
+  host: process.env.MYSQLHOST || 'localhost',
+  user: process.env.MYSQLUSER || 'root',
+  password: process.env.MYSQLPASSWORD || 'Angel13#',
+  database: process.env.MYSQLDATABASE || 'hotel',
+  port: process.env.MYSQLPORT || 3306
 });
 
 db.connect(err => {
-  if (err) console.log('❌ Error MySQL:', err);
-  else console.log('✅ MySQL conectado');
+  if (err) {
+    console.log('❌ Error MySQL:', err);
+  } else {
+    console.log('✅ MySQL conectado');
+  }
 });
 
 // ================= VISTAS =================
@@ -161,7 +173,7 @@ app.get('/habitaciones', (req, res) => {
   });
 });
 
-// 🔥 POST CORREGIDO (GUARDA TODO)
+// POST
 app.post('/habitaciones', (req, res) => {
 
   const { habitacion, fecha, encargado, color, inicio, fin } = req.body;
@@ -198,7 +210,7 @@ app.delete('/habitaciones/:id', (req, res) => {
 });
 
 
-// ================= 🧹 CONTROL DE LIMPIEZA =================
+// ================= 🧹 LIMPIEZA =================
 
 // GET
 app.get('/limpieza', (req, res) => {
@@ -228,7 +240,7 @@ app.post('/limpieza', (req, res) => {
   );
 });
 
-// ✏️ EDITAR
+// PUT
 app.put('/limpieza', (req, res) => {
   const { id, habitacion, tipo_accion, fecha, empleado, observacion } = req.body;
 
@@ -244,7 +256,7 @@ app.put('/limpieza', (req, res) => {
   );
 });
 
-// 🗑 ELIMINAR
+// DELETE
 app.delete('/limpieza/:id', (req, res) => {
   db.query(
     'DELETE FROM control_limpieza WHERE id=?',
