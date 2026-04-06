@@ -8,7 +8,9 @@ const app = express();
 // CONFIG
 app.use(cors());
 app.use(express.json());
-app.use(express.static(__dirname));
+app.use('/app', express.static(__dirname));
+
+
 
 // 🔥 NUEVO (NO BORRA LO TUYO)
 app.use(express.static(path.join(__dirname, 'public')));
