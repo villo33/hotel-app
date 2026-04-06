@@ -24,12 +24,9 @@ let db;
 
 if (process.env.MYSQL_URL) {
   console.log("🌐 Usando MySQL ONLINE");
-
   db = mysql.createConnection(process.env.MYSQL_URL);
-
 } else {
   console.log("💻 Usando MySQL LOCAL");
-
   db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -46,9 +43,32 @@ db.connect(err => {
   }
 });
 
+// ================= 🔐 LOGIN =================
+
+// 👉 LOGIN
+app.post('/login', (req, res) => {
+  const { usuario, password } = req.body;
+
+  db.query(
+    'SELECT * FROM usuarios WHERE usuario=? AND password=?',
+    [usuario, password],
+    (err, result) => {
+      if (err) return res.status(500).send(err);
+
+      if (result.length > 0) {
+        res.json({ success: true });
+      } else {
+        res.json({ success: false });
+      }
+    }
+  );
+});
+
 // ================= VISTAS =================
+
+// 🔥 CAMBIO: ahora entra primero al login
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, 'login.html'));
 });
 
 app.get('/inventario-vista', (req, res) => {
@@ -275,7 +295,6 @@ app.delete('/limpieza/:id', (req, res) => {
     }
   );
 });
-
 
 // SERVER
 app.listen(3000, () => {
