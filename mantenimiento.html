@@ -1,94 +1,140 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <title>Mantenimiento</title>
+<meta charset="UTF-8">
+<title>🛠️ Mantenimiento</title>
 
-  <style>
-  
-    body {
-      font-family: Arial;
-      text-align: center;
-    }
+<style>
 
-    h2 {
-      margin-top: 10px;
-    }
+body {
+  font-family: Arial;
+  background: #f4f6f9;
+  margin: 0;
+  text-align: center;
+}
 
-    .btn-inicio {
-      background: #28a745;
-      margin-top: 15px;
-      border-radius: 5px;
-    }
+/* 🔹 HEADER */
+.header {
+  background: #1e1e2f;
+  color: white;
+  padding: 15px;
+  font-size: 20px;
+}
 
-    input, select {
-      padding: 8px;
-      margin: 5px;
-      width: 150px;
-    }
+/* 🔹 TOP BAR */
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+}
 
-    button {
-      padding: 8px 15px;
-      background: green;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
+.btn-inicio {
+  background: #28a745;
+}
 
-    table {
-      margin: auto;
-      margin-top: 20px;
-      border-collapse: collapse;
-      width: 80%;
-    }
+.btn-logout {
+  background: red;
+}
 
-    th {
-      background: blue;
-      color: white;
-      padding: 10px;
-    }
+button {
+  padding: 8px 15px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 6px;
+}
 
-    td {
-      padding: 8px;
-      border: 1px solid #ccc;
-    }
+input, select {
+  padding: 8px;
+  margin: 5px;
+  width: 150px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
 
-    .descripcion {
-      max-width: 200px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+/* 🔹 FORM */
+.form {
+  margin: 15px;
+}
 
-    .btn-editar {
-      background: orange;
-    }
+/* 🔹 TABLA */
+table {
+  margin: auto;
+  margin-top: 20px;
+  border-collapse: collapse;
+  width: 90%;
+  background: white;
+}
 
-    .btn-eliminar {
-      background: red;
-    }
-  </style>
+th {
+  background: #007BFF;
+  color: white;
+  padding: 10px;
+}
+
+td {
+  padding: 8px;
+  border: 1px solid #ccc;
+}
+
+.descripcion {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-editar {
+  background: orange;
+}
+
+.btn-eliminar {
+  background: red;
+}
+
+</style>
 </head>
 
 <body>
-  <script>
+
+<script>
+// 🔐 PROTECCIÓN LOGIN
 if (localStorage.getItem('logueado') !== 'true') {
-    window.location.href = '/';
+  window.location.href = '/';
+}
+
+// 🔐 LOGOUT
+function logout() {
+  localStorage.removeItem('logueado');
+  window.location.href = '/';
+}
+
+// 🔹 IR AL PANEL (NO LOGIN)
+function irInicio() {
+  window.location.href = "/index.html";
 }
 </script>
 
-<button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>
+<div class="header">
+🛠️ Mantenimiento CASA NOA
+</div>
 
-<h2>MANTENIMIENTO CASA NOA SERGIO***** OVIDIO</h2>
+<div class="top-bar">
+  <button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>
+  <button class="btn-logout" onclick="logout()">🚪 Cerrar sesión</button>
+</div>
 
-<select id="habitacion">
-  <option value="">Habitación</option>
-</select>
+<div class="form">
+  <select id="habitacion">
+    <option value="">Habitación</option>
+  </select>
 
-<input type="text" id="descripcion" placeholder="Descripción">
-<input type="text" id="encargado" placeholder="Encargado">
-<input type="date" id="fecha">
+  <input type="text" id="descripcion" placeholder="Descripción">
+  <input type="text" id="encargado" placeholder="Encargado">
+  <input type="date" id="fecha">
 
-<button onclick="guardar()">Guardar</button>
+  <button onclick="guardar()">💾 Guardar</button>
+</div>
 
 <table>
   <thead>
@@ -109,23 +155,13 @@ if (localStorage.getItem('logueado') !== 'true') {
 
 let editandoId = null;
 
-/* 🔥 IR AL INICIO */
-function irInicio() {
-  window.location.href = "/";
-}
-
-/* 🔥 FORMATO DE FECHA */
+// 🔹 FORMATO FECHA
 function formatearFecha(fecha) {
   const f = new Date(fecha);
-
-  const dia = String(f.getDate()).padStart(2, '0');
-  const mes = String(f.getMonth() + 1).padStart(2, '0');
-  const año = f.getFullYear();
-
-  return `${dia}/${mes}/${año}`;
+  return f.toLocaleDateString();
 }
 
-/* 🔥 CARGAR HABITACIONES */
+// 🔹 HABITACIONES
 function cargarHabitaciones() {
   const select = document.getElementById("habitacion");
 
@@ -143,17 +179,21 @@ function cargarHabitaciones() {
   });
 }
 
-/* 🔥 CARGAR DATOS (MEJORADO) */
+// 🔹 CARGAR DATOS
 function cargar() {
   fetch('/mantenimiento')
     .then(res => res.json())
     .then(data => {
 
-      // 🔥 ORDENAR POR FECHA (MÁS RECIENTE PRIMERO)
       data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
       const tabla = document.getElementById('tabla');
       tabla.innerHTML = '';
+
+      if (data.length === 0) {
+        tabla.innerHTML = `<tr><td colspan="6">Sin datos</td></tr>`;
+        return;
+      }
 
       data.forEach(item => {
         const fila = document.createElement('tr');
@@ -177,12 +217,17 @@ function cargar() {
     });
 }
 
-/* 🔥 GUARDAR */
+// 🔹 GUARDAR
 function guardar() {
   const habitacion = document.getElementById('habitacion').value;
   const descripcion = document.getElementById('descripcion').value;
   const encargado = document.getElementById('encargado').value;
   const fecha = document.getElementById('fecha').value;
+
+  if (!habitacion || !descripcion || !encargado || !fecha) {
+    alert("Completa todos los campos");
+    return;
+  }
 
   fetch('/mantenimiento', {
     method: editandoId ? 'PUT' : 'POST',
@@ -201,7 +246,7 @@ function guardar() {
   });
 }
 
-/* 🔥 EDITAR */
+// 🔹 EDITAR
 function editar(id) {
   fetch('/mantenimiento')
     .then(res => res.json())
@@ -217,9 +262,9 @@ function editar(id) {
     });
 }
 
-/* 🔥 ELIMINAR */
+// 🔹 ELIMINAR
 function eliminar(id) {
-  if (!confirm("¿Seguro que quieres eliminar?")) return;
+  if (!confirm("¿Eliminar?")) return;
 
   fetch(`/mantenimiento/${id}`, {
     method: 'DELETE'
@@ -227,17 +272,16 @@ function eliminar(id) {
   .then(() => cargar());
 }
 
-/* 🔥 LIMPIAR */
+// 🔹 LIMPIAR
 function limpiar() {
   document.getElementById('habitacion').value = '';
   document.getElementById('descripcion').value = '';
   document.getElementById('encargado').value = '';
   document.getElementById('fecha').value = '';
-
   editandoId = null;
 }
 
-/* 🔥 INICIO */
+// 🔹 INIT
 cargarHabitaciones();
 cargar();
 

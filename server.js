@@ -5,23 +5,17 @@ const path = require('path');
 
 const app = express();
 
-// CONFIG
+// ================= CONFIG =================
 app.use(cors());
 app.use(express.json());
-app.use( express.static(__dirname));
-
-
-
-// 🔥 NUEVO (NO BORRA LO TUYO)
+app.use(express.static(__dirname));
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ================= 🔥 DEBUG =================
+// ================= DEBUG =================
 console.log("📦 VARIABLES MYSQL:");
 console.log("MYSQL_URL:", process.env.MYSQL_URL);
 
 // ================= MYSQL =================
-
-// 🔥 CONEXIÓN INTELIGENTE (LOCAL + ONLINE)
 let db;
 
 if (process.env.MYSQL_URL) {
@@ -45,17 +39,22 @@ db.connect(err => {
   }
 });
 
-// ================= 🔐 LOGIN =================
-
-// 👉 LOGIN
+// ================= LOGIN =================
 app.post('/login', (req, res) => {
   const { usuario, password } = req.body;
+
+  if (!usuario || !password) {
+    return res.json({ success: false });
+  }
 
   db.query(
     'SELECT * FROM usuarios WHERE usuario=? AND password=?',
     [usuario, password],
     (err, result) => {
-      if (err) return res.status(500).send(err);
+      if (err) {
+        console.log(err);
+        return res.status(500).send('Error servidor');
+      }
 
       if (result.length > 0) {
         res.json({ success: true });
@@ -68,9 +67,14 @@ app.post('/login', (req, res) => {
 
 // ================= VISTAS =================
 
-// 🔥 CAMBIO: ahora entra primero al login
+// LOGIN
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+// PANEL PRINCIPAL (IMPORTANTE 🔥)
+app.get('/index', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.get('/inventario-vista', (req, res) => {
@@ -85,15 +89,12 @@ app.get('/habitaciones-vista', (req, res) => {
   res.sendFile(path.join(__dirname, 'habitaciones.html'));
 });
 
-// 👉 NUEVA VISTA LIMPIEZA
 app.get('/limpieza-vista', (req, res) => {
   res.sendFile(path.join(__dirname, 'limpieza.html'));
 });
 
-
 // ================= INVENTARIO =================
 
-// GET
 app.get('/inventario', (req, res) => {
   db.query('SELECT * FROM inventario', (err, r) => {
     if (err) return res.status(500).send(err);
@@ -101,7 +102,6 @@ app.get('/inventario', (req, res) => {
   });
 });
 
-// POST
 app.post('/inventario', (req, res) => {
   const { nombre, cantidad, encargado, fecha } = req.body;
 
@@ -115,7 +115,6 @@ app.post('/inventario', (req, res) => {
   );
 });
 
-// PUT
 app.put('/inventario', (req, res) => {
   const { id, nombre, cantidad, encargado, fecha } = req.body;
 
@@ -129,7 +128,6 @@ app.put('/inventario', (req, res) => {
   );
 });
 
-// DELETE
 app.delete('/inventario/:id', (req, res) => {
   db.query(
     'DELETE FROM inventario WHERE id=?',
@@ -141,10 +139,8 @@ app.delete('/inventario/:id', (req, res) => {
   );
 });
 
-
 // ================= MANTENIMIENTO =================
 
-// GET
 app.get('/mantenimiento', (req, res) => {
   db.query('SELECT * FROM mantenimiento', (err, r) => {
     if (err) return res.status(500).send(err);
@@ -152,7 +148,6 @@ app.get('/mantenimiento', (req, res) => {
   });
 });
 
-// POST
 app.post('/mantenimiento', (req, res) => {
   const { habitacion, descripcion, encargado, fecha } = req.body;
 
@@ -166,7 +161,6 @@ app.post('/mantenimiento', (req, res) => {
   );
 });
 
-// PUT
 app.put('/mantenimiento', (req, res) => {
   const { id, habitacion, descripcion, encargado, fecha } = req.body;
 
@@ -180,7 +174,6 @@ app.put('/mantenimiento', (req, res) => {
   );
 });
 
-// DELETE
 app.delete('/mantenimiento/:id', (req, res) => {
   db.query(
     'DELETE FROM mantenimiento WHERE id=?',
@@ -192,10 +185,8 @@ app.delete('/mantenimiento/:id', (req, res) => {
   );
 });
 
-
 // ================= HABITACIONES =================
 
-// GET
 app.get('/habitaciones', (req, res) => {
   db.query('SELECT * FROM habitaciones', (err, r) => {
     if (err) return res.status(500).send(err);
@@ -203,9 +194,7 @@ app.get('/habitaciones', (req, res) => {
   });
 });
 
-// POST
 app.post('/habitaciones', (req, res) => {
-
   const { habitacion, fecha, encargado, color, inicio, fin } = req.body;
 
   if (!habitacion || !fecha || !encargado) {
@@ -218,16 +207,12 @@ app.post('/habitaciones', (req, res) => {
     VALUES (?, ?, ?, ?, ?, ?)`,
     [habitacion, fecha, encargado, color, inicio, fin],
     err => {
-      if (err) {
-        console.log(err);
-        return res.status(500).send(err);
-      }
+      if (err) return res.status(500).send(err);
       res.send('Guardado');
     }
   );
 });
 
-// DELETE
 app.delete('/habitaciones/:id', (req, res) => {
   db.query(
     'DELETE FROM habitaciones WHERE id=?',
@@ -239,10 +224,8 @@ app.delete('/habitaciones/:id', (req, res) => {
   );
 });
 
+// ================= LIMPIEZA =================
 
-// ================= 🧹 LIMPIEZA =================
-
-// GET
 app.get('/limpieza', (req, res) => {
   db.query('SELECT * FROM control_limpieza ORDER BY id DESC', (err, r) => {
     if (err) return res.status(500).send(err);
@@ -250,7 +233,6 @@ app.get('/limpieza', (req, res) => {
   });
 });
 
-// POST
 app.post('/limpieza', (req, res) => {
   const { habitacion, tipo_accion, fecha, empleado, observacion } = req.body;
 
@@ -270,7 +252,6 @@ app.post('/limpieza', (req, res) => {
   );
 });
 
-// PUT
 app.put('/limpieza', (req, res) => {
   const { id, habitacion, tipo_accion, fecha, empleado, observacion } = req.body;
 
@@ -286,7 +267,6 @@ app.put('/limpieza', (req, res) => {
   );
 });
 
-// DELETE
 app.delete('/limpieza/:id', (req, res) => {
   db.query(
     'DELETE FROM control_limpieza WHERE id=?',
@@ -298,7 +278,9 @@ app.delete('/limpieza/:id', (req, res) => {
   );
 });
 
-// SERVER
-app.listen(3000, () => {
-  console.log('🚀 http://localhost:3000');
+// ================= SERVER =================
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
 });

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 
-<title>🔒 CASA NOA - NO CERRAR</title>
+<title>🔒 CASA NOA - PANEL PRINCIPAL</title>
 
 <!-- 🔥 FAVICON -->
 <link rel="icon" href='data:image/svg+xml,
@@ -14,31 +14,43 @@
 
 <style>
 
-/* 🔥 GENERAL */
+/* 🔥 FONDO GENERAL */
 body {
-    font-family: Arial;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    height: 100vh;
+    background: linear-gradient(135deg, #1e1e2f, #007BFF);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 🔲 TARJETA CENTRAL */
+.container {
+    background: white;
+    padding: 40px;
+    border-radius: 15px;
+    width: 400px;
     text-align: center;
-    background: #f5f5f5;
-    margin: 0;
+    box-shadow: 0px 10px 30px rgba(0,0,0,0.3);
+    position: relative;
 }
 
-/* 🔹 HEADER */
+/* 🔹 TITULO */
 h1 {
-    background: #1e1e2f;
-    color: white;
-    padding: 20px;
-    margin: 0;
+    margin-bottom: 30px;
+    color: #1e1e2f;
 }
 
-/* 🔹 BOTÓN LOGOUT */
+/* 🔴 BOTÓN LOGOUT */
 .logout-btn {
     position: absolute;
     top: 15px;
-    right: 20px;
+    right: 15px;
     background: #dc3545;
     color: white;
     border: none;
-    padding: 10px 15px;
+    padding: 8px 12px;
     border-radius: 8px;
     cursor: pointer;
     transition: 0.3s;
@@ -50,30 +62,27 @@ h1 {
 }
 
 /* 🔹 MENÚ */
-.menu {
-    margin-top: 50px;
-}
-
 .menu a {
-    display: inline-block;
-    margin: 15px;
-    padding: 15px 25px;
-    background: #007BFF;
+    display: block;
+    margin: 12px 0;
+    padding: 12px;
+    background: linear-gradient(to right, #007BFF, #0dcaf0);
     color: white;
     text-decoration: none;
-    border-radius: 8px;
-    font-size: 16px;
+    border-radius: 10px;
+    font-size: 15px;
     transition: 0.3s;
 }
 
 .menu a:hover {
-    background: #0056b3;
     transform: scale(1.05);
+    opacity: 0.9;
 }
 
-/* 🔹 PIE */
+/* 🔹 FOOTER */
 .footer {
-    margin-top: 60px;
+    margin-top: 20px;
+    font-size: 12px;
     color: #777;
 }
 
@@ -89,8 +98,25 @@ if (localStorage.getItem('logueado') !== 'true') {
 }
 </script>
 
-<!-- 🔴 BOTÓN CERRAR SESIÓN -->
-<button class="logout-btn" onclick="logout()">🚪 Cerrar sesión</button>
+<div class="container">
+
+    <!-- 🔴 CERRAR SESIÓN -->
+    <button class="logout-btn" onclick="logout()">🚪</button>
+
+    <h1>🏨 CASA NOA</h1>
+
+    <div class="menu">
+        <a href="/inventario-vista">📦 Inventario</a>
+        <a href="/mantenimiento-vista">🛠️ Mantenimiento</a>
+        <a href="/habitaciones-vista">🏨 Habitaciones</a>
+        <a href="/limpieza-vista">🧹 Limpieza</a>
+    </div>
+
+    <div class="footer">
+        <p>Creado por Ovidio Camaño</p>
+    </div>
+
+</div>
 
 <script>
 function logout() {
@@ -98,19 +124,6 @@ function logout() {
     window.location.href = '/';
 }
 </script>
-
-<h1>🏨 Sistema Hotelero CASA NOA</h1>
-
-<div class="menu">
-    <a href="/inventario-vista">📦 Inventario</a>
-    <a href="/mantenimiento-vista">🛠️ Mantenimiento</a>
-    <a href="/habitaciones-vista">🏨 Habitaciones</a>
-    <a href="/limpieza-vista">🧹 Control de Limpieza</a>
-</div>
-
-<div class="footer">
-    <p>creado por ovidio camaño</p>
-</div>
 
 </body>
 </html>

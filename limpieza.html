@@ -5,38 +5,42 @@
 <title>Control de Limpieza</title>
 
 <style>
-   
-
-
 body{
     font-family: Arial;
     background: #f5f5f5;
     padding: 20px;
 }
 
-h2{
-    text-align: center;
-    margin-bottom: 20px;
+/* 🔥 BARRA SUPERIOR */
+.top-bar{
+    position: absolute;
+    top: 10px;
+    left: 10px;
 }
 
-/* 🔹 BARRA SUPERIOR */
-.top-bar{
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 10px;
+.top-bar button{
+    margin-right: 5px;
 }
 
 .btn-inicio{
     background: #28a745;
     color: white;
-    padding: 10px 20px;
+    padding: 10px 15px;
     border-radius: 6px;
-    text-decoration: none;
-    font-weight: bold;
 }
 
-.btn-inicio:hover{
-    background: #218838;
+.btn-logout{
+    background: #dc3545;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 6px;
+}
+
+/* TITULO */
+h2{
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 20px;
 }
 
 /* FORMULARIO */
@@ -93,16 +97,32 @@ td, th{
 
 </head>
 <body>
-    <script>
+
+<!-- 🔥 BARRA SUPERIOR -->
+<div class="top-bar">
+    <button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>
+    <button class="btn-logout" onclick="logout()">🚪 Cerrar sesión</button>
+</div>
+
+<script>
+// 🔐 PROTECCIÓN LOGIN
 if (localStorage.getItem('logueado') !== 'true') {
     window.location.href = '/';
 }
-</script>
 
-<!-- 🔥 BOTÓN INICIO -->
-<div class="top-bar">
-    <a href="/" class="btn-inicio">🏠 Inicio</a>
-</div>
+// 🔥 API DINÁMICA (LOCAL + WEB)
+const API = window.location.origin;
+
+// 🔥 NAVEGACIÓN
+function irInicio() {
+    window.location.href = "/app/index.html";
+}
+
+function logout() {
+    localStorage.removeItem('logueado');
+    window.location.href = '/';
+}
+</script>
 
 <h2>🧹 Control de Limpieza</h2>
 
@@ -140,8 +160,7 @@ if (localStorage.getItem('logueado') !== 'true') {
             <th>Acciones</th>
         </tr>
     </thead>
-    <tbody id="tabla">
-    </tbody>
+    <tbody id="tabla"></tbody>
 </table>
 
 <script>
@@ -149,6 +168,7 @@ if (localStorage.getItem('logueado') !== 'true') {
 let editando = false;
 let idEditar = null;
 
+// 🔥 GUARDAR
 async function guardar(){
 
     let habitacion = document.getElementById("habitacion").value;
@@ -164,7 +184,7 @@ async function guardar(){
 
     if(editando){
 
-        await fetch('/limpieza', {
+        await fetch(`${API}/limpieza`, {
             method: 'PUT',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
@@ -182,11 +202,9 @@ async function guardar(){
 
     } else {
 
-        await fetch('/limpieza', {
+        await fetch(`${API}/limpieza`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({
                 habitacion,
                 tipo_accion,
@@ -202,6 +220,7 @@ async function guardar(){
     cargar();
 }
 
+// 🔥 LIMPIAR
 function limpiarFormulario(){
     document.getElementById("habitacion").value = "";
     document.getElementById("tipo_accion").value = "";
@@ -210,17 +229,19 @@ function limpiarFormulario(){
     document.getElementById("observacion").value = "";
 }
 
+// 🔥 ELIMINAR
 async function eliminar(id){
 
     if(!confirm("¿Eliminar registro?")) return;
 
-    await fetch('/limpieza/' + id, {
+    await fetch(`${API}/limpieza/` + id, {
         method: 'DELETE'
     });
 
     cargar();
 }
 
+// 🔥 EDITAR
 function editar(id, habitacion, tipo_accion, fecha, empleado, observacion){
 
     document.getElementById("habitacion").value = habitacion;
@@ -233,9 +254,10 @@ function editar(id, habitacion, tipo_accion, fecha, empleado, observacion){
     idEditar = id;
 }
 
+// 🔥 CARGAR
 async function cargar(){
 
-    const res = await fetch('/limpieza');
+    const res = await fetch(`${API}/limpieza`);
     const data = await res.json();
 
     let tabla = document.getElementById("tabla");
@@ -271,6 +293,7 @@ async function cargar(){
     });
 }
 
+// 🔥 INICIO
 cargar();
 
 </script>

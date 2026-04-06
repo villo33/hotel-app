@@ -10,10 +10,25 @@ body {
   font-size: 14px;
 }
 
+/* 🔥 BOTONES SUPERIORES */
+.top-bar {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.top-bar button {
+  margin-right: 5px;
+}
+
 .btn-inicio {
   background: #28a745;
   color: white;
-  margin-top: 15px;
+}
+
+.btn-logout {
+  background: #dc3545;
+  color: white;
 }
 
 button {
@@ -28,7 +43,7 @@ button {
 
 table {
   margin: auto;
-  margin-top: 20px;
+  margin-top: 60px;
   border-collapse: collapse;
   width: 98%;
   font-size: 12px;
@@ -59,12 +74,32 @@ input {
 </head>
 
 <body>
+
+<!-- 🔥 BARRA SUPERIOR -->
+<div class="top-bar">
+  <button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>
+  <button class="btn-logout" onclick="logout()">🚪 Cerrar sesión</button>
+</div>
+
 <script>
+// 🔐 PROTECCIÓN LOGIN
 if (localStorage.getItem('logueado') !== 'true') {
     window.location.href = '/';
 }
+
+// 🔥 URL DINÁMICA (LOCAL + WEB)
+const API = window.location.origin;
+
+// 🔥 FUNCIONES NAV
+function irInicio() {
+  window.location.href = "/app/index.html";
+}
+
+function logout() {
+  localStorage.removeItem('logueado');
+  window.location.href = '/';
+}
 </script>
-<button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>
 
 <h2>CONTROL DE HABITACIONES SERGIO***** OVIDIO</h2>
 
@@ -89,10 +124,6 @@ if (localStorage.getItem('logueado') !== 'true') {
 </table>
 
 <script>
-
-function irInicio() {
-  window.location.href = "/";
-}
 
 const habitaciones = [
   101,102,103,104,105,106,107,
@@ -185,7 +216,7 @@ function calcularTotalFila(fila) {
   fila.querySelector(".total").innerText = total;
 }
 
-// 🔥 GUARDAR FILA (CORREGIDO)
+// 🔥 GUARDAR (YA FUNCIONA EN WEB)
 function guardarFila(btn) {
 
   const fila = btn.closest("tr");
@@ -208,7 +239,7 @@ function guardarFila(btn) {
 
     if (inicio && fin) {
 
-      fetch('http://localhost:3000/habitaciones', {
+      fetch(`${API}/habitaciones`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -227,22 +258,7 @@ function guardarFila(btn) {
   alert("Fila guardada ✅");
 }
 
-// 🔵 EDITAR
-function editarFila(btn) {
-
-  const fila = btn.closest("tr");
-  const inputs = fila.querySelectorAll("input");
-
-  const bloqueado = inputs[0].disabled;
-
-  inputs.forEach(input => {
-    input.disabled = !bloqueado;
-  });
-
-  btn.textContent = bloqueado ? "💾" : "✏️";
-}
-
-// 🔥 ELIMINAR (BORRA TAMBIÉN EN MYSQL)
+// 🔵 ELIMINAR
 function eliminarFila(btn) {
 
   if (!confirm("¿Eliminar esta fila completa?")) return;
@@ -252,7 +268,7 @@ function eliminarFila(btn) {
   const encargado = fila.querySelector(".encargado").value;
   const fecha = fila.querySelector(".fechaPrincipal").value;
 
-  fetch('http://localhost:3000/habitaciones')
+  fetch(`${API}/habitaciones`)
     .then(res => res.json())
     .then(data => {
 
@@ -261,7 +277,7 @@ function eliminarFila(btn) {
       );
 
       eliminar.forEach(item => {
-        fetch(`http://localhost:3000/habitaciones/${item.id}`, {
+        fetch(`${API}/habitaciones/${item.id}`, {
           method: 'DELETE'
         });
       });
@@ -270,10 +286,10 @@ function eliminarFila(btn) {
     });
 }
 
-// 🔥 CARGAR EXACTO COMO GUARDADO
+// 🔥 CARGAR DATOS
 function cargarFilasGuardadas() {
 
-  fetch('http://localhost:3000/habitaciones')
+  fetch(`${API}/habitaciones`)
     .then(res => res.json())
     .then(data => {
 
@@ -295,11 +311,7 @@ function cargarFilasGuardadas() {
         grupos[key].habitaciones.push(item);
       });
 
-      let resultado = Object.values(grupos);
-
-      resultado.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-
-      resultado.forEach(grupo => {
+      Object.values(grupos).forEach(grupo => {
 
         agregarFila();
 
@@ -338,14 +350,6 @@ function cargarFilasGuardadas() {
     });
 
 }
-
-// 🔥 COLOR EN TIEMPO REAL
-document.addEventListener("input", function(e) {
-  if (e.target.classList.contains("color")) {
-    const fila = e.target.closest("tr");
-    fila.querySelector(".encargado").style.color = e.target.value;
-  }
-});
 
 // 🔥 INICIO
 cargarFilasGuardadas();

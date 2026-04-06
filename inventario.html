@@ -2,20 +2,35 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Inventario </title>
+<title>Inventario</title>
 
 <style>
-  
 body {
   font-family: Arial;
   background: #f4f6f9;
   text-align: center;
 }
 
-/* 🔥 BOTÓN INICIO */
+/* 🔥 BARRA SUPERIOR */
+.top-bar {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.top-bar button {
+  margin-right: 5px;
+}
+
 .btn-inicio {
   background: #28a745;
-  margin-top: 15px;
+  color: white;
+  border-radius: 5px;
+}
+
+.btn-logout {
+  background: #dc3545;
+  color: white;
   border-radius: 5px;
 }
 
@@ -25,7 +40,7 @@ body {
 }
 
 h2 {
-  margin-top: 10px;
+  margin-top: 60px;
 }
 
 .form {
@@ -70,14 +85,32 @@ th, td {
 </head>
 
 <body>
-  <script>
+
+<!-- 🔥 BARRA SUPERIOR -->
+<div class="top-bar">
+  <button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>
+  <button class="btn-logout" onclick="logout()">🚪 Cerrar sesión</button>
+</div>
+
+<script>
+// 🔐 PROTECCIÓN LOGIN
 if (localStorage.getItem('logueado') !== 'true') {
     window.location.href = '/';
 }
-</script>
 
-<!-- 🔥 BOTÓN INICIO -->
-<button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>
+// 🔥 API DINÁMICA (FUNCIONA LOCAL + WEB)
+const API = window.location.origin;
+
+// 🔥 NAVEGACIÓN
+function irInicio() {
+  window.location.href = "/app/index.html";
+}
+
+function logout() {
+  localStorage.removeItem('logueado');
+  window.location.href = '/';
+}
+</script>
 
 <div class="container">
   <h2>📦 Inventario CASA NOA</h2>
@@ -109,14 +142,9 @@ if (localStorage.getItem('logueado') !== 'true') {
 
 let editId = null;
 
-/* 🔥 IR AL INICIO */
-function irInicio() {
-  window.location.href = "/";
-}
-
-// CARGAR
+// 🔥 CARGAR
 async function cargar() {
-  const res = await fetch('/inventario');
+  const res = await fetch(`${API}/inventario`);
   const data = await res.json();
 
   let html = '';
@@ -149,25 +177,25 @@ async function cargar() {
   document.getElementById('tabla').innerHTML = html;
 }
 
-// GUARDAR / EDITAR
+// 🔥 GUARDAR / EDITAR
 async function guardar() {
   const nombre = document.getElementById('producto').value;
   const cantidad = document.getElementById('cantidad').value;
   const encargado = document.getElementById('encargado').value;
   const fecha = document.getElementById('fecha').value;
 
-  let url = '/inventario';
+  let url = `${API}/inventario`;
   let method = 'POST';
 
   if (editId) {
-    url = '/inventario/' + editId;
+    url = `${API}/inventario`;
     method = 'PUT';
   }
 
   const res = await fetch(url, {
     method,
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ nombre, cantidad, encargado, fecha })
+    body: JSON.stringify({ id: editId, nombre, cantidad, encargado, fecha })
   });
 
   alert(await res.text());
@@ -177,11 +205,11 @@ async function guardar() {
   cargar();
 }
 
-// ELIMINAR
+// 🔥 ELIMINAR
 async function eliminar(id) {
   if (!confirm("¿Eliminar?")) return;
 
-  const res = await fetch('/inventario/' + id, {
+  const res = await fetch(`${API}/inventario/` + id, {
     method: 'DELETE'
   });
 
@@ -189,7 +217,7 @@ async function eliminar(id) {
   cargar();
 }
 
-// EDITAR
+// 🔥 EDITAR
 function editar(id, nombre, cantidad, encargado, fecha) {
   document.getElementById('producto').value = nombre;
   document.getElementById('cantidad').value = cantidad;
@@ -199,7 +227,7 @@ function editar(id, nombre, cantidad, encargado, fecha) {
   editId = id;
 }
 
-// LIMPIAR
+// 🔥 LIMPIAR
 function limpiar() {
   document.getElementById('producto').value = '';
   document.getElementById('cantidad').value = '';
@@ -207,6 +235,7 @@ function limpiar() {
   document.getElementById('fecha').value = '';
 }
 
+// 🔥 INICIO
 cargar();
 
 </script>
