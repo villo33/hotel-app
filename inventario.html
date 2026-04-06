@@ -70,6 +70,11 @@ th, td {
 </head>
 
 <body>
+  <script>
+if (localStorage.getItem('logueado') !== 'true') {
+    window.location.href = '/';
+}
+</script>
 
 <!-- 🔥 BOTÓN INICIO -->
 <button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>

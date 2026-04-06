@@ -59,7 +59,11 @@ input {
 </head>
 
 <body>
-
+<script>
+if (localStorage.getItem('logueado') !== 'true') {
+    window.location.href = '/';
+}
+</script>
 <button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>
 
 <h2>CONTROL DE HABITACIONES SERGIO***** OVIDIO</h2>

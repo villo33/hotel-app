@@ -93,6 +93,11 @@ td, th{
 
 </head>
 <body>
+    <script>
+if (localStorage.getItem('logueado') !== 'true') {
+    window.location.href = '/';
+}
+</script>
 
 <!-- 🔥 BOTÓN INICIO -->
 <div class="top-bar">

@@ -5,7 +5,7 @@
 
 <title>🔒 CASA NOA - NO CERRAR</title>
 
-<!-- 🔥 FAVICON SIN IMAGEN (SVG) -->
+<!-- 🔥 FAVICON -->
 <link rel="icon" href='data:image/svg+xml,
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
 <rect width="100" height="100" fill="black"/>
@@ -13,7 +13,8 @@
 </svg>'>
 
 <style>
-   
+
+/* 🔥 GENERAL */
 body {
     font-family: Arial;
     text-align: center;
@@ -29,9 +30,28 @@ h1 {
     margin: 0;
 }
 
+/* 🔹 BOTÓN LOGOUT */
+.logout-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    background: #dc3545;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.logout-btn:hover {
+    background: #a71d2a;
+    transform: scale(1.05);
+}
+
 /* 🔹 MENÚ */
 .menu {
-    margin-top: 40px;
+    margin-top: 50px;
 }
 
 .menu a {
@@ -53,13 +73,31 @@ h1 {
 
 /* 🔹 PIE */
 .footer {
-    margin-top: 50px;
+    margin-top: 60px;
     color: #777;
 }
+
 </style>
 </head>
 
 <body>
+
+<!-- 🔐 PROTECCIÓN LOGIN -->
+<script>
+if (localStorage.getItem('logueado') !== 'true') {
+    window.location.href = '/';
+}
+</script>
+
+<!-- 🔴 BOTÓN CERRAR SESIÓN -->
+<button class="logout-btn" onclick="logout()">🚪 Cerrar sesión</button>
+
+<script>
+function logout() {
+    localStorage.removeItem('logueado');
+    window.location.href = '/';
+}
+</script>
 
 <h1>🏨 Sistema Hotelero CASA NOA</h1>
 
@@ -67,8 +105,6 @@ h1 {
     <a href="/inventario-vista">📦 Inventario</a>
     <a href="/mantenimiento-vista">🛠️ Mantenimiento</a>
     <a href="/habitaciones-vista">🏨 Habitaciones</a>
-    
-    <!-- 🧹 NUEVO BOTÓN -->
     <a href="/limpieza-vista">🧹 Control de Limpieza</a>
 </div>
 
