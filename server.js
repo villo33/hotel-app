@@ -13,22 +13,30 @@ app.use(express.static(__dirname));
 // 🔥 NUEVO (NO BORRA LO TUYO)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ================= 🔥 AÑADIDO (DEBUG VARIABLES) =================
+// ================= 🔥 DEBUG =================
 console.log("📦 VARIABLES MYSQL:");
-console.log("HOST:", process.env.MYSQLHOST);
-console.log("USER:", process.env.MYSQLUSER);
-console.log("DB:", process.env.MYSQLDATABASE);
+console.log("MYSQL_URL:", process.env.MYSQL_URL);
 
 // ================= MYSQL =================
 
-// 🔥 AÑADIDO: conexión inteligente (local + web)
-const db = mysql.createConnection({
-  host: process.env.MYSQLHOST || 'localhost',
-  user: process.env.MYSQLUSER || 'root',
-  password: process.env.MYSQLPASSWORD || 'Angel13#',
-  database: process.env.MYSQLDATABASE || 'hotel',
-  port: process.env.MYSQLPORT || 3306
-});
+// 🔥 CONEXIÓN INTELIGENTE (LOCAL + ONLINE)
+let db;
+
+if (process.env.MYSQL_URL) {
+  console.log("🌐 Usando MySQL ONLINE");
+
+  db = mysql.createConnection(process.env.MYSQL_URL);
+
+} else {
+  console.log("💻 Usando MySQL LOCAL");
+
+  db = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'Angel13#',
+    database: 'hotel'
+  });
+}
 
 db.connect(err => {
   if (err) {
