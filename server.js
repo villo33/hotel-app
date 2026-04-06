@@ -8,7 +8,7 @@ const app = express();
 // CONFIG
 app.use(cors());
 app.use(express.json());
-app.use('/app', express.static(__dirname));
+app.use( express.static(__dirname));
 
 
 
