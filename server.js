@@ -9,7 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 🔥 SOLO ESTA LÍNEA (IMPORTANTE)
+// 🔥 STATIC (CLAVE)
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ================= MYSQL =================
@@ -36,31 +36,14 @@ db.connect(err => {
   }
 });
 
-// ================= VISTAS =================
-
-// 🔥 PANEL PRINCIPAL (SIN LOGIN)
+// ================= RUTA PRINCIPAL =================
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
-app.get('/inventario-vista', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/inventario.html'));
-});
-
-app.get('/mantenimiento-vista', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/mantenimiento.html'));
-});
-
-app.get('/habitaciones-vista', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/habitaciones.html'));
-});
-
-app.get('/limpieza-vista', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public/limpieza.html'));
-});
+// ❌ ELIMINAMOS rutas tipo /inventario-vista (ya no se necesitan)
 
 // ================= INVENTARIO =================
-
 app.get('/inventario', (req, res) => {
   db.query('SELECT * FROM inventario', (err, r) => {
     if (err) return res.status(500).send(err);
@@ -106,7 +89,6 @@ app.delete('/inventario/:id', (req, res) => {
 });
 
 // ================= MANTENIMIENTO =================
-
 app.get('/mantenimiento', (req, res) => {
   db.query('SELECT * FROM mantenimiento', (err, r) => {
     if (err) return res.status(500).send(err);
@@ -152,7 +134,6 @@ app.delete('/mantenimiento/:id', (req, res) => {
 });
 
 // ================= HABITACIONES =================
-
 app.get('/habitaciones', (req, res) => {
   db.query('SELECT * FROM habitaciones', (err, r) => {
     if (err) return res.status(500).send(err);
@@ -191,7 +172,6 @@ app.delete('/habitaciones/:id', (req, res) => {
 });
 
 // ================= LIMPIEZA =================
-
 app.get('/limpieza', (req, res) => {
   db.query('SELECT * FROM control_limpieza ORDER BY id DESC', (err, r) => {
     if (err) return res.status(500).send(err);
@@ -236,6 +216,57 @@ app.put('/limpieza', (req, res) => {
 app.delete('/limpieza/:id', (req, res) => {
   db.query(
     'DELETE FROM control_limpieza WHERE id=?',
+    [req.params.id],
+    err => {
+      if (err) return res.status(500).send(err);
+      res.send('Eliminado');
+    }
+  );
+});
+// ================= TAREAS =================
+
+// GET
+app.get('/tareas', (req, res) => {
+  db.query('SELECT * FROM tareas ORDER BY id DESC', (err, r) => {
+    if (err) return res.status(500).send(err);
+    res.json(r);
+  });
+});
+
+// POST (crear tarea)
+app.post('/tareas', (req, res) => {
+  const { descripcion, fecha } = req.body;
+
+  if (!descripcion || !fecha) {
+    return res.status(400).send('Datos incompletos');
+  }
+
+  db.query(
+    'INSERT INTO tareas (descripcion, fecha, estado) VALUES (?, ?, "pendiente")',
+    [descripcion, fecha],
+    err => {
+      if (err) return res.status(500).send(err);
+      res.send('Tarea creada');
+    }
+  );
+});
+
+// PUT (marcar como hecho)
+app.put('/tareas/:id', (req, res) => {
+  db.query(
+    'UPDATE tareas SET estado="hecho" WHERE id=?',
+    [req.params.id],
+    err => {
+      if (err) return res.status(500).send(err);
+      res.send('Actualizado');
+    }
+  );
+});
+
+// DELETE
+app.delete('/tareas/:id', (req, res) => {
+  db.query(
+    'DELETE FROM tareas WHERE id=?',
     [req.params.id],
     err => {
       if (err) return res.status(500).send(err);

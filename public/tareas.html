@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>📋 Tareas</title>
+
+<style>
+body {
+  font-family: Arial;
+  background: #f5f5f5;
+  text-align: center;
+}
+
+.top-bar {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+button {
+  padding: 8px 12px;
+  margin: 3px;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-inicio { background: #28a745; }
+.btn-hecho { background: #007BFF; }
+.btn-eliminar { background: red; }
+
+.container {
+  margin-top: 60px;
+}
+
+input {
+  padding: 8px;
+  margin: 5px;
+}
+
+table {
+  margin: auto;
+  width: 80%;
+  border-collapse: collapse;
+  background: white;
+}
+
+th {
+  background: #007BFF;
+  color: white;
+}
+
+td, th {
+  padding: 10px;
+  border: 1px solid #ccc;
+}
+
+.pendiente { color: orange; font-weight: bold; }
+.hecho { color: green; font-weight: bold; }
+
+</style>
+</head>
+
+<body>
+
+<div class="top-bar">
+  <button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>
+</div>
+
+<div class="container">
+  <h2>📋 Tareas</h2>
+
+  <input id="descripcion" placeholder="Escribir tarea">
+  <input type="date" id="fecha">
+  <button onclick="guardar()">Guardar</button>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Tarea</th>
+        <th>Fecha</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="tabla"></tbody>
+  </table>
+</div>
+
+<script>
+
+const API = window.location.origin;
+
+function irInicio(){
+  window.location.href = "/";
+}
+
+// 🔥 GUARDAR
+async function guardar(){
+  const descripcion = document.getElementById("descripcion").value;
+  const fecha = document.getElementById("fecha").value;
+
+  if(!descripcion || !fecha){
+    alert("Completa los datos");
+    return;
+  }
+
+  await fetch(`${API}/tareas`, {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ descripcion, fecha })
+  });
+
+  document.getElementById("descripcion").value = "";
+  document.getElementById("fecha").value = "";
+
+  cargar();
+}
+
+// 🔥 MARCAR HECHO
+async function completar(id){
+  await fetch(`${API}/tareas/` + id, {
+    method: 'PUT'
+  });
+  cargar();
+}
+
+// 🔥 ELIMINAR
+async function eliminar(id){
+  if(!confirm("¿Eliminar?")) return;
+
+  await fetch(`${API}/tareas/` + id, {
+    method: 'DELETE'
+  });
+  cargar();
+}
+
+// 🔥 CARGAR
+async function cargar(){
+
+  const res = await fetch(`${API}/tareas`);
+  const data = await res.json();
+
+  let html = '';
+
+  data.forEach(t => {
+    html += `
+      <tr>
+        <td>${t.descripcion}</td>
+        <td>${t.fecha.split('T')[0]}</td>
+        <td class="${t.estado}">${t.estado}</td>
+        <td>
+          ${t.estado === 'pendiente' ? 
+            `<button class="btn-hecho" onclick="completar(${t.id})">✔</button>` 
+            : ''}
+          <button class="btn-eliminar" onclick="eliminar(${t.id})">❌</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  document.getElementById("tabla").innerHTML = html;
+}
+
+cargar();
+
+</script>
+
+</body>
+</html>
