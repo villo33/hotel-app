@@ -5,16 +5,20 @@
 <title>📋 Tareas</title>
 
 <style>
+
+/* 🔥 FONDO */
 body {
   font-family: Arial;
-  background: #f5f5f5;
-  text-align: center;
+  margin: 0;
+  background: linear-gradient(135deg, #1e1e2f, #007BFF);
+  color: #333;
 }
 
+/* 🔝 BARRA SUPERIOR */
 .top-bar {
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 15px;
+  left: 15px;
 }
 
 button {
@@ -23,26 +27,59 @@ button {
   border: none;
   color: white;
   cursor: pointer;
+  border-radius: 6px;
+  transition: 0.3s;
 }
 
+button:hover {
+  transform: scale(1.05);
+}
+
+/* BOTONES */
 .btn-inicio { background: #28a745; }
 .btn-hecho { background: #007BFF; }
-.btn-eliminar { background: red; }
+.btn-eliminar { background: #dc3545; }
+.btn-guardar { 
+  background: linear-gradient(to right, #0d6efd, #0dcaf0);
+}
 
+/* 🔲 CONTENEDOR */
 .container {
-  margin-top: 60px;
+  width: 80%;
+  margin: auto;
+  margin-top: 80px;
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0px 10px 30px rgba(0,0,0,0.3);
+}
+
+/* 🔹 TITULO */
+h2 {
+  margin-bottom: 20px;
+  color: #1e1e2f;
+}
+
+/* 🔹 FORM */
+.form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
 input {
-  padding: 8px;
-  margin: 5px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 180px;
 }
 
+/* 🔹 TABLA */
 table {
-  margin: auto;
-  width: 80%;
+  width: 100%;
   border-collapse: collapse;
-  background: white;
 }
 
 th {
@@ -53,10 +90,19 @@ th {
 td, th {
   padding: 10px;
   border: 1px solid #ccc;
+  text-align: center;
 }
 
-.pendiente { color: orange; font-weight: bold; }
-.hecho { color: green; font-weight: bold; }
+/* 🔹 ESTADOS */
+.pendiente {
+  color: orange;
+  font-weight: bold;
+}
+
+.hecho {
+  color: green;
+  font-weight: bold;
+}
 
 </style>
 </head>
@@ -68,16 +114,20 @@ td, th {
 </div>
 
 <div class="container">
-  <h2>📋 Tareas</h2>
+  <h2>📋 Gestión de Tareas</h2>
 
-  <input id="descripcion" placeholder="Escribir tarea">
-  <input type="date" id="fecha">
-  <button onclick="guardar()">Guardar</button>
+  <div class="form">
+    <input id="descripcion" placeholder="Descripción de la tarea">
+    <input id="encargado" placeholder="Encargado">
+    <input type="date" id="fecha">
+    <button class="btn-guardar" onclick="guardar()">💾 Guardar</button>
+  </div>
 
   <table>
     <thead>
       <tr>
         <th>Tarea</th>
+        <th>Encargado</th>
         <th>Fecha</th>
         <th>Estado</th>
         <th>Acciones</th>
@@ -97,27 +147,27 @@ function irInicio(){
 
 // 🔥 GUARDAR
 async function guardar(){
+
   const descripcion = document.getElementById("descripcion").value;
+  const encargado = document.getElementById("encargado").value;
   const fecha = document.getElementById("fecha").value;
 
-  if(!descripcion || !fecha){
-    alert("Completa los datos");
+  if(!descripcion || !encargado || !fecha){
+    alert("Completa todos los datos");
     return;
   }
 
   await fetch(`${API}/tareas`, {
     method: 'POST',
     headers: {'Content-Type':'application/json'},
-    body: JSON.stringify({ descripcion, fecha })
+    body: JSON.stringify({ descripcion, encargado, fecha })
   });
 
-  document.getElementById("descripcion").value = "";
-  document.getElementById("fecha").value = "";
-
+  limpiar();
   cargar();
 }
 
-// 🔥 MARCAR HECHO
+// 🔥 COMPLETAR
 async function completar(id){
   await fetch(`${API}/tareas/` + id, {
     method: 'PUT'
@@ -127,12 +177,19 @@ async function completar(id){
 
 // 🔥 ELIMINAR
 async function eliminar(id){
-  if(!confirm("¿Eliminar?")) return;
+  if(!confirm("¿Eliminar tarea?")) return;
 
   await fetch(`${API}/tareas/` + id, {
     method: 'DELETE'
   });
   cargar();
+}
+
+// 🔥 LIMPIAR
+function limpiar(){
+  document.getElementById("descripcion").value = "";
+  document.getElementById("encargado").value = "";
+  document.getElementById("fecha").value = "";
 }
 
 // 🔥 CARGAR
@@ -143,10 +200,15 @@ async function cargar(){
 
   let html = '';
 
+  if(data.length === 0){
+    html = `<tr><td colspan="5">No hay tareas</td></tr>`;
+  }
+
   data.forEach(t => {
     html += `
       <tr>
         <td>${t.descripcion}</td>
+        <td>${t.encargado || ''}</td>
         <td>${t.fecha.split('T')[0]}</td>
         <td class="${t.estado}">${t.estado}</td>
         <td>

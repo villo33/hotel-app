@@ -233,19 +233,21 @@ app.get('/tareas', (req, res) => {
   });
 });
 
-// POST (crear tarea)
 app.post('/tareas', (req, res) => {
-  const { descripcion, fecha } = req.body;
+  const { descripcion, encargado, fecha } = req.body;
 
-  if (!descripcion || !fecha) {
+  if (!descripcion || !encargado || !fecha) {
     return res.status(400).send('Datos incompletos');
   }
 
   db.query(
-    'INSERT INTO tareas (descripcion, fecha, estado) VALUES (?, ?, "pendiente")',
-    [descripcion, fecha],
+    'INSERT INTO tareas (descripcion, encargado, fecha, estado) VALUES (?, ?, ?, "pendiente")',
+    [descripcion, encargado, fecha],
     err => {
-      if (err) return res.status(500).send(err);
+      if (err) {
+        console.log(err);
+        return res.status(500).send('Error servidor');
+      }
       res.send('Tarea creada');
     }
   );
