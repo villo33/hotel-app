@@ -276,7 +276,9 @@ app.delete('/tareas/:id', (req, res) => {
     }
   );
 });
-
+function verTarea(texto){
+  alert("📋 Tarea:\n\n" + texto);
+}
 // ================= SERVER =================
 const PORT = process.env.PORT || 3000;
 

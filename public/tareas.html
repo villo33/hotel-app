@@ -214,8 +214,10 @@ async function cargar(){
   data.forEach(t => {
     html += `
       <tr>
-        <td class="descripcion" title="${t.descripcion}">
-  ${t.descripcion}
+        <td>
+  ${t.descripcion.length > 20 ? t.descripcion.substring(0,20) + '...' : t.descripcion}
+  <br>
+  <button onclick="verTarea('${t.descripcion.replace(/'/g, "\\'")}')">👁</button>
 </td>
         <td>${t.encargado || ''}</td>
         <td>${t.fecha.split('T')[0]}</td>
