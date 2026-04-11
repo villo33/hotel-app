@@ -5,6 +5,13 @@
 <title>📋 Tareas</title>
 
 <style>
+    /* 🔥 CONTROL TEXTO LARGO */
+.descripcion {
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
 /* 🔥 FONDO */
 body {
@@ -207,7 +214,9 @@ async function cargar(){
   data.forEach(t => {
     html += `
       <tr>
-        <td>${t.descripcion}</td>
+        <td class="descripcion" title="${t.descripcion}">
+  ${t.descripcion}
+</td>
         <td>${t.encargado || ''}</td>
         <td>${t.fecha.split('T')[0]}</td>
         <td class="${t.estado}">${t.estado}</td>
