@@ -290,13 +290,10 @@ function cargarFilasGuardadas() {
     .then(res => res.json())
     .then(data => {
 
-      // 🔥 ORDENAR POR FECHA (MAS RECIENTE ARRIBA)
-      data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-
+      // 🔥 AGRUPAR
       const grupos = {};
 
       data.forEach(item => {
-
         const key = item.encargado + "_" + item.fecha;
 
         if (!grupos[key]) {
@@ -311,18 +308,50 @@ function cargarFilasGuardadas() {
         grupos[key].habitaciones.push(item);
       });
 
-      Object.values(grupos).forEach(grupo => {
+      // 🔥 ORDENAR POR FECHA (CORRECTO)
+      const gruposOrdenados = Object.values(grupos)
+        .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
-        agregarFila();
+      const tabla = document.getElementById("cuerpo");
+      tabla.innerHTML = ""; // 🔥 LIMPIAR TODO
 
-        const filas = document.querySelectorAll("#cuerpo tr");
-        const fila = filas[0]; // 🔥 SIEMPRE TOMAR LA PRIMERA (porque ahora se agrega arriba)
+      // 🔥 CREAR FILAS EN ORDEN
+      gruposOrdenados.forEach(grupo => {
 
-        fila.querySelector(".encargado").value = grupo.encargado;
-        fila.querySelector(".encargado").style.color = grupo.color;
-        fila.querySelector(".color").value = grupo.color;
-        fila.querySelector(".fechaPrincipal").value = grupo.fecha.split('T')[0];
+        const fila = document.createElement("tr");
 
+        let html = `
+          <td></td>
+          <td>
+            <input class="encargado" value="${grupo.encargado}" style="color:${grupo.color}"><br>
+            <input type="color" class="color" value="${grupo.color}"><br>
+            <input type="date" class="fechaPrincipal" value="${grupo.fecha.split('T')[0]}">
+          </td>
+        `;
+
+        habitaciones.forEach(() => {
+          html += `
+            <td>
+              <input type="date" class="inicio"><br>
+              <input type="date" class="fin"><br>
+              <div class="dias">0</div>
+            </td>
+          `;
+        });
+
+        html += `<td class="total">0</td>`;
+
+        html += `
+          <td>
+            <button onclick="guardarFila(this)">💾</button>
+            <button onclick="eliminarFila(this)">❌</button>
+          </td>
+        `;
+
+        fila.innerHTML = html;
+        tabla.appendChild(fila);
+
+        // 🔥 RELLENAR DATOS
         const celdas = fila.querySelectorAll("td");
 
         grupo.habitaciones.forEach(h => {
@@ -343,6 +372,7 @@ function cargarFilasGuardadas() {
 
         });
 
+        activarEventos(fila);
         calcularTotalFila(fila);
 
       });
