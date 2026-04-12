@@ -167,7 +167,7 @@ function agregarFila() {
   `;
 
   fila.innerHTML = html;
-  tabla.appendChild(fila);
+  tabla.insertBefore(fila, tabla.firstChild);
 
   activarEventos(fila);
 }
@@ -267,6 +267,7 @@ function eliminarFila(btn) {
   fetch(`${API}/habitaciones`)
     .then(res => res.json())
     .then(data => {
+      data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
       const eliminar = data.filter(d =>
         d.encargado === encargado && d.fecha.includes(fecha)
@@ -288,6 +289,9 @@ function cargarFilasGuardadas() {
   fetch(`${API}/habitaciones`)
     .then(res => res.json())
     .then(data => {
+
+      // 🔥 ORDENAR POR FECHA (MAS RECIENTE ARRIBA)
+      data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
 
       const grupos = {};
 
@@ -312,7 +316,7 @@ function cargarFilasGuardadas() {
         agregarFila();
 
         const filas = document.querySelectorAll("#cuerpo tr");
-        const fila = filas[filas.length - 1];
+        const fila = filas[0]; // 🔥 SIEMPRE TOMAR LA PRIMERA (porque ahora se agrega arriba)
 
         fila.querySelector(".encargado").value = grupo.encargado;
         fila.querySelector(".encargado").style.color = grupo.color;
