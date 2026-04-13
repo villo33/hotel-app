@@ -5,7 +5,13 @@
 <title>🛠️ Mantenimiento</title>
 
 <style>
+.btn-guardar {
+  background: #007BFF;
+}
 
+.btn-guardar:hover {
+  background: #0056b3;
+}
 body {
   font-family: Arial;
   background: #f4f6f9;
@@ -132,13 +138,12 @@ function logout() {
   <input type="text" id="encargado" placeholder="Encargado">
   <input type="date" id="fecha">
 
-  <button onclick="guardar()">💾 Guardar</button>
+  <button class="btn-guardar" onclick="guardar()">💾 Guardar</button>
 </div>
 
 <table>
   <thead>
     <tr>
-      <th>ID</th>
       <th>Habitación</th>
       <th>Descripción</th>
       <th>Encargado</th>
@@ -203,7 +208,6 @@ async function cargar() {
       const fila = document.createElement('tr');
 
       fila.innerHTML = `
-        <td>${item.id}</td>
         <td>${item.habitacion}</td>
         <td class="descripcion" title="${item.descripcion}">
           ${item.descripcion}
