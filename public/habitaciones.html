@@ -388,7 +388,6 @@ function eliminarFila(btn){
   });
 }
 
-// 🔥 CARGAR ORDENADO + ID CORRECTO (MAS RECIENTE ARRIBA)
 function cargarFilasGuardadas(){
 
   fetch(`${API}/habitaciones`)
@@ -413,17 +412,16 @@ function cargarFilasGuardadas(){
       grupos[key].habitaciones.push(item);
     });
 
-    // 🔥 ORDENAR POR FECHA (MAS NUEVO PRIMERO)
+    // 🔥 ORDENAR POR FECHA
     const ordenados = Object.values(grupos)
       .sort((a,b)=> new Date(b.fecha) - new Date(a.fecha));
 
     const tabla = document.getElementById("cuerpo");
     tabla.innerHTML="";
 
-    // 🔥 CREAR FILAS CON ID INVERSO
     ordenados.forEach((grupo, index)=>{
 
-      const idVisual = ordenados.length - index; // 🔥 CLAVE
+      const idVisual = ordenados.length - index;
 
       const fila = document.createElement("tr");
 
@@ -432,7 +430,7 @@ function cargarFilasGuardadas(){
         <td>
           <input class="encargado" value="${grupo.encargado}" style="color:${grupo.color}"><br>
           <input type="color" class="color" value="${grupo.color}"><br>
-          <input type="date" class="fechaPrincipal" value="${grupo.fecha.split('T')[0]}">
+          <input type="date" class="fechaPrincipal" value="${grupo.fecha ? grupo.fecha.split('T')[0] : ''}">
         </td>
       `;
 
@@ -466,16 +464,25 @@ function cargarFilasGuardadas(){
 
         const indexHab = habitaciones.indexOf(h.habitacion);
 
-        if(indexHab !== -1){
+        if(indexHab !== -1 && h.inicio && h.fin){
 
           const inicio = celdas[indexHab + 2].querySelector(".inicio");
           const fin = celdas[indexHab + 2].querySelector(".fin");
 
-          inicio.value = h.inicio?.split('T')[0] || "";
-          fin.value = h.fin?.split('T')[0] || "";
+          const inicioDate = new Date(h.inicio);
+          const finDate = new Date(h.fin);
 
-          const diff = (new Date(h.fin) - new Date(h.inicio)) / (1000*60*60*24);
-          celdas[indexHab + 2].querySelector(".dias").innerText = diff > 0 ? diff : 0;
+          inicio.value = !isNaN(inicioDate) ? inicioDate.toISOString().split('T')[0] : "";
+          fin.value = !isNaN(finDate) ? finDate.toISOString().split('T')[0] : "";
+
+          let diff = 0;
+
+          if(!isNaN(inicioDate) && !isNaN(finDate)){
+            diff = Math.floor((finDate - inicioDate) / (1000*60*60*24));
+          }
+
+          celdas[indexHab + 2].querySelector(".dias").innerText =
+            diff > 0 ? diff : 0;
         }
 
       });
