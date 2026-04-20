@@ -286,7 +286,7 @@ function calcularTotalFila(fila){
 }
 
 // 🔥 GUARDAR
-function guardarFila(btn){
+async function guardarFila(btn){
 
   const fila = btn.closest("tr");
 
@@ -300,8 +300,7 @@ function guardarFila(btn){
   }
 
   const celdas = fila.querySelectorAll("td");
-
-  let guardadas = 0;
+  const requests = [];
 
   for(let i=2;i<=21;i++){
 
@@ -310,7 +309,7 @@ function guardarFila(btn){
 
     if(inicio && fin){
 
-      fetch(`${API}/habitaciones`,{
+      const req = fetch(`${API}/habitaciones`,{
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
@@ -323,21 +322,28 @@ function guardarFila(btn){
         })
       });
 
-      guardadas++;
+      requests.push(req);
     }
   }
 
-  if(guardadas === 0){
+  if(requests.length === 0){
     alert("No llenaste ninguna habitación");
     return;
   }
 
-  alert("Fila guardada ✅");
+  try{
+    // 🔥 ESPERA A QUE TODO GUARDE
+    await Promise.all(requests);
 
-  // 🔥 CLAVE: recargar datos reales desde backend
-  setTimeout(()=>{
+    alert("Fila guardada ✅");
+
+    // 🔥 AHORA SÍ RECARGA BIEN
     cargarFilasGuardadas();
-  }, 500);
+
+  }catch(e){
+    console.error(e);
+    alert("Error guardando ❌");
+  }
 }
 
 // 🔥 ELIMINAR
