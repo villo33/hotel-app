@@ -287,7 +287,6 @@ function calcularTotalFila(fila){
 
 // 🔥 GUARDAR
 
-
 async function guardarFila(btn){
 
   const fila = btn.closest("tr");
@@ -305,47 +304,59 @@ async function guardarFila(btn){
 
   try {
 
-    const promesas = []; // 🔥 CLAVE
+    const promesas = [];
 
-    for(let i=2;i<=21;i++){
+    for(let i = 2; i <= 21; i++){
 
-      const inicio = celdas[i].querySelector(".inicio").value;
-      const fin = celdas[i].querySelector(".fin").value;
+      const celda = celdas[i];
+      if(!celda) continue; // 🔥 evita errores
 
+      const inicioEl = celda.querySelector(".inicio");
+      const finEl = celda.querySelector(".fin");
+
+      if(!inicioEl || !finEl) continue;
+
+      const inicio = inicioEl.value;
+      const fin = finEl.value;
+
+      // 🔥 solo guarda si ambos existen
       if(inicio && fin){
 
         promesas.push(
-          fetch(`${API}/habitaciones`,{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({
-              habitacion: habitaciones[i-2],
-              encargado,fecha,color,inicio,fin
+          fetch(`${API}/habitaciones`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              habitacion: habitaciones[i - 2],
+              encargado,
+              fecha: fecha.split('T')[0], // 🔥 evita problemas de fecha
+              color,
+              inicio,
+              fin
             })
           })
+          .then(res => {
+            if(!res.ok) throw new Error("Error guardando habitación");
+            return res.json();
+          })
         );
-
       }
     }
 
-    // 🔥 ESPERAR TODO
     await Promise.all(promesas);
 
-    alert("Fila guardada ✅");
+    alert("Fila guardada correctamente ✅");
 
-    // 🔥 PEQUEÑO RETRASO PARA ASEGURAR DB
-    setTimeout(()=>{
+    // 🔥 recargar después de guardar
+    setTimeout(() => {
       cargarFilasGuardadas();
-    }, 500);
+    }, 300);
 
   } catch (error) {
-    console.log(error);
-    alert("Error guardando ❌");
+    console.error(error);
+    alert("Error guardando la fila ❌");
   }
 }
-
-
-
 // 🔥 ELIMINAR
 function eliminarFila(btn){
 
