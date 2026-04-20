@@ -241,6 +241,7 @@ function agregarFila(){
   activarEventos(fila);
 }
 
+
 // 💾 GUARDAR
 async function guardarFila(btn){
 
@@ -299,6 +300,8 @@ async function guardarFila(btn){
     alert("Error guardando ❌");
   }
 }
+
+
 // ❌ ELIMINAR
 function eliminarFila(btn){
 
@@ -319,12 +322,13 @@ function eliminarFila(btn){
     );
 
     eliminar.forEach(i=>{
-      fetch(`${API}/habitaciones/${i.id}`,{method:'DELETE'});
+      fetch(`${API}/habitaciones/${i.id}`, { method:'DELETE' });
     });
 
     fila.remove();
   });
 }
+
 
 // 📥 CARGAR
 function cargarFilasGuardadas(){
@@ -340,11 +344,11 @@ function cargarFilasGuardadas(){
       const key = item.encargado + "_" + item.fecha;
 
       if(!grupos[key]){
-        grupos[key]={
-          encargado:item.encargado,
-          fecha:item.fecha,
-          color:item.color||"#000",
-          habitaciones:[]
+        grupos[key] = {
+          encargado: item.encargado,
+          fecha: item.fecha,
+          color: item.color || "#000",
+          habitaciones: []
         };
       }
 
@@ -355,14 +359,14 @@ function cargarFilasGuardadas(){
       .sort((a,b)=> new Date(b.fecha) - new Date(a.fecha));
 
     const tabla = document.getElementById("cuerpo");
-    tabla.innerHTML="";
+    tabla.innerHTML = "";
 
     ordenados.forEach((grupo, index)=>{
 
       const fila = document.createElement("tr");
 
       let html = `
-        <td>${index+1}</td>
+        <td>${index + 1}</td>
         <td>
           <input class="encargado" value="${grupo.encargado}" style="color:${grupo.color}"><br>
           <input type="color" class="color" value="${grupo.color}"><br>
@@ -399,6 +403,54 @@ function cargarFilasGuardadas(){
     });
 
   });
+}
+
+
+// 🔥 CÁLCULO AUTOMÁTICO (CLAVE)
+function activarEventos(fila){
+
+  const celdas = fila.querySelectorAll("td");
+
+  for(let i = 2; i <= 21; i++){
+
+    const celda = celdas[i];
+    if(!celda) continue;
+
+    const inicio = celda.querySelector(".inicio");
+    const fin = celda.querySelector(".fin");
+    const dias = celda.querySelector(".dias");
+
+    function calc(){
+
+      if(inicio.value && fin.value){
+
+        const diff = (new Date(fin.value) - new Date(inicio.value)) / (1000*60*60*24);
+
+        dias.innerText = diff > 0 ? diff : 0;
+      } else {
+        dias.innerText = 0;
+      }
+
+      calcularTotalFila(fila);
+    }
+
+    inicio.onchange = calc;
+    fin.onchange = calc;
+  }
+}
+
+
+// 🔥 TOTAL AUTOMÁTICO
+function calcularTotalFila(fila){
+
+  let total = 0;
+
+  fila.querySelectorAll(".dias").forEach(d=>{
+    const val = parseInt(d.innerText);
+    if(val > 0) total += val;
+  });
+
+  fila.querySelector(".total").innerText = total;
 }
 
 cargarFilasGuardadas();
