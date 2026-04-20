@@ -457,20 +457,19 @@ function cargarFilasGuardadas(){
           const fin = celda.querySelector(".fin");
           const dias = celda.querySelector(".dias");
 
-          const inicioVal = h.inicio?.split('T')[0] || "";
-          const finVal = h.fin?.split('T')[0] || "";
+         const inicioVal = h.inicio ? h.inicio.split('T')[0].trim() : "";
+const finVal = h.fin ? h.fin.split('T')[0].trim() : "";
 
           inicio.value = inicioVal;
           fin.value = finVal;
 
-          // 🔥 CALCULO SEGURO
-          // 🔥 CALCULO SEGURO (FIX REAL)
+          
 if(inicioVal && finVal){
 
-  const fechaInicio = new Date(inicioVal + "T00:00:00");
-  const fechaFin = new Date(finVal + "T00:00:00");
+  const inicioDate = new Date(inicioVal.replace(/\s/g, '') + "T00:00:00");
+  const finDate = new Date(finVal.replace(/\s/g, '') + "T00:00:00");
 
-  const diff = (fechaFin - fechaInicio) / (1000*60*60*24);
+  const diff = (finDate - inicioDate) / (1000*60*60*24);
 
   dias.innerText = diff > 0 ? diff : 0;
 
