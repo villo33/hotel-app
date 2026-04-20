@@ -1,38 +1,19 @@
 const express = require('express');
-const mysql = require('mysql2');
+const { Pool } = require('pg');
 const cors = require('cors');
 const path = require('path');
 
 const app = express();
 
-// ================= CONFIG =================
 app.use(cors());
 app.use(express.json());
-
-// 🔥 STATIC (CLAVE)
 app.use(express.static(path.join(__dirname, 'public')));
 
-// ================= MYSQL =================
-let db;
-
-if (process.env.MYSQL_URL) {
-  console.log("🌐 Usando MySQL ONLINE");
-  db = mysql.createConnection(process.env.MYSQL_URL);
-} else {
-  console.log("💻 Usando MySQL LOCAL");
-  db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'Angel13#',
-    database: 'hotel'
-  });
-}
-
-db.connect(err => {
-  if (err) {
-    console.log('❌ Error MySQL:', err);
-  } else {
-    console.log('✅ MySQL conectado');
+// ================= POSTGRES (SUPABASE) =================
+const db = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
   }
 });
 
@@ -41,245 +22,233 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'public/index.html'));
 });
 
-// ❌ ELIMINAMOS rutas tipo /inventario-vista (ya no se necesitan)
-
 // ================= INVENTARIO =================
-app.get('/inventario', (req, res) => {
-  db.query('SELECT * FROM inventario', (err, r) => {
-    if (err) return res.status(500).send(err);
-    res.json(r);
-  });
+app.get('/inventario', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM inventario');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
-app.post('/inventario', (req, res) => {
+app.post('/inventario', async (req, res) => {
   const { nombre, cantidad, encargado, fecha } = req.body;
 
-  db.query(
-    'INSERT INTO inventario(nombre,cantidad,encargado,fecha) VALUES (?,?,?,?)',
-    [nombre, cantidad, encargado, fecha],
-    err => {
-      if (err) return res.status(500).send(err);
-      res.send('✅ Guardado');
-    }
-  );
+  try {
+    await db.query(
+      'INSERT INTO inventario(nombre,cantidad,encargado,fecha) VALUES ($1,$2,$3,$4)',
+      [nombre, cantidad, encargado, fecha]
+    );
+    res.send('Guardado');
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
-app.put('/inventario', (req, res) => {
+app.put('/inventario', async (req, res) => {
   const { id, nombre, cantidad, encargado, fecha } = req.body;
 
-  db.query(
-    'UPDATE inventario SET nombre=?, cantidad=?, encargado=?, fecha=? WHERE id=?',
-    [nombre, cantidad, encargado, fecha, id],
-    err => {
-      if (err) return res.status(500).send(err);
-      res.send('Actualizado');
-    }
-  );
+  try {
+    await db.query(
+      'UPDATE inventario SET nombre=$1, cantidad=$2, encargado=$3, fecha=$4 WHERE id=$5',
+      [nombre, cantidad, encargado, fecha, id]
+    );
+    res.send('Actualizado');
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
-app.delete('/inventario/:id', (req, res) => {
-  db.query(
-    'DELETE FROM inventario WHERE id=?',
-    [req.params.id],
-    err => {
-      if (err) return res.status(500).send(err);
-      res.send('Eliminado');
-    }
-  );
+app.delete('/inventario/:id', async (req, res) => {
+  try {
+    await db.query('DELETE FROM inventario WHERE id=$1', [req.params.id]);
+    res.send('Eliminado');
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
 // ================= MANTENIMIENTO =================
-app.get('/mantenimiento', (req, res) => {
-  db.query('SELECT * FROM mantenimiento', (err, r) => {
-    if (err) return res.status(500).send(err);
-    res.json(r);
-  });
+app.get('/mantenimiento', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM mantenimiento');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
-app.post('/mantenimiento', (req, res) => {
+app.post('/mantenimiento', async (req, res) => {
   const { habitacion, descripcion, encargado, fecha } = req.body;
 
-  db.query(
-    'INSERT INTO mantenimiento(habitacion,descripcion,encargado,fecha) VALUES (?,?,?,?)',
-    [habitacion, descripcion, encargado, fecha],
-    err => {
-      if (err) return res.status(500).send(err);
-      res.send('✅ Guardado');
-    }
-  );
+  try {
+    await db.query(
+      'INSERT INTO mantenimiento(habitacion,descripcion,encargado,fecha) VALUES ($1,$2,$3,$4)',
+      [habitacion, descripcion, encargado, fecha]
+    );
+    res.send('Guardado');
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
-app.put('/mantenimiento', (req, res) => {
+app.put('/mantenimiento', async (req, res) => {
   const { id, habitacion, descripcion, encargado, fecha } = req.body;
 
-  db.query(
-    'UPDATE mantenimiento SET habitacion=?, descripcion=?, encargado=?, fecha=? WHERE id=?',
-    [habitacion, descripcion, encargado, fecha, id],
-    err => {
-      if (err) return res.status(500).send(err);
-      res.send('Actualizado');
-    }
-  );
+  try {
+    await db.query(
+      'UPDATE mantenimiento SET habitacion=$1, descripcion=$2, encargado=$3, fecha=$4 WHERE id=$5',
+      [habitacion, descripcion, encargado, fecha, id]
+    );
+    res.send('Actualizado');
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
-app.delete('/mantenimiento/:id', (req, res) => {
-  db.query(
-    'DELETE FROM mantenimiento WHERE id=?',
-    [req.params.id],
-    err => {
-      if (err) return res.status(500).send(err);
-      res.send('Eliminado');
-    }
-  );
+app.delete('/mantenimiento/:id', async (req, res) => {
+  try {
+    await db.query('DELETE FROM mantenimiento WHERE id=$1', [req.params.id]);
+    res.send('Eliminado');
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
 // ================= HABITACIONES =================
-app.get('/habitaciones', (req, res) => {
-  db.query('SELECT * FROM habitaciones', (err, r) => {
-    if (err) return res.status(500).send(err);
-    res.json(r);
-  });
+app.get('/habitaciones', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM habitaciones');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
-app.post('/habitaciones', (req, res) => {
+app.post('/habitaciones', async (req, res) => {
   const { habitacion, fecha, encargado, color, inicio, fin } = req.body;
 
-  if (!habitacion || !fecha || !encargado) {
-    return res.status(400).send('Datos incompletos');
+  try {
+    await db.query(
+      `INSERT INTO habitaciones (habitacion, fecha, encargado, color, inicio, fin)
+       VALUES ($1,$2,$3,$4,$5,$6)`,
+      [habitacion, fecha, encargado, color, inicio, fin]
+    );
+    res.send('Guardado');
+  } catch (err) {
+    res.status(500).send(err);
   }
-
-  db.query(
-    `INSERT INTO habitaciones 
-    (habitacion, fecha, encargado, color, inicio, fin) 
-    VALUES (?, ?, ?, ?, ?, ?)`,
-    [habitacion, fecha, encargado, color, inicio, fin],
-    err => {
-      if (err) return res.status(500).send(err);
-      res.send('Guardado');
-    }
-  );
 });
 
-app.delete('/habitaciones/:id', (req, res) => {
-  db.query(
-    'DELETE FROM habitaciones WHERE id=?',
-    [req.params.id],
-    err => {
-      if (err) return res.status(500).send(err);
-      res.send('Eliminado');
-    }
-  );
+app.delete('/habitaciones/:id', async (req, res) => {
+  try {
+    await db.query('DELETE FROM habitaciones WHERE id=$1', [req.params.id]);
+    res.send('Eliminado');
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
 // ================= LIMPIEZA =================
-app.get('/limpieza', (req, res) => {
-  db.query('SELECT * FROM control_limpieza ORDER BY id DESC', (err, r) => {
-    if (err) return res.status(500).send(err);
-    res.json(r);
-  });
+app.get('/limpieza', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM control_limpieza ORDER BY id DESC');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
-app.post('/limpieza', (req, res) => {
+app.post('/limpieza', async (req, res) => {
   const { habitacion, tipo_accion, fecha, empleado, observacion } = req.body;
 
-  if (!habitacion || !tipo_accion || !fecha || !empleado) {
-    return res.status(400).send('Datos incompletos');
+  try {
+    await db.query(
+      `INSERT INTO control_limpieza 
+      (habitacion, tipo_accion, fecha, empleado, observacion, estado)
+      VALUES ($1,$2,$3,$4,$5,'hecho')`,
+      [habitacion, tipo_accion, fecha, empleado, observacion]
+    );
+    res.send('Guardado');
+  } catch (err) {
+    res.status(500).send(err);
   }
-
-  db.query(
-    `INSERT INTO control_limpieza 
-    (habitacion, tipo_accion, fecha, empleado, observacion, estado) 
-    VALUES (?, ?, ?, ?, ?, 'hecho')`,
-    [habitacion, tipo_accion, fecha, empleado, observacion],
-    err => {
-      if (err) return res.status(500).send(err);
-      res.send('✅ Limpieza guardada');
-    }
-  );
 });
 
-app.put('/limpieza', (req, res) => {
+app.put('/limpieza', async (req, res) => {
   const { id, habitacion, tipo_accion, fecha, empleado, observacion } = req.body;
 
-  db.query(
-    `UPDATE control_limpieza 
-     SET habitacion=?, tipo_accion=?, fecha=?, empleado=?, observacion=? 
-     WHERE id=?`,
-    [habitacion, tipo_accion, fecha, empleado, observacion, id],
-    err => {
-      if (err) return res.status(500).send(err);
-      res.send('Actualizado');
-    }
-  );
+  try {
+    await db.query(
+      `UPDATE control_limpieza 
+       SET habitacion=$1, tipo_accion=$2, fecha=$3, empleado=$4, observacion=$5 
+       WHERE id=$6`,
+      [habitacion, tipo_accion, fecha, empleado, observacion, id]
+    );
+    res.send('Actualizado');
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
-app.delete('/limpieza/:id', (req, res) => {
-  db.query(
-    'DELETE FROM control_limpieza WHERE id=?',
-    [req.params.id],
-    err => {
-      if (err) return res.status(500).send(err);
-      res.send('Eliminado');
-    }
-  );
+app.delete('/limpieza/:id', async (req, res) => {
+  try {
+    await db.query('DELETE FROM control_limpieza WHERE id=$1', [req.params.id]);
+    res.send('Eliminado');
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
+
 // ================= TAREAS =================
-
-// GET
-app.get('/tareas', (req, res) => {
-  db.query('SELECT * FROM tareas ORDER BY id DESC', (err, r) => {
-    if (err) return res.status(500).send(err);
-    res.json(r);
-  });
+app.get('/tareas', async (req, res) => {
+  try {
+    const result = await db.query('SELECT * FROM tareas ORDER BY id DESC');
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
-app.post('/tareas', (req, res) => {
+app.post('/tareas', async (req, res) => {
   const { descripcion, encargado, fecha } = req.body;
 
-  if (!descripcion || !encargado || !fecha) {
-    return res.status(400).send('Datos incompletos');
+  try {
+    await db.query(
+      'INSERT INTO tareas (descripcion, encargado, fecha, estado) VALUES ($1,$2,$3,$4)',
+      [descripcion, encargado, fecha, 'pendiente']
+    );
+    res.send('Tarea creada');
+  } catch (err) {
+    res.status(500).send(err);
   }
-
-  db.query(
-    'INSERT INTO tareas (descripcion, encargado, fecha, estado) VALUES (?, ?, ?, "pendiente")',
-    [descripcion, encargado, fecha],
-    err => {
-      if (err) {
-        console.log(err);
-        return res.status(500).send('Error servidor');
-      }
-      res.send('Tarea creada');
-    }
-  );
 });
 
-// PUT (marcar como hecho)
-app.put('/tareas/:id', (req, res) => {
-  db.query(
-    'UPDATE tareas SET estado="hecho" WHERE id=?',
-    [req.params.id],
-    err => {
-      if (err) return res.status(500).send(err);
-      res.send('Actualizado');
-    }
-  );
+app.put('/tareas/:id', async (req, res) => {
+  try {
+    await db.query(
+      'UPDATE tareas SET estado=$1 WHERE id=$2',
+      ['hecho', req.params.id]
+    );
+    res.send('Actualizado');
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
-// DELETE
-app.delete('/tareas/:id', (req, res) => {
-  db.query(
-    'DELETE FROM tareas WHERE id=?',
-    [req.params.id],
-    err => {
-      if (err) return res.status(500).send(err);
-      res.send('Eliminado');
-    }
-  );
+app.delete('/tareas/:id', async (req, res) => {
+  try {
+    await db.query('DELETE FROM tareas WHERE id=$1', [req.params.id]);
+    res.send('Eliminado');
+  } catch (err) {
+    res.status(500).send(err);
+  }
 });
 
 // ================= SERVER =================
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-  console.log(`🚀 Servidor corriendo en puerto ${PORT}`);
+  console.log(`Servidor corriendo en puerto ${PORT}`);
 });
