@@ -286,7 +286,9 @@ function calcularTotalFila(fila){
 }
 
 // 🔥 GUARDAR
-function guardarFila(btn){
+
+
+async function guardarFila(btn){
 
   const fila = btn.closest("tr");
 
@@ -301,26 +303,38 @@ function guardarFila(btn){
 
   const celdas = fila.querySelectorAll("td");
 
-  for(let i=2;i<=21;i++){
+  try {
 
-    const inicio = celdas[i].querySelector(".inicio").value;
-    const fin = celdas[i].querySelector(".fin").value;
+    for(let i=2;i<=21;i++){
 
-    if(inicio && fin){
+      const inicio = celdas[i].querySelector(".inicio").value;
+      const fin = celdas[i].querySelector(".fin").value;
 
-      fetch(`${API}/habitaciones`,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          habitacion: habitaciones[i-2],
-          encargado,fecha,color,inicio,fin
-        })
-      });
+      if(inicio && fin){
+
+        await fetch(`${API}/habitaciones`,{
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({
+            habitacion: habitaciones[i-2],
+            encargado,fecha,color,inicio,fin
+          })
+        });
+
+      }
     }
-  }
 
-  alert("Fila guardada ✅");
+    alert("Fila guardada ✅");
+
+    // 🔥 RECARGAR DATOS (AQUÍ ESTABA EL PROBLEMA)
+    cargarFilasGuardadas();
+
+  } catch (error) {
+    console.log(error);
+    alert("Error guardando ❌");
+  }
 }
+
 
 // 🔥 ELIMINAR
 function eliminarFila(btn){
