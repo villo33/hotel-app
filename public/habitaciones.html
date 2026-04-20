@@ -305,6 +305,8 @@ async function guardarFila(btn){
 
   try {
 
+    const promesas = []; // 🔥 CLAVE
+
     for(let i=2;i<=21;i++){
 
       const inicio = celdas[i].querySelector(".inicio").value;
@@ -312,28 +314,36 @@ async function guardarFila(btn){
 
       if(inicio && fin){
 
-        await fetch(`${API}/habitaciones`,{
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({
-            habitacion: habitaciones[i-2],
-            encargado,fecha,color,inicio,fin
+        promesas.push(
+          fetch(`${API}/habitaciones`,{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({
+              habitacion: habitaciones[i-2],
+              encargado,fecha,color,inicio,fin
+            })
           })
-        });
+        );
 
       }
     }
 
+    // 🔥 ESPERAR TODO
+    await Promise.all(promesas);
+
     alert("Fila guardada ✅");
 
-    // 🔥 RECARGAR DATOS (AQUÍ ESTABA EL PROBLEMA)
-    cargarFilasGuardadas();
+    // 🔥 PEQUEÑO RETRASO PARA ASEGURAR DB
+    setTimeout(()=>{
+      cargarFilasGuardadas();
+    }, 500);
 
   } catch (error) {
     console.log(error);
     alert("Error guardando ❌");
   }
 }
+
 
 
 // 🔥 ELIMINAR
