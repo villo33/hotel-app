@@ -200,7 +200,48 @@ const habitaciones = [
 // 🔥 CONTROL ID CORRECTO
 let contadorId = 1;
 
-// 🔥 AGREGAR FILA ARRIBA (ID CRECE HACIA ARRIBA)
+// ➕ AGREGAR FILA
+function agregarFila(){
+
+  const tabla = document.getElementById("cuerpo");
+  const fila = document.createElement("tr");
+
+  let html = `
+    <td>${contadorId++}</td>
+    <td>
+      <input class="encargado" placeholder="Encargado"><br>
+      <input type="color" class="color"><br>
+      <input type="date" class="fechaPrincipal">
+    </td>
+  `;
+
+  habitaciones.forEach(()=>{
+
+    html += `
+      <td>
+        <input type="date" class="inicio"><br>
+        <input type="date" class="fin"><br>
+        <div class="dias">0</div>
+      </td>
+    `;
+  });
+
+  html += `
+    <td class="total">0</td>
+    <td>
+      <button onclick="guardarFila(this)">💾</button>
+      <button onclick="editarFila(this)">✏️</button>
+      <button onclick="eliminarFila(this)">❌</button>
+    </td>
+  `;
+
+  fila.innerHTML = html;
+  tabla.insertBefore(fila, tabla.firstChild);
+
+  activarEventos(fila);
+}
+
+// 💾 GUARDAR
 async function guardarFila(btn){
 
   const fila = btn.closest("tr");
@@ -208,6 +249,11 @@ async function guardarFila(btn){
   const encargado = fila.querySelector(".encargado").value;
   const fecha = fila.querySelector(".fechaPrincipal").value;
   const color = fila.querySelector(".color").value;
+
+  if(!encargado || !fecha){
+    alert("Falta encargado o fecha");
+    return;
+  }
 
   const habitacionesData = [];
 
@@ -235,7 +281,7 @@ async function guardarFila(btn){
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         encargado,
-        fecha, // 🔥 FIX IMPORTANTE
+        fecha,
         color,
         habitaciones: habitacionesData
       })
@@ -243,15 +289,17 @@ async function guardarFila(btn){
 
     if(!res.ok) throw new Error("Error guardando");
 
-    alert("Fila guardada correctamente ✅");
+    alert("Guardado correcto ✅");
 
-    cargarFilasGuardadas(); // 🔥 REFRESCO INMEDIATO
+    cargarFilasGuardadas();
 
   } catch (error) {
     console.error(error);
     alert("Error guardando ❌");
   }
 }
+
+// ❌ ELIMINAR
 function eliminarFila(btn){
 
   if(!confirm("¿Eliminar fila?")) return;
@@ -267,9 +315,7 @@ function eliminarFila(btn){
 
     const eliminar = data.filter(d =>
       d.encargado === encargado &&
-      d.fecha &&
-      fecha &&
-      d.fecha.split("T")[0] === fecha.split("T")[0] // 🔥 FIX CLAVE
+      d.fecha === fecha
     );
 
     eliminar.forEach(i=>{
@@ -279,6 +325,8 @@ function eliminarFila(btn){
     fila.remove();
   });
 }
+
+// 📥 CARGAR
 function cargarFilasGuardadas(){
 
   fetch(`${API}/habitaciones`)
@@ -289,7 +337,7 @@ function cargarFilasGuardadas(){
 
     data.forEach(item=>{
 
-      const key = item.encargado + "_" + item.fecha; // 🔥 FIX CLAVE
+      const key = item.encargado + "_" + item.fecha;
 
       if(!grupos[key]){
         grupos[key]={
@@ -311,12 +359,10 @@ function cargarFilasGuardadas(){
 
     ordenados.forEach((grupo, index)=>{
 
-      const idVisual = ordenados.length - index;
-
       const fila = document.createElement("tr");
 
       let html = `
-        <td>${idVisual}</td>
+        <td>${index+1}</td>
         <td>
           <input class="encargado" value="${grupo.encargado}" style="color:${grupo.color}"><br>
           <input type="color" class="color" value="${grupo.color}"><br>
@@ -325,7 +371,8 @@ function cargarFilasGuardadas(){
       `;
 
       habitaciones.forEach(()=>{
-        html+=`
+
+        html += `
           <td>
             <input type="date" class="inicio"><br>
             <input type="date" class="fin"><br>
@@ -334,47 +381,17 @@ function cargarFilasGuardadas(){
         `;
       });
 
-      html+=`<td class="total">0</td>`;
-
-      html+=`
+      html += `
+        <td class="total">0</td>
         <td>
-          <button class="btn-guardar" onclick="guardarFila(this)">💾</button>
-          <button class="btn-editar" onclick="editarFila(this)">✏️</button>
-          <button class="btn-eliminar" onclick="eliminarFila(this)">❌</button>
+          <button onclick="guardarFila(this)">💾</button>
+          <button onclick="editarFila(this)">✏️</button>
+          <button onclick="eliminarFila(this)">❌</button>
         </td>
       `;
 
       fila.innerHTML = html;
       tabla.appendChild(fila);
-
-      const celdas = fila.querySelectorAll("td");
-
-      grupo.habitaciones.forEach(h=>{
-
-        const indexHab = habitaciones.indexOf(h.habitacion);
-
-        if(indexHab !== -1 && h.inicio && h.fin){
-
-          const inicioDate = new Date(h.inicio);
-          const finDate = new Date(h.fin);
-
-          const inicioEl = celdas[indexHab + 2].querySelector(".inicio");
-          const finEl = celdas[indexHab + 2].querySelector(".fin");
-
-          if(!isNaN(inicioDate)) inicioEl.value = inicioDate.toISOString().split('T')[0];
-          if(!isNaN(finDate)) finEl.value = finDate.toISOString().split('T')[0];
-
-          let diff = 0;
-
-          if(!isNaN(inicioDate) && !isNaN(finDate)){
-            diff = Math.floor((finDate - inicioDate) / (1000*60*60*24));
-          }
-
-          celdas[indexHab + 2].querySelector(".dias").innerText =
-            diff > 0 ? diff : 0;
-        }
-
-      });
 
       activarEventos(fila);
       calcularTotalFila(fila);
