@@ -127,17 +127,30 @@ app.get('/habitaciones', async (req, res) => {
 });
 
 app.post('/habitaciones', async (req, res) => {
-  const { habitacion, fecha, encargado, color, inicio, fin } = req.body;
-
   try {
+    let { habitacion, fecha, encargado, color, inicio, fin } = req.body;
+
+    // 🔥 LIMPIEZA DE DATOS
+    inicio = inicio || null;
+    fin = fin || null;
+    color = color || null;
+
+    if (!habitacion || !fecha || !encargado) {
+      return res.status(400).send('Datos incompletos');
+    }
+
     await db.query(
-      `INSERT INTO habitaciones (habitacion, fecha, encargado, color, inicio, fin)
-       VALUES ($1,$2,$3,$4,$5,$6)`,
+      `INSERT INTO habitaciones 
+      (habitacion, fecha, encargado, color, inicio, fin)
+      VALUES ($1,$2,$3,$4,$5,$6)`,
       [habitacion, fecha, encargado, color, inicio, fin]
     );
+
     res.send('Guardado');
+
   } catch (err) {
-    res.status(500).send(err);
+    console.log("ERROR REAL HABITACIONES:", err); // 🔥 IMPORTANTE
+    res.status(500).send(err.message);
   }
 });
 
