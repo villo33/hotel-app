@@ -343,15 +343,14 @@ async function guardarFila(btn){
     alert("Error guardando ❌");
   }
 }
-
-// 🔥 ELIMINAR CORREGIDO
+// 🔥 ELIMINAR (CORREGIDO 100%)
 async function eliminarFila(btn){
 
   if(!confirm("¿Eliminar fila?")) return;
 
   const fila = btn.closest("tr");
 
-  const encargado = fila.querySelector(".encargado").value;
+  const encargado = fila.querySelector(".encargado").value.trim();
   const fecha = fila.querySelector(".fechaPrincipal").value;
 
   try{
@@ -359,18 +358,18 @@ async function eliminarFila(btn){
     const res = await fetch(`${API}/habitaciones`);
     const data = await res.json();
 
-    // 🔥 FILTRO CORRECTO (MISMA FECHA EXACTA)
+    // 🔥 FILTRO CORRECTO
     const eliminar = data.filter(d =>
-      d.encargado === encargado &&
+      d.encargado.trim() === encargado &&
       d.fecha.split('T')[0] === fecha
     );
 
     if(eliminar.length === 0){
-      alert("No se encontraron datos para eliminar");
+      alert("No se encontraron registros para eliminar ❌");
       return;
     }
 
-    // 🔥 BORRADO REAL (ESPERA QUE TERMINE)
+    // 🔥 ESPERAR BORRADO REAL
     await Promise.all(
       eliminar.map(i =>
         fetch(`${API}/habitaciones/${i.id}`,{
@@ -381,14 +380,16 @@ async function eliminarFila(btn){
 
     alert("Eliminado correctamente ✅");
 
-    // 🔥 RECARGA DESDE LA BD
+    // 🔥 RECARGA REAL DESDE DB
     cargarFilasGuardadas();
 
-  }catch(e){
-    console.error(e);
+  }catch(err){
+    console.error(err);
     alert("Error eliminando ❌");
   }
 }
+
+
 
 // 🔥 CARGAR CORREGIDO 100%
 function cargarFilasGuardadas(){
