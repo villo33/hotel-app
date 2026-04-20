@@ -247,10 +247,11 @@ async function guardarFila(btn){
 
   const fila = btn.closest("tr");
 
-  const encargado = fila.querySelector(".encargado").value;
+  const encargado = fila.querySelector(".encargado").value.trim();
   const fecha = fila.querySelector(".fechaPrincipal").value;
   const color = fila.querySelector(".color").value;
 
+  // 🔴 Validación básica
   if(!encargado || !fecha){
     alert("Falta encargado o fecha");
     return;
@@ -262,14 +263,24 @@ async function guardarFila(btn){
   for(let i = 2; i < celdas.length - 2; i++){
 
     const celda = celdas[i];
+
     const inicio = celda.querySelector(".inicio").value;
     const fin = celda.querySelector(".fin").value;
 
-    habitacionesData.push({
-      habitacion: habitaciones[i - 2],
-      inicio,
-      fin
-    });
+    // ✅ SOLO guardar si ambas fechas existen
+    if(inicio && fin){
+      habitacionesData.push({
+        habitacion: habitaciones[i - 2],
+        inicio,
+        fin
+      });
+    }
+  }
+
+  // 🔥 VALIDACIÓN CLAVE (EVITA ERROR 400)
+  if(habitacionesData.length === 0){
+    alert("No hay habitaciones llenas");
+    return;
   }
 
   try {
@@ -285,7 +296,12 @@ async function guardarFila(btn){
       })
     });
 
-    if(!res.ok) throw new Error("Error guardando");
+    // 🔴 Manejo de error real del servidor
+    if(!res.ok){
+      const errorText = await res.text();
+      console.error("Error servidor:", errorText);
+      throw new Error("Error guardando");
+    }
 
     alert("Guardado correcto ✅");
 
@@ -296,7 +312,6 @@ async function guardarFila(btn){
     alert("Error guardando ❌");
   }
 }
-
 
 // ❌ ELIMINAR
 function eliminarFila(btn){
@@ -465,12 +480,19 @@ function calcularTotalFila(fila){
 
   let total = 0;
 
-  fila.querySelectorAll(".dias").forEach(d=>{
-    const v = Number(d.innerText);
+  fila.querySelectorAll("td").forEach((celda, index)=>{
 
-    if(!isNaN(v) && v > 0){
-      total += v;
+    // saltar columnas que no son habitaciones
+    if(index < 2 || index >= fila.children.length - 2) return;
+
+    const inicio = celda.querySelector(".inicio");
+    const fin = celda.querySelector(".fin");
+
+    // ✅ SOLO cuenta si ambas fechas están llenas
+    if(inicio && fin && inicio.value && fin.value){
+      total++;
     }
+
   });
 
   fila.querySelector(".total").innerText = total;
