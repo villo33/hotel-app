@@ -138,11 +138,27 @@ function logout() {
 
 let editId = null;
 
-// 🔥 CARGAR
+// 🔥 CARGAR (CORREGIDO)
 async function cargar() {
   try {
     const res = await fetch(`${API}/inventario`);
+
+    // 🔴 VALIDAR RESPUESTA
+    if (!res.ok) {
+      const text = await res.text();
+      console.error("Error servidor:", text);
+      alert("Error del servidor ❌ (ver consola)");
+      return;
+    }
+
     const data = await res.json();
+
+    // 🔴 VALIDAR QUE SEA ARRAY
+    if (!Array.isArray(data)) {
+      console.error("Respuesta inválida:", data);
+      alert("Error: respuesta no válida ❌");
+      return;
+    }
 
     let html = '';
 
@@ -152,8 +168,8 @@ async function cargar() {
 
     data.forEach(item => {
 
-      // 🔥 ESCAPAR TEXTO (SOLUCIÓN ERROR COMILLAS)
-      const nombre = item.nombre.replace(/'/g, "\\'");
+      // 🔥 ESCAPAR TEXTO
+      const nombre = (item.nombre || '').replace(/'/g, "\\'");
       const encargado = (item.encargado || '').replace(/'/g, "\\'");
 
       html += `
