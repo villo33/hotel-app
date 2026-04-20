@@ -481,6 +481,9 @@ if(inicioVal && finVal){
       });
 
       activarEventos(fila);
+      fila.querySelectorAll(".inicio, .fin").forEach(input=>{
+  input.dispatchEvent(new Event("change"));
+});
       calcularTotalFila(fila);
 
     });
