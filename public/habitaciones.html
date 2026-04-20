@@ -201,90 +201,6 @@ const habitaciones = [
 let contadorId = 1;
 
 // 🔥 AGREGAR FILA ARRIBA (ID CRECE HACIA ARRIBA)
-function agregarFila(){
-
-  const tabla = document.getElementById("cuerpo");
-  const fila = document.createElement("tr");
-
-  let html = `
-    <td>${contadorId++}</td>
-    <td>
-      <input class="encargado" placeholder="Encargado"><br>
-      <input type="color" class="color"><br>
-      <input type="date" class="fechaPrincipal">
-    </td>
-  `;
-
-  habitaciones.forEach(()=>{
-    html += `
-      <td>
-        <input type="date" class="inicio"><br>
-        <input type="date" class="fin"><br>
-        <div class="dias">0</div>
-      </td>
-    `;
-  });
-
-  html += `<td class="total">0</td>`;
-
-  html += `
-    <td>
-      <button class="btn-guardar" onclick="guardarFila(this)">💾</button>
-      <button class="btn-editar" onclick="editarFila(this)">✏️</button>
-      <button class="btn-eliminar" onclick="eliminarFila(this)">❌</button>
-    </td>
-  `;
-
-  fila.innerHTML = html;
-
-  // 🔥 SIEMPRE ARRIBA
-  tabla.insertBefore(fila, tabla.firstChild);
-
-  activarEventos(fila);
-}
-
-// 🔥 EDITAR
-function editarFila(btn){
-  const fila = btn.closest("tr");
-
-  fila.querySelectorAll("input").forEach(i=>{
-    i.disabled = !i.disabled;
-  });
-}
-
-// 🔥 EVENTOS
-function activarEventos(fila){
-
-  const celdas = fila.querySelectorAll("td");
-
-  for(let i=2;i<=21;i++){
-
-    const inicio = celdas[i].querySelector(".inicio");
-    const fin = celdas[i].querySelector(".fin");
-    const diasDiv = celdas[i].querySelector(".dias");
-
-    function calcular(){
-      if(inicio.value && fin.value){
-        const diff = (new Date(fin.value) - new Date(inicio.value))/(1000*60*60*24);
-        diasDiv.innerText = diff>0?diff:0;
-      }
-      calcularTotalFila(fila);
-    }
-
-    inicio.addEventListener("change", calcular);
-    fin.addEventListener("change", calcular);
-  }
-}
-
-// 🔥 TOTAL
-function calcularTotalFila(fila){
-  let total = 0;
-  fila.querySelectorAll(".dias").forEach(d=>{
-    if(parseInt(d.innerText)>0) total++;
-  });
-  fila.querySelector(".total").innerText = total;
-}
-
 async function guardarFila(btn){
 
   const fila = btn.closest("tr");
@@ -319,7 +235,7 @@ async function guardarFila(btn){
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         encargado,
-        fecha: fecha ? fecha.split("T")[0] : "",
+        fecha, // 🔥 FIX IMPORTANTE
         color,
         habitaciones: habitacionesData
       })
@@ -329,7 +245,7 @@ async function guardarFila(btn){
 
     alert("Fila guardada correctamente ✅");
 
-    setTimeout(() => cargarFilasGuardadas(), 500);
+    cargarFilasGuardadas(); // 🔥 REFRESCO INMEDIATO
 
   } catch (error) {
     console.error(error);
@@ -373,7 +289,7 @@ function cargarFilasGuardadas(){
 
     data.forEach(item=>{
 
-      const key = item.encargado + "_" + (item.fecha ? item.fecha.split('T')[0] : "");
+      const key = item.encargado + "_" + item.fecha; // 🔥 FIX CLAVE
 
       if(!grupos[key]){
         grupos[key]={
@@ -404,7 +320,7 @@ function cargarFilasGuardadas(){
         <td>
           <input class="encargado" value="${grupo.encargado}" style="color:${grupo.color}"><br>
           <input type="color" class="color" value="${grupo.color}"><br>
-          <input type="date" class="fechaPrincipal" value="${grupo.fecha ? grupo.fecha.split('T')[0] : ''}">
+          <input type="date" class="fechaPrincipal" value="${grupo.fecha}">
         </td>
       `;
 
