@@ -255,39 +255,40 @@ async function guardarFila(btn){
     return;
   }
 
-  const habitacionesData = [];
-
   const celdas = fila.querySelectorAll("td");
-
-  for(let i = 2; i <= 21; i++){
-
-    const celda = celdas[i];
-    if(!celda) continue;
-
-    const inicio = celda.querySelector(".inicio").value;
-    const fin = celda.querySelector(".fin").value;
-
-    habitacionesData.push({
-      habitacion: habitaciones[i - 2],
-      inicio,
-      fin
-    });
-  }
 
   try {
 
-    const res = await fetch(`${API}/habitaciones`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        encargado,
-        fecha,
-        color,
-        habitaciones: habitacionesData
-      })
-    });
+    const promesas = [];
 
-    if(!res.ok) throw new Error("Error guardando");
+    for(let i = 2; i <= 21; i++){
+
+      const celda = celdas[i];
+      if(!celda) continue;
+
+      const inicio = celda.querySelector(".inicio").value;
+      const fin = celda.querySelector(".fin").value;
+
+      if(inicio && fin){
+
+        promesas.push(
+          fetch(`${API}/habitaciones`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              habitacion: habitaciones[i - 2],
+              encargado,
+              fecha,
+              color,
+              inicio,
+              fin
+            })
+          })
+        );
+      }
+    }
+
+    await Promise.all(promesas);
 
     alert("Guardado correcto ✅");
 
@@ -298,7 +299,6 @@ async function guardarFila(btn){
     alert("Error guardando ❌");
   }
 }
-
 // ❌ ELIMINAR
 function eliminarFila(btn){
 
