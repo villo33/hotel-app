@@ -197,12 +197,10 @@ const habitaciones = [
   301,302,303,304,305,306
 ];
 
-
-// 🔥 CONTROL ID (solo visual al crear nueva fila)
+// 🔥 CONTROL ID CORRECTO
 let contadorId = 1;
 
-
-// ➕ AGREGAR FILA
+// 🔥 AGREGAR FILA ARRIBA (ID CRECE HACIA ARRIBA)
 function agregarFila(){
 
   const tabla = document.getElementById("cuerpo");
@@ -227,28 +225,72 @@ function agregarFila(){
     `;
   });
 
+  html += `<td class="total">0</td>`;
+
   html += `
-    <td class="total">0</td>
     <td>
-      <button onclick="guardarFila(this)">💾</button>
-      <button onclick="eliminarFila(this)">❌</button>
+      <button class="btn-guardar" onclick="guardarFila(this)">💾</button>
+      <button class="btn-editar" onclick="editarFila(this)">✏️</button>
+      <button class="btn-eliminar" onclick="eliminarFila(this)">❌</button>
     </td>
   `;
 
   fila.innerHTML = html;
+
+  // 🔥 SIEMPRE ARRIBA
   tabla.insertBefore(fila, tabla.firstChild);
 
   activarEventos(fila);
 }
 
+// 🔥 EDITAR
+function editarFila(btn){
+  const fila = btn.closest("tr");
 
+  fila.querySelectorAll("input").forEach(i=>{
+    i.disabled = !i.disabled;
+  });
+}
 
-// 💾 GUARDAR
-async function guardarFila(btn){
+// 🔥 EVENTOS
+function activarEventos(fila){
+
+  const celdas = fila.querySelectorAll("td");
+
+  for(let i=2;i<=21;i++){
+
+    const inicio = celdas[i].querySelector(".inicio");
+    const fin = celdas[i].querySelector(".fin");
+    const diasDiv = celdas[i].querySelector(".dias");
+
+    function calcular(){
+      if(inicio.value && fin.value){
+        const diff = (new Date(fin.value) - new Date(inicio.value))/(1000*60*60*24);
+        diasDiv.innerText = diff>0?diff:0;
+      }
+      calcularTotalFila(fila);
+    }
+
+    inicio.addEventListener("change", calcular);
+    fin.addEventListener("change", calcular);
+  }
+}
+
+// 🔥 TOTAL
+function calcularTotalFila(fila){
+  let total = 0;
+  fila.querySelectorAll(".dias").forEach(d=>{
+    if(parseInt(d.innerText)>0) total++;
+  });
+  fila.querySelector(".total").innerText = total;
+}
+
+// 🔥 GUARDAR
+function guardarFila(btn){
 
   const fila = btn.closest("tr");
 
-  const encargado = fila.querySelector(".encargado").value.trim();
+  const encargado = fila.querySelector(".encargado").value;
   const fecha = fila.querySelector(".fechaPrincipal").value;
   const color = fila.querySelector(".color").value;
 
@@ -258,82 +300,32 @@ async function guardarFila(btn){
   }
 
   const celdas = fila.querySelectorAll("td");
-  const habitacionesData = [];
 
-  for(let i = 2; i < celdas.length - 2; i++){
+  for(let i=2;i<=21;i++){
 
-    const celda = celdas[i];
+    const inicio = celdas[i].querySelector(".inicio").value;
+    const fin = celdas[i].querySelector(".fin").value;
 
-    const inicio = celda.querySelector(".inicio").value;
-    const fin = celda.querySelector(".fin").value;
-
-    // 🔥 VALIDACIÓN REAL (AQUÍ ESTABA EL PROBLEMA)
     if(inicio && fin){
 
-      const f1 = new Date(inicio);
-      const f2 = new Date(fin);
-
-      // evita fechas inválidas
-      if(!isNaN(f1.getTime()) && !isNaN(f2.getTime())){
-
-        habitacionesData.push({
-          habitacion: Number(habitaciones[i - 2]), // 🔥 asegurar número
-          inicio: inicio,
-          fin: fin
-        });
-
-      }
+      fetch(`${API}/habitaciones`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          habitacion: habitaciones[i-2],
+          encargado,fecha,color,inicio,fin
+        })
+      });
     }
   }
 
-  // 🔥 IMPORTANTE: backend NO acepta vacío
-  if(habitacionesData.length === 0){
-    alert("Debes llenar al menos una habitación");
-    return;
-  }
-
-  // 🔥 DEBUG (míralo en consola)
-  console.log("DATOS ENVIADOS:", {
-    encargado,
-    fecha,
-    color,
-    habitaciones: habitacionesData
-  });
-
-  try {
-
-    const res = await fetch(`${API}/habitaciones`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        encargado,
-        fecha,
-        color,
-        habitaciones: habitacionesData
-      })
-    });
-
-    if(!res.ok){
-      const errorText = await res.text();
-      console.error("Error servidor:", errorText);
-      alert("El servidor dice: " + errorText);
-      return;
-    }
-
-    alert("Guardado correcto ✅");
-
-    cargarFilasGuardadas();
-
-  } catch (e){
-    console.error(e);
-    alert("Error guardando ❌");
-  }
+  alert("Fila guardada ✅");
 }
 
-// ❌ ELIMINAR
+// 🔥 ELIMINAR
 function eliminarFila(btn){
 
-  if(!confirm("¿Eliminar?")) return;
+  if(!confirm("¿Eliminar fila?")) return;
 
   const fila = btn.closest("tr");
 
@@ -345,20 +337,18 @@ function eliminarFila(btn){
   .then(data=>{
 
     const eliminar = data.filter(d =>
-      d.encargado === encargado &&
-      d.fecha === fecha
+      d.encargado === encargado && d.fecha.includes(fecha)
     );
 
     eliminar.forEach(i=>{
-      fetch(`${API}/habitaciones/${i.id}`, {method:'DELETE'});
+      fetch(`${API}/habitaciones/${i.id}`,{method:'DELETE'});
     });
 
     fila.remove();
   });
 }
 
-
-// 📥 CARGAR DATOS
+// 🔥 CARGAR ORDENADO + ID CORRECTO (MAS RECIENTE ARRIBA)
 function cargarFilasGuardadas(){
 
   fetch(`${API}/habitaciones`)
@@ -367,50 +357,47 @@ function cargarFilasGuardadas(){
 
     const grupos = {};
 
+    // 🔥 AGRUPAR
     data.forEach(item=>{
-
-      const key = item.encargado + "_" + item.fecha;
+      const key = item.encargado+"_"+item.fecha;
 
       if(!grupos[key]){
-        grupos[key] = {
-          encargado: item.encargado,
-          fecha: item.fecha,
-          color: item.color || "#000",
-          habitaciones: [],
-          id: item.id // 🔥 guardamos id real
+        grupos[key]={
+          encargado:item.encargado,
+          fecha:item.fecha,
+          color:item.color||"#000",
+          habitaciones:[]
         };
       }
 
       grupos[key].habitaciones.push(item);
-
-      // 🔥 mantener el ID más alto del grupo
-      if(item.id > grupos[key].id){
-        grupos[key].id = item.id;
-      }
     });
 
-    // 🔥 ORDENAR POR ID (último guardado primero)
+    // 🔥 ORDENAR POR FECHA (MAS NUEVO PRIMERO)
     const ordenados = Object.values(grupos)
-      .sort((a,b)=> b.id - a.id);
+      .sort((a,b)=> new Date(b.fecha) - new Date(a.fecha));
 
     const tabla = document.getElementById("cuerpo");
-    tabla.innerHTML = "";
+    tabla.innerHTML="";
 
-    ordenados.forEach((grupo)=>{
+    // 🔥 CREAR FILAS CON ID INVERSO
+    ordenados.forEach((grupo, index)=>{
+
+      const idVisual = ordenados.length - index; // 🔥 CLAVE
 
       const fila = document.createElement("tr");
 
       let html = `
-        <td>${grupo.id}</td>
+        <td>${idVisual}</td>
         <td>
-          <input class="encargado" value="${grupo.encargado}"><br>
+          <input class="encargado" value="${grupo.encargado}" style="color:${grupo.color}"><br>
           <input type="color" class="color" value="${grupo.color}"><br>
-          <input type="date" class="fechaPrincipal" value="${grupo.fecha}">
+          <input type="date" class="fechaPrincipal" value="${grupo.fecha.split('T')[0]}">
         </td>
       `;
 
       habitaciones.forEach(()=>{
-        html += `
+        html+=`
           <td>
             <input type="date" class="inicio"><br>
             <input type="date" class="fin"><br>
@@ -419,101 +406,49 @@ function cargarFilasGuardadas(){
         `;
       });
 
-      html += `
-        <td class="total">0</td>
+      html+=`<td class="total">0</td>`;
+
+      html+=`
         <td>
-          <button onclick="guardarFila(this)">💾</button>
-          <button onclick="eliminarFila(this)">❌</button>
+          <button class="btn-guardar" onclick="guardarFila(this)">💾</button>
+          <button class="btn-editar" onclick="editarFila(this)">✏️</button>
+          <button class="btn-eliminar" onclick="eliminarFila(this)">❌</button>
         </td>
       `;
 
       fila.innerHTML = html;
       tabla.appendChild(fila);
 
-      // 🔥 LLENAR DATOS DE HABITACIONES
-      grupo.habitaciones.forEach(h => {
+      const celdas = fila.querySelectorAll("td");
 
-        const index = habitaciones.indexOf(h.habitacion);
-        if(index === -1) return;
+      // 🔥 RELLENAR DATOS
+      grupo.habitaciones.forEach(h=>{
 
-        const celda = fila.querySelectorAll("td")[index + 2];
+        const indexHab = habitaciones.indexOf(h.habitacion);
 
-        const inicio = celda.querySelector(".inicio");
-        const fin = celda.querySelector(".fin");
+        if(indexHab !== -1){
 
-        inicio.value = h.inicio || "";
-        fin.value = h.fin || "";
+          const inicio = celdas[indexHab + 2].querySelector(".inicio");
+          const fin = celdas[indexHab + 2].querySelector(".fin");
+
+          inicio.value = h.inicio?.split('T')[0] || "";
+          fin.value = h.fin?.split('T')[0] || "";
+
+          const diff = (new Date(h.fin) - new Date(h.inicio)) / (1000*60*60*24);
+          celdas[indexHab + 2].querySelector(".dias").innerText = diff > 0 ? diff : 0;
+        }
+
       });
 
       activarEventos(fila);
-
-      // 🔥 FORZAR CÁLCULO INICIAL
-      fila.querySelectorAll(".inicio, .fin").forEach(input=>{
-        input.dispatchEvent(new Event("change"));
-      });
+      calcularTotalFila(fila);
 
     });
 
   });
 }
 
-
-// 🔥 EVENTOS Y CÁLCULO
-function activarEventos(fila){
-
-  const celdas = fila.querySelectorAll("td");
-
-  for(let i = 2; i < celdas.length - 2; i++){
-
-    const celda = celdas[i];
-
-    const inicio = celda.querySelector(".inicio");
-    const fin = celda.querySelector(".fin");
-    const dias = celda.querySelector(".dias");
-
-    function calc(){
-
-      if(inicio.value && fin.value){
-
-        const diff = (new Date(fin.value) - new Date(inicio.value)) / (1000*60*60*24);
-
-        dias.innerText = diff > 0 ? diff : 0;
-
-      } else {
-        dias.innerText = 0;
-      }
-
-      calcularTotalFila(fila);
-    }
-
-    inicio.onchange = calc;
-    fin.onchange = calc;
-  }
-}
-
-
-// 🔥 TOTAL CORREGIDO
-function calcularTotalFila(fila){
-
-  let total = 0;
-
-  fila.querySelectorAll("td").forEach((celda, index)=>{
-
-    // saltar columnas que no son habitaciones
-    if(index < 2 || index >= fila.children.length - 2) return;
-
-    const inicio = celda.querySelector(".inicio");
-    const fin = celda.querySelector(".fin");
-
-    // ✅ SOLO cuenta si ambas fechas están llenas
-    if(inicio && fin && inicio.value && fin.value){
-      total++;
-    }
-
-  });
-
-  fila.querySelector(".total").innerText = total;
-}
+cargarFilasGuardadas();
 </script>
 
 </body>
