@@ -407,7 +407,7 @@ function cargarFilasGuardadas(){
     // 🔥 CREAR FILAS CON ID INVERSO
     ordenados.forEach((grupo, index)=>{
 
-      const idVisual = ordenados.length - index; // 🔥 CLAVE
+      const idVisual = ordenados.length - index;
 
       const fila = document.createElement("tr");
 
@@ -445,21 +445,42 @@ function cargarFilasGuardadas(){
 
       const celdas = fila.querySelectorAll("td");
 
-      // 🔥 RELLENAR DATOS
+      // 🔥 RELLENAR DATOS (CORREGIDO)
       grupo.habitaciones.forEach(h=>{
 
         const indexHab = habitaciones.indexOf(h.habitacion);
 
         if(indexHab !== -1){
 
-          const inicio = celdas[indexHab + 2].querySelector(".inicio");
-          const fin = celdas[indexHab + 2].querySelector(".fin");
+          const celda = celdas[indexHab + 2];
+          const inicio = celda.querySelector(".inicio");
+          const fin = celda.querySelector(".fin");
+          const dias = celda.querySelector(".dias");
 
-          inicio.value = h.inicio?.split('T')[0] || "";
-          fin.value = h.fin?.split('T')[0] || "";
+          const inicioVal = h.inicio?.split('T')[0] || "";
+          const finVal = h.fin?.split('T')[0] || "";
 
-          const diff = (new Date(h.fin) - new Date(h.inicio)) / (1000*60*60*24);
-          celdas[indexHab + 2].querySelector(".dias").innerText = diff > 0 ? diff : 0;
+          inicio.value = inicioVal;
+          fin.value = finVal;
+
+          // 🔥 CALCULO SEGURO
+          if(inicioVal && finVal){
+
+            const fechaInicio = new Date(inicioVal);
+            const fechaFin = new Date(finVal);
+
+            if(!isNaN(fechaInicio) && !isNaN(fechaFin)){
+
+              const diff = (fechaFin - fechaInicio) / (1000*60*60*24);
+              dias.innerText = diff > 0 ? diff : 0;
+
+            } else {
+              dias.innerText = 0;
+            }
+
+          } else {
+            dias.innerText = 0;
+          }
         }
 
       });
