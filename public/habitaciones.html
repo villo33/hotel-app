@@ -295,73 +295,39 @@ async function guardarFila(btn){
   const fecha = fila.querySelector(".fechaPrincipal").value;
   const color = fila.querySelector(".color").value;
 
-  if(!encargado || !fecha){
-    alert("Falta encargado o fecha");
-    return;
-  }
+  const habitacionesData = [];
 
   const celdas = fila.querySelectorAll("td");
 
-  try {
+  for(let i = 2; i <= 21; i++){
 
-    const promesas = [];
+    const celda = celdas[i];
+    if(!celda) continue;
 
-    for(let i = 2; i <= 21; i++){
+    const inicio = celda.querySelector(".inicio").value;
+    const fin = celda.querySelector(".fin").value;
 
-      const celda = celdas[i];
-      if(!celda) continue;
-
-      const inicioEl = celda.querySelector(".inicio");
-      const finEl = celda.querySelector(".fin");
-
-      if(!inicioEl || !finEl) continue;
-
-      const inicio = inicioEl.value;
-      const fin = finEl.value;
-
-      if(inicio && fin){
-
-        promesas.push(
-          fetch(`${API}/habitaciones`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              habitacion: habitaciones[i - 2],
-              encargado,
-              fecha: fecha.split('T')[0],
-              color,
-              inicio,
-              fin
-            })
-          })
-          .then(async res => {
-
-            const text = await res.text();
-
-            if(!res.ok) {
-              throw new Error(text || "Error guardando habitación");
-            }
-
-            return text;
-          })
-        );
-      }
-    }
-
-    // 🔥 IMPORTANTE: esperar guardado real
-    await Promise.all(promesas);
-
-    alert("Fila guardada correctamente ✅");
-
-    // 🔥 FIX CLAVE: evitar que desaparezca la fila
-    await new Promise(r => setTimeout(r, 500));
-
-    cargarFilasGuardadas();
-
-  } catch (error) {
-    console.error(error);
-    alert("Error guardando la fila ❌");
+    habitacionesData.push({
+      habitacion: habitaciones[i - 2],
+      inicio,
+      fin
+    });
   }
+
+  await fetch(`${API}/habitaciones`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      encargado,
+      fecha: fecha.split("T")[0],
+      color,
+      habitaciones: habitacionesData
+    })
+  });
+
+  alert("Fila guardada correctamente ✅");
+
+  setTimeout(() => cargarFilasGuardadas(), 500);
 }
 // 🔥 ELIMINAR
 function eliminarFila(btn){
