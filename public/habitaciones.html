@@ -197,8 +197,10 @@ const habitaciones = [
   301,302,303,304,305,306
 ];
 
-// 🔥 CONTROL ID CORRECTO
+
+// 🔥 CONTROL ID
 let contadorId = 1;
+
 
 // ➕ AGREGAR FILA
 function agregarFila(){
@@ -230,7 +232,6 @@ function agregarFila(){
     <td class="total">0</td>
     <td>
       <button onclick="guardarFila(this)">💾</button>
-      <button onclick="editarFila(this)">✏️</button>
       <button onclick="eliminarFila(this)">❌</button>
     </td>
   `;
@@ -242,7 +243,7 @@ function agregarFila(){
 }
 
 
-// 💾 GUARDAR
+// 💾 GUARDAR (1 FILA = 1 REGISTRO)
 async function guardarFila(btn){
 
   const fila = btn.closest("tr");
@@ -258,45 +259,44 @@ async function guardarFila(btn){
 
   const celdas = fila.querySelectorAll("td");
 
+  const habitacionesData = [];
+
+  for(let i = 2; i <= 21; i++){
+
+    const celda = celdas[i];
+    if(!celda) continue;
+
+    const inicio = celda.querySelector(".inicio").value;
+    const fin = celda.querySelector(".fin").value;
+
+    habitacionesData.push({
+      habitacion: habitaciones[i - 2],
+      inicio,
+      fin
+    });
+  }
+
   try {
 
-    const promesas = [];
+    const res = await fetch(`${API}/habitaciones`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        encargado,
+        fecha,
+        color,
+        habitaciones: habitacionesData
+      })
+    });
 
-    for(let i = 2; i <= 21; i++){
-
-      const celda = celdas[i];
-      if(!celda) continue;
-
-      const inicio = celda.querySelector(".inicio").value;
-      const fin = celda.querySelector(".fin").value;
-
-      if(inicio && fin){
-
-        promesas.push(
-          fetch(`${API}/habitaciones`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              habitacion: habitaciones[i - 2],
-              encargado,
-              fecha,
-              color,
-              inicio,
-              fin
-            })
-          })
-        );
-      }
-    }
-
-    await Promise.all(promesas);
+    if(!res.ok) throw new Error("Error guardando");
 
     alert("Guardado correcto ✅");
 
     cargarFilasGuardadas();
 
-  } catch (error) {
-    console.error(error);
+  } catch (e){
+    console.error(e);
     alert("Error guardando ❌");
   }
 }
@@ -305,7 +305,7 @@ async function guardarFila(btn){
 // ❌ ELIMINAR
 function eliminarFila(btn){
 
-  if(!confirm("¿Eliminar fila?")) return;
+  if(!confirm("¿Eliminar?")) return;
 
   const fila = btn.closest("tr");
 
@@ -322,7 +322,7 @@ function eliminarFila(btn){
     );
 
     eliminar.forEach(i=>{
-      fetch(`${API}/habitaciones/${i.id}`, { method:'DELETE' });
+      fetch(`${API}/habitaciones/${i.id}`, {method:'DELETE'});
     });
 
     fila.remove();
@@ -366,9 +366,9 @@ function cargarFilasGuardadas(){
       const fila = document.createElement("tr");
 
       let html = `
-        <td>${index + 1}</td>
+        <td>${index+1}</td>
         <td>
-          <input class="encargado" value="${grupo.encargado}" style="color:${grupo.color}"><br>
+          <input class="encargado" value="${grupo.encargado}"><br>
           <input type="color" class="color" value="${grupo.color}"><br>
           <input type="date" class="fechaPrincipal" value="${grupo.fecha}">
         </td>
@@ -389,7 +389,6 @@ function cargarFilasGuardadas(){
         <td class="total">0</td>
         <td>
           <button onclick="guardarFila(this)">💾</button>
-          <button onclick="editarFila(this)">✏️</button>
           <button onclick="eliminarFila(this)">❌</button>
         </td>
       `;
@@ -406,7 +405,7 @@ function cargarFilasGuardadas(){
 }
 
 
-// 🔥 CÁLCULO AUTOMÁTICO (CLAVE)
+// 🔥 CÁLCULO DE DÍAS
 function activarEventos(fila){
 
   const celdas = fila.querySelectorAll("td");
@@ -440,20 +439,18 @@ function activarEventos(fila){
 }
 
 
-// 🔥 TOTAL AUTOMÁTICO
+// 🔥 TOTAL
 function calcularTotalFila(fila){
 
   let total = 0;
 
   fila.querySelectorAll(".dias").forEach(d=>{
-    const val = parseInt(d.innerText);
-    if(val > 0) total += val;
+    const v = parseInt(d.innerText);
+    if(v > 0) total += v;
   });
 
   fila.querySelector(".total").innerText = total;
 }
-
-cargarFilasGuardadas();
 </script>
 
 </body>
