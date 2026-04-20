@@ -119,8 +119,13 @@ app.delete('/mantenimiento/:id', async (req, res) => {
 // ================= HABITACIONES =================
 app.get('/habitaciones', async (req, res) => {
   try {
-    const result = await db.query('SELECT * FROM habitaciones');
+    const result = await db.query(`
+      SELECT * FROM habitaciones
+      ORDER BY id DESC
+    `);
+
     res.json(result.rows);
+
   } catch (err) {
     res.status(500).send(err);
   }
@@ -128,41 +133,39 @@ app.get('/habitaciones', async (req, res) => {
 
 app.post('/habitaciones', async (req, res) => {
   try {
+
     let { habitacion, fecha, encargado, color, inicio, fin } = req.body;
 
-    // 🔥 LIMPIEZA DE DATOS
-    inicio = inicio || null;
-    fin = fin || null;
-    color = color || null;
-
+    // 🔥 VALIDACIÓN REAL
     if (!habitacion || !fecha || !encargado) {
       return res.status(400).send('Datos incompletos');
     }
+
+    // 🔥 LIMPIEZA CORRECTA (NO ROMPE DATOS)
+    const inicioLimpio = inicio && inicio !== "" ? inicio : null;
+    const finLimpio = fin && fin !== "" ? fin : null;
 
     await db.query(
       `INSERT INTO habitaciones 
       (habitacion, fecha, encargado, color, inicio, fin)
       VALUES ($1,$2,$3,$4,$5,$6)`,
-      [habitacion, fecha, encargado, color, inicio, fin]
+      [
+        Number(habitacion),
+        fecha,
+        encargado,
+        color || null,
+        inicioLimpio,
+        finLimpio
+      ]
     );
 
     res.send('Guardado');
 
   } catch (err) {
-    console.log("ERROR REAL HABITACIONES:", err); // 🔥 IMPORTANTE
+    console.log("ERROR REAL HABITACIONES:", err);
     res.status(500).send(err.message);
   }
 });
-
-app.delete('/habitaciones/:id', async (req, res) => {
-  try {
-    await db.query('DELETE FROM habitaciones WHERE id=$1', [req.params.id]);
-    res.send('Eliminado');
-  } catch (err) {
-    res.status(500).send(err);
-  }
-});
-
 // ================= LIMPIEZA =================
 app.get('/limpieza', async (req, res) => {
   try {
