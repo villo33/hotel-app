@@ -309,7 +309,7 @@ async function guardarFila(btn){
     for(let i = 2; i <= 21; i++){
 
       const celda = celdas[i];
-      if(!celda) continue; // 🔥 evita errores
+      if(!celda) continue;
 
       const inicioEl = celda.querySelector(".inicio");
       const finEl = celda.querySelector(".fin");
@@ -319,7 +319,6 @@ async function guardarFila(btn){
       const inicio = inicioEl.value;
       const fin = finEl.value;
 
-      // 🔥 solo guarda si ambos existen
       if(inicio && fin){
 
         promesas.push(
@@ -329,15 +328,22 @@ async function guardarFila(btn){
             body: JSON.stringify({
               habitacion: habitaciones[i - 2],
               encargado,
-              fecha: fecha.split('T')[0], // 🔥 evita problemas de fecha
+              fecha: fecha.split('T')[0],
               color,
               inicio,
               fin
             })
           })
-          .then(res => {
-            if(!res.ok) throw new Error("Error guardando habitación");
-            return res.json();
+          .then(async res => {
+
+            // 🔥 FIX CLAVE: no romper si NO es JSON
+            const text = await res.text();
+
+            if(!res.ok) {
+              throw new Error(text || "Error guardando habitación");
+            }
+
+            return text;
           })
         );
       }
@@ -347,7 +353,6 @@ async function guardarFila(btn){
 
     alert("Fila guardada correctamente ✅");
 
-    // 🔥 recargar después de guardar
     setTimeout(() => {
       cargarFilasGuardadas();
     }, 300);
