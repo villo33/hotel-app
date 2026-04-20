@@ -301,6 +301,8 @@ function guardarFila(btn){
 
   const celdas = fila.querySelectorAll("td");
 
+  let guardadas = 0;
+
   for(let i=2;i<=21;i++){
 
     const inicio = celdas[i].querySelector(".inicio").value;
@@ -313,13 +315,29 @@ function guardarFila(btn){
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
           habitacion: habitaciones[i-2],
-          encargado,fecha,color,inicio,fin
+          encargado,
+          fecha,
+          color,
+          inicio,
+          fin
         })
       });
+
+      guardadas++;
     }
   }
 
+  if(guardadas === 0){
+    alert("No llenaste ninguna habitación");
+    return;
+  }
+
   alert("Fila guardada ✅");
+
+  // 🔥 CLAVE: recargar datos reales desde backend
+  setTimeout(()=>{
+    cargarFilasGuardadas();
+  }, 500);
 }
 
 // 🔥 ELIMINAR
