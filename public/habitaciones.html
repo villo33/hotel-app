@@ -285,8 +285,6 @@ function calcularTotalFila(fila){
   fila.querySelector(".total").innerText = total;
 }
 
-// 🔥 GUARDAR
-
 async function guardarFila(btn){
 
   const fila = btn.closest("tr");
@@ -314,22 +312,30 @@ async function guardarFila(btn){
     });
   }
 
-  await fetch(`${API}/habitaciones`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      encargado,
-      fecha: fecha.split("T")[0],
-      color,
-      habitaciones: habitacionesData
-    })
-  });
+  try {
 
-  alert("Fila guardada correctamente ✅");
+    const res = await fetch(`${API}/habitaciones`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        encargado,
+        fecha: fecha ? fecha.split("T")[0] : "",
+        color,
+        habitaciones: habitacionesData
+      })
+    });
 
-  setTimeout(() => cargarFilasGuardadas(), 500);
+    if(!res.ok) throw new Error("Error guardando");
+
+    alert("Fila guardada correctamente ✅");
+
+    setTimeout(() => cargarFilasGuardadas(), 500);
+
+  } catch (error) {
+    console.error(error);
+    alert("Error guardando ❌");
+  }
 }
-// 🔥 ELIMINAR
 function eliminarFila(btn){
 
   if(!confirm("¿Eliminar fila?")) return;
@@ -344,7 +350,10 @@ function eliminarFila(btn){
   .then(data=>{
 
     const eliminar = data.filter(d =>
-      d.encargado === encargado && d.fecha.includes(fecha)
+      d.encargado === encargado &&
+      d.fecha &&
+      fecha &&
+      d.fecha.split("T")[0] === fecha.split("T")[0] // 🔥 FIX CLAVE
     );
 
     eliminar.forEach(i=>{
@@ -354,7 +363,6 @@ function eliminarFila(btn){
     fila.remove();
   });
 }
-
 function cargarFilasGuardadas(){
 
   fetch(`${API}/habitaciones`)
@@ -363,9 +371,9 @@ function cargarFilasGuardadas(){
 
     const grupos = {};
 
-    // 🔥 AGRUPAR
     data.forEach(item=>{
-      const key = item.encargado+"_"+item.fecha;
+
+      const key = item.encargado + "_" + (item.fecha ? item.fecha.split('T')[0] : "");
 
       if(!grupos[key]){
         grupos[key]={
@@ -379,7 +387,6 @@ function cargarFilasGuardadas(){
       grupos[key].habitaciones.push(item);
     });
 
-    // 🔥 ORDENAR POR FECHA
     const ordenados = Object.values(grupos)
       .sort((a,b)=> new Date(b.fecha) - new Date(a.fecha));
 
@@ -426,21 +433,20 @@ function cargarFilasGuardadas(){
 
       const celdas = fila.querySelectorAll("td");
 
-      // 🔥 RELLENAR DATOS
       grupo.habitaciones.forEach(h=>{
 
         const indexHab = habitaciones.indexOf(h.habitacion);
 
         if(indexHab !== -1 && h.inicio && h.fin){
 
-          const inicio = celdas[indexHab + 2].querySelector(".inicio");
-          const fin = celdas[indexHab + 2].querySelector(".fin");
-
           const inicioDate = new Date(h.inicio);
           const finDate = new Date(h.fin);
 
-          inicio.value = !isNaN(inicioDate) ? inicioDate.toISOString().split('T')[0] : "";
-          fin.value = !isNaN(finDate) ? finDate.toISOString().split('T')[0] : "";
+          const inicioEl = celdas[indexHab + 2].querySelector(".inicio");
+          const finEl = celdas[indexHab + 2].querySelector(".fin");
+
+          if(!isNaN(inicioDate)) inicioEl.value = inicioDate.toISOString().split('T')[0];
+          if(!isNaN(finDate)) finEl.value = finDate.toISOString().split('T')[0];
 
           let diff = 0;
 
