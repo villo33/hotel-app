@@ -166,6 +166,24 @@ app.post('/habitaciones', async (req, res) => {
     res.status(500).send(err.message);
   }
 });
+// 🔥 ELIMINAR HABITACIONES (FALTABA ESTO)
+app.delete('/habitaciones/:id', async (req, res) => {
+  try {
+
+    const id = req.params.id;
+
+    await db.query(
+      'DELETE FROM habitaciones WHERE id = $1',
+      [id]
+    );
+
+    res.send('Eliminado correctamente');
+
+  } catch (err) {
+    console.error("ERROR ELIMINANDO HABITACION:", err);
+    res.status(500).send(err.message);
+  }
+});
 // ================= LIMPIEZA =================
 app.get('/limpieza', async (req, res) => {
   try {

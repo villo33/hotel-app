@@ -343,52 +343,50 @@ async function guardarFila(btn){
     alert("Error guardando ❌");
   }
 }
-// 🔥 ELIMINAR (CORREGIDO 100%)
+// 🔥 ELIMINAR (VERSIÓN PRO - POR ID REAL)
 async function eliminarFila(btn){
 
   if(!confirm("¿Eliminar fila?")) return;
 
   const fila = btn.closest("tr");
 
-  const encargado = fila.querySelector(".encargado").value.trim();
-  const fecha = fila.querySelector(".fechaPrincipal").value;
-
   try{
 
     const res = await fetch(`${API}/habitaciones`);
     const data = await res.json();
 
-    // 🔥 FILTRO CORRECTO
+    // 🔥 OBTENER DATOS DE LA FILA
+    const encargado = fila.querySelector(".encargado").value.trim();
+    const fecha = fila.querySelector(".fechaPrincipal").value;
+
+    // 🔥 BUSCAR IDs REALES (SIN FALLAR POR ESPACIOS)
     const eliminar = data.filter(d =>
-      d.encargado.trim() === encargado &&
-      d.fecha.split('T')[0] === fecha
+      d.encargado?.trim() === encargado &&
+      d.fecha?.split('T')[0]?.replace(/\s/g,'') === fecha
     );
 
     if(eliminar.length === 0){
-      alert("No se encontraron registros para eliminar ❌");
+      alert("No se encontró nada para eliminar ❌");
       return;
     }
 
-    // 🔥 ESPERAR BORRADO REAL
-    await Promise.all(
-      eliminar.map(i =>
-        fetch(`${API}/habitaciones/${i.id}`,{
-          method:'DELETE'
-        })
-      )
-    );
+    // 🔥 BORRAR UNO POR UNO ESPERANDO
+    for(const item of eliminar){
+      await fetch(`${API}/habitaciones/${item.id}`,{
+        method:'DELETE'
+      });
+    }
 
     alert("Eliminado correctamente ✅");
 
-    // 🔥 RECARGA REAL DESDE DB
-    cargarFilasGuardadas();
+    // 🔥 RECARGA REAL
+    await cargarFilasGuardadas();
 
   }catch(err){
     console.error(err);
     alert("Error eliminando ❌");
   }
 }
-
 
 
 // 🔥 CARGAR CORREGIDO 100%
