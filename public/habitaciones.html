@@ -336,7 +336,6 @@ async function guardarFila(btn){
           })
           .then(async res => {
 
-            // 🔥 FIX CLAVE: no romper si NO es JSON
             const text = await res.text();
 
             if(!res.ok) {
@@ -349,13 +348,15 @@ async function guardarFila(btn){
       }
     }
 
+    // 🔥 IMPORTANTE: esperar guardado real
     await Promise.all(promesas);
 
     alert("Fila guardada correctamente ✅");
 
-    setTimeout(() => {
-      cargarFilasGuardadas();
-    }, 300);
+    // 🔥 FIX CLAVE: evitar que desaparezca la fila
+    await new Promise(r => setTimeout(r, 500));
+
+    cargarFilasGuardadas();
 
   } catch (error) {
     console.error(error);
