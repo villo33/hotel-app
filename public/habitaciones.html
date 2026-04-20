@@ -198,7 +198,7 @@ const habitaciones = [
 ];
 
 
-// 🔥 CONTROL ID
+// 🔥 CONTROL ID (solo visual al crear nueva fila)
 let contadorId = 1;
 
 
@@ -218,7 +218,6 @@ function agregarFila(){
   `;
 
   habitaciones.forEach(()=>{
-
     html += `
       <td>
         <input type="date" class="inicio"><br>
@@ -243,7 +242,7 @@ function agregarFila(){
 }
 
 
-// 💾 GUARDAR (1 FILA = 1 REGISTRO)
+// 💾 GUARDAR
 async function guardarFila(btn){
 
   const fila = btn.closest("tr");
@@ -258,14 +257,11 @@ async function guardarFila(btn){
   }
 
   const celdas = fila.querySelectorAll("td");
-
   const habitacionesData = [];
 
-  for(let i = 2; i <= 21; i++){
+  for(let i = 2; i < celdas.length - 2; i++){
 
     const celda = celdas[i];
-    if(!celda) continue;
-
     const inicio = celda.querySelector(".inicio").value;
     const fin = celda.querySelector(".fin").value;
 
@@ -330,7 +326,7 @@ function eliminarFila(btn){
 }
 
 
-// 📥 CARGAR
+// 📥 CARGAR DATOS
 function cargarFilasGuardadas(){
 
   fetch(`${API}/habitaciones`)
@@ -348,25 +344,32 @@ function cargarFilasGuardadas(){
           encargado: item.encargado,
           fecha: item.fecha,
           color: item.color || "#000",
-          habitaciones: []
+          habitaciones: [],
+          id: item.id // 🔥 guardamos id real
         };
       }
 
       grupos[key].habitaciones.push(item);
+
+      // 🔥 mantener el ID más alto del grupo
+      if(item.id > grupos[key].id){
+        grupos[key].id = item.id;
+      }
     });
 
+    // 🔥 ORDENAR POR ID (último guardado primero)
     const ordenados = Object.values(grupos)
-      .sort((a,b)=> new Date(b.fecha) - new Date(a.fecha));
+      .sort((a,b)=> b.id - a.id);
 
     const tabla = document.getElementById("cuerpo");
     tabla.innerHTML = "";
 
-    ordenados.forEach((grupo, index)=>{
+    ordenados.forEach((grupo)=>{
 
       const fila = document.createElement("tr");
 
       let html = `
-        <td>${index+1}</td>
+        <td>${grupo.id}</td>
         <td>
           <input class="encargado" value="${grupo.encargado}"><br>
           <input type="color" class="color" value="${grupo.color}"><br>
@@ -375,7 +378,6 @@ function cargarFilasGuardadas(){
       `;
 
       habitaciones.forEach(()=>{
-
         html += `
           <td>
             <input type="date" class="inicio"><br>
@@ -396,8 +398,27 @@ function cargarFilasGuardadas(){
       fila.innerHTML = html;
       tabla.appendChild(fila);
 
+      // 🔥 LLENAR DATOS DE HABITACIONES
+      grupo.habitaciones.forEach(h => {
+
+        const index = habitaciones.indexOf(h.habitacion);
+        if(index === -1) return;
+
+        const celda = fila.querySelectorAll("td")[index + 2];
+
+        const inicio = celda.querySelector(".inicio");
+        const fin = celda.querySelector(".fin");
+
+        inicio.value = h.inicio || "";
+        fin.value = h.fin || "";
+      });
+
       activarEventos(fila);
-      calcularTotalFila(fila);
+
+      // 🔥 FORZAR CÁLCULO INICIAL
+      fila.querySelectorAll(".inicio, .fin").forEach(input=>{
+        input.dispatchEvent(new Event("change"));
+      });
 
     });
 
@@ -405,15 +426,14 @@ function cargarFilasGuardadas(){
 }
 
 
-// 🔥 CÁLCULO DE DÍAS
+// 🔥 EVENTOS Y CÁLCULO
 function activarEventos(fila){
 
   const celdas = fila.querySelectorAll("td");
 
-  for(let i = 2; i <= 21; i++){
+  for(let i = 2; i < celdas.length - 2; i++){
 
     const celda = celdas[i];
-    if(!celda) continue;
 
     const inicio = celda.querySelector(".inicio");
     const fin = celda.querySelector(".fin");
@@ -426,6 +446,7 @@ function activarEventos(fila){
         const diff = (new Date(fin.value) - new Date(inicio.value)) / (1000*60*60*24);
 
         dias.innerText = diff > 0 ? diff : 0;
+
       } else {
         dias.innerText = 0;
       }
@@ -439,14 +460,17 @@ function activarEventos(fila){
 }
 
 
-// 🔥 TOTAL
+// 🔥 TOTAL CORREGIDO
 function calcularTotalFila(fila){
 
   let total = 0;
 
   fila.querySelectorAll(".dias").forEach(d=>{
-    const v = parseInt(d.innerText);
-    if(v > 0) total += v;
+    const v = Number(d.innerText);
+
+    if(!isNaN(v) && v > 0){
+      total += v;
+    }
   });
 
   fila.querySelector(".total").innerText = total;
