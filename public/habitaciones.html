@@ -464,23 +464,19 @@ function cargarFilasGuardadas(){
           fin.value = finVal;
 
           // 🔥 CALCULO SEGURO
-          if(inicioVal && finVal){
+          // 🔥 CALCULO SEGURO (FIX REAL)
+if(inicioVal && finVal){
 
-            const fechaInicio = new Date(inicioVal);
-            const fechaFin = new Date(finVal);
+  const fechaInicio = new Date(inicioVal + "T00:00:00");
+  const fechaFin = new Date(finVal + "T00:00:00");
 
-            if(!isNaN(fechaInicio) && !isNaN(fechaFin)){
+  const diff = (fechaFin - fechaInicio) / (1000*60*60*24);
 
-              const diff = (fechaFin - fechaInicio) / (1000*60*60*24);
-              dias.innerText = diff > 0 ? diff : 0;
+  dias.innerText = diff > 0 ? diff : 0;
 
-            } else {
-              dias.innerText = 0;
-            }
-
-          } else {
-            dias.innerText = 0;
-          }
+} else {
+  dias.innerText = 0;
+}
         }
 
       });
