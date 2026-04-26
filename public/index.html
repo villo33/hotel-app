@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1e1e2f">
-<title> CASA NOA - PANEL PRINCIPAL</title>
+<title>CASA NOA - PANEL PRINCIPAL</title>
 
 <link rel="icon" href="/logo.png">
 
@@ -20,21 +20,23 @@
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    min-height: 100vh; /* más compatible */
+    min-height: 100vh;
     background: linear-gradient(135deg, #1e1e2f, #007BFF);
 
     display: flex;
 }
 
-/* 🔥 CONTENEDOR PRINCIPAL (CENTRADO REAL) */
+/* 🔥 CONTENEDOR PRINCIPAL */
 .wrapper {
-    margin: auto; /* 🔥 centra horizontal y vertical SIEMPRE */
     width: 100%;
+    min-height: 100vh;
+    
     display: flex;
     justify-content: center;
+    align-items: center;
 }
 
-/* 🔲 TARJETA CENTRAL */
+/* 🔲 TARJETA */
 .container {
     background: white;
     padding: 40px;
@@ -77,28 +79,32 @@ h1 {
 }
 
 </style>
-
 </head>
 
 <body>
 
-<div class="container">
+<div class="wrapper">
 
-    <h1>🏨 CASA NOA</h1>
+    <div class="container">
 
-    <div class="menu">
-        <a href="/inventario.html">📦 Inventario</a>
-        <a href="/mantenimiento.html">🛠️ Mantenimiento</a>
-        <a href="/habitaciones.html">🏨 Habitaciones</a>
-        <a href="/limpieza.html">🧹 Limpieza</a>
-        <a href="/tareas.html">📋 Tareas</a>
-    </div>
+        <h1>🏨 CASA NOA</h1>
 
-    <div class="footer">
-        <p>Creado por Ovidio Camaño</p>
+        <div class="menu">
+            <a href="/inventario.html">📦 Inventario</a>
+            <a href="/mantenimiento.html">🛠️ Mantenimiento</a>
+            <a href="/habitaciones.html">🏨 Habitaciones</a>
+            <a href="/limpieza.html">🧹 Limpieza</a>
+            <a href="/tareas.html">📋 Tareas</a>
+        </div>
+
+        <div class="footer">
+            <p>Creado por Ovidio Camaño</p>
+        </div>
+
     </div>
 
 </div>
+
 <script>
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("/service-worker.js");
