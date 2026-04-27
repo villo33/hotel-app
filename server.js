@@ -293,8 +293,8 @@ app.post('/tareas', async (req, res) => {
   try {
 
     await db.query(
-      'INSERT INTO tareas (descripcion, encargado, fecha, estado) VALUES ($1,$2,$3,$4)',
-      [descripcion, encargado, fecha, 'pendiente']
+      'INSERT INTO tareas (descripcion, asignado_por, fecha, estado) VALUES ($1,$2,$3,$4)',
+[descripcion, asignado_por, fecha, 'pendiente']
     );
 
     const payload = JSON.stringify({
