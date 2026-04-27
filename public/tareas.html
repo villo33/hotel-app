@@ -214,30 +214,36 @@ async function cargar(){
     html = `<tr><td colspan="5">No hay tareas</td></tr>`;
   }
 
-
   data.forEach(t => {
-  html += `
-      <td>
-        ${t.descripcion.length > 20 ? t.descripcion.substring(0,20) + '...' : t.descripcion}
-        <br>
-        <button onclick="verTarea('${encodeURIComponent(t.descripcion)}')">👁</button>
-      </td>
-      <td>${t.encargado || ''}</td>
-      <td>${t.fecha.split('T')[0]}</td>
-      <td class="${t.estado}">${t.estado}</td>
-      <td>
-        ${t.estado === 'pendiente' ? 
-          `<button class="btn-hecho" onclick="completar(${t.id})">✔</button>` 
-          : ''}
-        <button class="btn-eliminar" onclick="eliminar(${t.id})">❌</button>
-      </td>
-    </tr>
-  `;
-});
+    html += `
+      <tr>
+        <td>
+          ${t.descripcion.length > 20 ? t.descripcion.substring(0,20) + '...' : t.descripcion}
+          <br>
+          <button onclick="verTarea('${encodeURIComponent(t.descripcion)}')">👁</button>
+        </td>
+
+        <td>${t.encargado || ''}</td>
+
+        <td>${t.fecha.split('T')[0]}</td>
+
+        <td class="${t.estado}">${t.estado}</td>
+
+        <td>
+          ${t.estado === 'pendiente' 
+            ? `<button class="btn-hecho" onclick="completar(${t.id})">✔</button>` 
+            : ''}
+
+          <button class="btn-eliminar" onclick="eliminar(${t.id})">❌</button>
+        </td>
+      </tr>
+    `;
+  });
 
   document.getElementById("tabla").innerHTML = html;
 }
 
+// 🔥 LLAMADA CORRECTA (FUERA DE LA FUNCIÓN)
 cargar();
 
 </script>
