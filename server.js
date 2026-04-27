@@ -319,6 +319,41 @@ app.post('/tareas', async (req, res) => {
     res.status(500).send(err.message);
   }
 });
+// 🔥 COMPLETAR TAREA (CAMBIAR ESTADO)
+app.put('/tareas/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    await db.query(
+      "UPDATE tareas SET estado = 'hecho' WHERE id = $1",
+      [id]
+    );
+
+    res.send('Tarea actualizada');
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
+  }
+});
+
+// 🔥 ELIMINAR TAREA
+app.delete('/tareas/:id', async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    await db.query(
+      'DELETE FROM tareas WHERE id = $1',
+      [id]
+    );
+
+    res.send('Tarea eliminada');
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).send(err.message);
+  }
+});
 
 // ================= SERVER =================
 const PORT = process.env.PORT || 3000;
