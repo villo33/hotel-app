@@ -1,25 +1,38 @@
+// 🔥 INSTALACIÓN
 self.addEventListener("install", event => {
-  console.log("App instalada");
+  console.log("✅ Service Worker instalado");
   self.skipWaiting();
 });
 
+// 🔥 ACTIVACIÓN
 self.addEventListener("activate", event => {
-  console.log("Service Worker activo");
-  event.waitUntil(self.clients.claim());
+  console.log("✅ Service Worker activo");
 });
+
+// ❌ ELIMINAMOS FETCH VACÍO (NO LO NECESITAS)
+// ❌ NO pongas fetch si no vas a usar cache
 
 // 🔔 PUSH NOTIFICATIONS
 self.addEventListener("push", event => {
 
-  const data = event.data ? event.data.json() : {
+  let data = {
     title: "📋 Notificación",
     body: "Nueva tarea disponible"
   };
 
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch (e) {
+      console.log("Error leyendo push:", e);
+    }
+  }
+
   const options = {
     body: data.body,
     icon: "/logo.png",
-    badge: "/logo.png"
+    badge: "/logo.png",
+    vibrate: [200, 100, 200] // 🔥 hace vibrar en celular
   };
 
   event.waitUntil(

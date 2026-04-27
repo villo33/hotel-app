@@ -23,10 +23,19 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.post('/suscribir', async (req, res) => {
-
   try {
 
     const sub = req.body;
+
+    // 🔥 EVITAR DUPLICADOS
+    const existe = await db.query(
+      'SELECT 1 FROM suscripciones WHERE endpoint = $1',
+      [sub.endpoint]
+    );
+
+    if (existe.rows.length > 0) {
+      return res.sendStatus(200);
+    }
 
     await db.query(
       `INSERT INTO suscripciones (endpoint, p256dh, auth)
@@ -38,13 +47,14 @@ app.post('/suscribir', async (req, res) => {
       ]
     );
 
+    console.log("✅ Nueva suscripción guardada");
+
     res.sendStatus(201);
 
   } catch (err) {
-    console.error("Error guardando suscripción:", err);
+    console.error("❌ Error guardando suscripción:", err);
     res.status(500).send("Error");
   }
-
 });
 
 // ================= RUTA PRINCIPAL =================
@@ -275,26 +285,28 @@ app.get('/tareas', async (req, res) => {
   }
 });
 
+// ================= ENVIAR NOTIFICACIONES =================
 app.post('/tareas', async (req, res) => {
   const { descripcion, encargado, fecha } = req.body;
 
   try {
-    // 1. guardar tarea
+
+    // 1. GUARDAR TAREA
     await db.query(
       'INSERT INTO tareas (descripcion, encargado, fecha, estado) VALUES ($1,$2,$3,$4)',
       [descripcion, encargado, fecha, 'pendiente']
     );
 
-    // 2. payload
+    // 2. PAYLOAD
     const payload = JSON.stringify({
       title: "📋 Nueva tarea",
       body: descripcion
     });
 
-    // 3. traer suscripciones
+    // 3. TRAER SUSCRIPCIONES
     const subs = await db.query('SELECT * FROM suscripciones');
 
-    // 4. enviar notificación
+    // 4. ENVIAR NOTIFICACIONES
     for (const sub of subs.rows) {
 
       const pushSubscription = {
@@ -306,55 +318,33 @@ app.post('/tareas', async (req, res) => {
       };
 
       try {
+
         await webpush.sendNotification(pushSubscription, payload);
+
       } catch (err) {
-        console.log("Error push:", err.statusCode || err);
+
+        console.log("❌ Error push:", err.statusCode || err);
+
+        // 🔥 ESTO ES LO IMPORTANTE
+        if (err.statusCode === 410 || err.statusCode === 404) {
+          console.log("🧹 Eliminando suscripción inválida");
+
+          await db.query(
+            'DELETE FROM suscripciones WHERE endpoint = $1',
+            [sub.endpoint]
+          );
+        }
+
       }
     }
 
-    res.send('Tarea creada');
+    res.send('Tarea creada y notificaciones enviadas');
 
   } catch (err) {
-    console.error(err);
+    console.error("🔥 ERROR GENERAL:", err);
     res.status(500).send(err.message);
   }
 });
-// 🔥 COMPLETAR TAREA (CAMBIAR ESTADO)
-app.put('/tareas/:id', async (req, res) => {
-  try {
-    const id = req.params.id;
-
-    await db.query(
-      "UPDATE tareas SET estado = 'hecho' WHERE id = $1",
-      [id]
-    );
-
-    res.send('Tarea actualizada');
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err.message);
-  }
-});
-
-// 🔥 ELIMINAR TAREA
-app.delete('/tareas/:id', async (req, res) => {
-  try {
-    const id = req.params.id;
-
-    await db.query(
-      'DELETE FROM tareas WHERE id = $1',
-      [id]
-    );
-
-    res.send('Tarea eliminada');
-
-  } catch (err) {
-    console.error(err);
-    res.status(500).send(err.message);
-  }
-});
-
 // ================= SERVER =================
 const PORT = process.env.PORT || 3000;
 

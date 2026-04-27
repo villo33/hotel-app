@@ -142,22 +142,31 @@ async function activarNotificaciones() {
 
   const registro = await navigator.serviceWorker.ready;
 
-  const suscripcion = await registro.pushManager.subscribe({
+  // 🔥 BORRAR SUSCRIPCIÓN VIEJA (CLAVE)
+  let suscripcion = await registro.pushManager.getSubscription();
+
+  if (suscripcion) {
+    await suscripcion.unsubscribe();
+  }
+
+  // 🔥 CREAR NUEVA LIMPIA
+  suscripcion = await registro.pushManager.subscribe({
     userVisibleOnly: true,
     applicationServerKey: urlBase64ToUint8Array(PUBLIC_KEY)
   });
 
-  console.log("SUSCRIPCIÓN:", suscripcion);
+  console.log("SUSCRIPCIÓN NUEVA:", suscripcion);
 
   await fetch("/suscribir", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify(suscripcion)
   });
 
-  alert("🔔 Notificaciones activadas");
+  alert("🔔 Notificaciones activadas correctamente");
 }
-
 </script>
 
 </body>
