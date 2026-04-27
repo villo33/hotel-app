@@ -288,7 +288,7 @@ app.get('/tareas', async (req, res) => {
 
 // 🔥 CREAR TAREA + NOTIFICAR
 app.post('/tareas', async (req, res) => {
-  const { descripcion, encargado, fecha } = req.body;
+  const { descripcion, asignado_por, fecha } = req.body;
 
   try {
 
