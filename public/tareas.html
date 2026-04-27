@@ -180,11 +180,19 @@ async function guardar(){
   cargar();
 }
 
-// 🔥 COMPLETAR
+// 🔥 COMPLETAR (CON NOMBRE)
 async function completar(id){
+
+  const nombre = prompt("¿Quién completó la tarea?");
+
+  if(!nombre) return;
+
   await fetch(`${API}/tareas/` + id, {
-    method: 'PUT'
+    method: 'PUT',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({ realizado_por: nombre })
   });
+
   cargar();
 }
 
@@ -230,8 +238,10 @@ async function cargar(){
 
         <td>${t.fecha.split('T')[0]}</td>
 
-        <td class="${t.estado}">${t.estado}</td>
-
+        <td class="${t.estado}">
+  ${t.estado}
+  ${t.realizado_por ? `<br><small>👤 ${t.realizado_por}</small>` : ''}
+</td>
         <td>
           ${t.estado === 'pendiente' 
             ? `<button class="btn-hecho" onclick="completar(${t.id})">✔</button>` 

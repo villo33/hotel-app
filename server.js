@@ -341,19 +341,26 @@ app.post('/tareas', async (req, res) => {
 app.put('/tareas/:id', async (req, res) => {
   try {
     const id = req.params.id;
+    const { realizado_por } = req.body;
 
+    // 1. actualizar tarea
     const result = await db.query(
-      "UPDATE tareas SET estado = 'hecho' WHERE id = $1 RETURNING *",
-      [id]
+      `UPDATE tareas 
+       SET estado = 'hecho', realizado_por = $1 
+       WHERE id = $2 
+       RETURNING *`,
+      [realizado_por, id]
     );
 
     const tarea = result.rows[0];
 
+    // 2. payload con nombre 🔥
     const payload = JSON.stringify({
       title: "✅ Tarea completada",
-      body: `${tarea.descripcion} fue finalizada`
+      body: `${tarea.descripcion} fue finalizada por ${realizado_por}`
     });
 
+    // 3. enviar notificaciones
     const subs = await db.query('SELECT * FROM suscripciones');
 
     for (const sub of subs.rows) {
@@ -369,7 +376,6 @@ app.put('/tareas/:id', async (req, res) => {
       try {
         await webpush.sendNotification(pushSubscription, payload);
       } catch (err) {
-
         if (err.statusCode === 410 || err.statusCode === 404) {
           await db.query(
             'DELETE FROM suscripciones WHERE endpoint = $1',
@@ -379,7 +385,7 @@ app.put('/tareas/:id', async (req, res) => {
       }
     }
 
-    res.send('Tarea completada y notificada');
+    res.send('Tarea completada con responsable');
 
   } catch (err) {
     console.error(err);
