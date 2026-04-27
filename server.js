@@ -274,8 +274,9 @@ app.delete('/limpieza/:id', async (req, res) => {
     res.status(500).send(err);
   }
 });
-
 // ================= TAREAS =================
+
+// 🔹 OBTENER TAREAS
 app.get('/tareas', async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM tareas ORDER BY id DESC');
@@ -284,17 +285,101 @@ app.get('/tareas', async (req, res) => {
     res.status(500).send(err);
   }
 });
-// 🔥 COMPLETAR TAREA
+
+// 🔥 CREAR TAREA + NOTIFICAR
+app.post('/tareas', async (req, res) => {
+  const { descripcion, encargado, fecha } = req.body;
+
+  try {
+
+    await db.query(
+      'INSERT INTO tareas (descripcion, encargado, fecha, estado) VALUES ($1,$2,$3,$4)',
+      [descripcion, encargado, fecha, 'pendiente']
+    );
+
+    const payload = JSON.stringify({
+      title: "📋 Nueva tarea",
+      body: descripcion
+    });
+
+    const subs = await db.query('SELECT * FROM suscripciones');
+
+    for (const sub of subs.rows) {
+
+      const pushSubscription = {
+        endpoint: sub.endpoint,
+        keys: {
+          p256dh: sub.p256dh,
+          auth: sub.auth
+        }
+      };
+
+      try {
+        await webpush.sendNotification(pushSubscription, payload);
+      } catch (err) {
+
+        console.log("❌ Error push:", err.statusCode || err);
+
+        if (err.statusCode === 410 || err.statusCode === 404) {
+          await db.query(
+            'DELETE FROM suscripciones WHERE endpoint = $1',
+            [sub.endpoint]
+          );
+        }
+      }
+    }
+
+    res.send('Tarea creada y notificada');
+
+  } catch (err) {
+    console.error("🔥 ERROR GENERAL:", err);
+    res.status(500).send(err.message);
+  }
+});
+
+// 🔥 COMPLETAR TAREA + NOTIFICAR (ESTA ES LA CLAVE)
 app.put('/tareas/:id', async (req, res) => {
   try {
     const id = req.params.id;
 
-    await db.query(
-      "UPDATE tareas SET estado = 'hecho' WHERE id = $1",
+    const result = await db.query(
+      "UPDATE tareas SET estado = 'hecho' WHERE id = $1 RETURNING *",
       [id]
     );
 
-    res.send('Tarea actualizada');
+    const tarea = result.rows[0];
+
+    const payload = JSON.stringify({
+      title: "✅ Tarea completada",
+      body: `${tarea.descripcion} fue finalizada`
+    });
+
+    const subs = await db.query('SELECT * FROM suscripciones');
+
+    for (const sub of subs.rows) {
+
+      const pushSubscription = {
+        endpoint: sub.endpoint,
+        keys: {
+          p256dh: sub.p256dh,
+          auth: sub.auth
+        }
+      };
+
+      try {
+        await webpush.sendNotification(pushSubscription, payload);
+      } catch (err) {
+
+        if (err.statusCode === 410 || err.statusCode === 404) {
+          await db.query(
+            'DELETE FROM suscripciones WHERE endpoint = $1',
+            [sub.endpoint]
+          );
+        }
+      }
+    }
+
+    res.send('Tarea completada y notificada');
 
   } catch (err) {
     console.error(err);
@@ -319,68 +404,6 @@ app.delete('/tareas/:id', async (req, res) => {
     res.status(500).send(err.message);
   }
 });
-
-// ================= ENVIAR NOTIFICACIONES =================
-app.post('/tareas', async (req, res) => {
-  const { descripcion, encargado, fecha } = req.body;
-
-  try {
-
-    // 1. GUARDAR TAREA
-    await db.query(
-      'INSERT INTO tareas (descripcion, encargado, fecha, estado) VALUES ($1,$2,$3,$4)',
-      [descripcion, encargado, fecha, 'pendiente']
-    );
-
-    // 2. PAYLOAD
-    const payload = JSON.stringify({
-      title: "📋 Nueva tarea",
-      body: descripcion
-    });
-
-    // 3. TRAER SUSCRIPCIONES
-    const subs = await db.query('SELECT * FROM suscripciones');
-
-    // 4. ENVIAR NOTIFICACIONES
-    for (const sub of subs.rows) {
-
-      const pushSubscription = {
-        endpoint: sub.endpoint,
-        keys: {
-          p256dh: sub.p256dh,
-          auth: sub.auth
-        }
-      };
-
-      try {
-
-        await webpush.sendNotification(pushSubscription, payload);
-
-      } catch (err) {
-
-        console.log("❌ Error push:", err.statusCode || err);
-
-        // 🔥 ESTO ES LO IMPORTANTE
-        if (err.statusCode === 410 || err.statusCode === 404) {
-          console.log("🧹 Eliminando suscripción inválida");
-
-          await db.query(
-            'DELETE FROM suscripciones WHERE endpoint = $1',
-            [sub.endpoint]
-          );
-        }
-
-      }
-    }
-
-    res.send('Tarea creada y notificaciones enviadas');
-
-  } catch (err) {
-    console.error("🔥 ERROR GENERAL:", err);
-    res.status(500).send(err.message);
-  }
-});
-
 // ================= SERVER =================
 const PORT = process.env.PORT || 3000;
 

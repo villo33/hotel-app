@@ -49,6 +49,9 @@ button:hover {
 .btn-guardar { 
   background: linear-gradient(to right, #0d6efd, #0dcaf0);
 }
+.btn-ver {
+  background: #17a2b8;
+}
 
 /* 🔲 CONTENEDOR */
 .container {
@@ -220,7 +223,7 @@ async function cargar(){
         <td>
           ${t.descripcion.length > 20 ? t.descripcion.substring(0,20) + '...' : t.descripcion}
           <br>
-          <button onclick="verTarea('${encodeURIComponent(t.descripcion)}')">👁</button>
+          <button class="btn-ver" onclick="verTarea('${encodeURIComponent(t.descripcion)}')">👁</button>
         </td>
 
         <td>${t.encargado || ''}</td>
