@@ -7,6 +7,7 @@
 <meta name="theme-color" content="#1e1e2f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
 <title>CASA NOA - PANEL PRINCIPAL</title>
 <link rel="icon" href="/logo.png">
@@ -132,10 +133,7 @@ function urlBase64ToUint8Array(base64String) {
   return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
 }
 /* ================= PWA INSTALL EVENT ================= */
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  console.log("PWA lista para instalar");
-});
+
 
 /* ================= ACTIVAR NOTIFICACIONES ================= */
 async function activarNotificaciones() {
@@ -175,6 +173,48 @@ async function activarNotificaciones() {
   alert("🔔 Notificaciones activadas correctamente");
 }
 </script>
+<!-- 🔥 BOTÓN -->
+<button id="btnInstalar" style="display:none; position:fixed; bottom:20px; right:20px; padding:12px 16px; border-radius:10px; background:#007BFF; color:white; border:none;">
+📲 Instalar App
+</button>
 
+<!-- 🔥 SCRIPT DE INSTALACIÓN -->
+<script>
+
+let deferredPrompt;
+const btn = document.getElementById("btnInstalar");
+
+// 🔥 EVENTO PRINCIPAL
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+
+  btn.style.display = "block";
+});
+
+// 🔥 CLICK INSTALAR
+btn.addEventListener("click", async () => {
+  if (!deferredPrompt) return;
+
+  deferredPrompt.prompt();
+
+  const result = await deferredPrompt.userChoice;
+
+  if (result.outcome === "accepted") {
+    console.log("Instalada");
+  }
+
+  deferredPrompt = null;
+  btn.style.display = "none";
+});
+
+// 🔥 CUANDO YA ESTA INSTALADA
+window.addEventListener("appinstalled", () => {
+  console.log("App instalada correctamente");
+  btn.style.display = "none";
+  deferredPrompt = null;
+});
+
+</script>
 </body>
 </html>
