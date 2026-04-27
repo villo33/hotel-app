@@ -1,8 +1,12 @@
 self.addEventListener("install", event => {
   console.log("App instalada");
+  self.skipWaiting();
 });
 
-self.addEventListener("fetch", event => {});
+self.addEventListener("activate", event => {
+  console.log("Service Worker activo");
+  event.waitUntil(self.clients.claim());
+});
 
 // 🔔 PUSH NOTIFICATIONS
 self.addEventListener("push", event => {
@@ -14,7 +18,8 @@ self.addEventListener("push", event => {
 
   const options = {
     body: data.body,
-    icon: "/logo.png"
+    icon: "/logo.png",
+    badge: "/logo.png"
   };
 
   event.waitUntil(
