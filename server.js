@@ -14,24 +14,37 @@ webpush.setVapidDetails(
   PUBLIC_KEY,
   PRIVATE_KEY
 );
-
-// 🔥 guardar suscripciones
-let suscripciones = [];
+const db = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
+});
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
-app.post('/suscribir', (req, res) => {
-  suscripciones.push(req.body);
-  res.sendStatus(201);
-});
+app.post('/suscribir', async (req, res) => {
 
-// ================= POSTGRES (SUPABASE) =================
-const db = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false
+  try {
+
+    const sub = req.body;
+
+    await db.query(
+      `INSERT INTO suscripciones (endpoint, p256dh, auth)
+       VALUES ($1, $2, $3)`,
+      [
+        sub.endpoint,
+        sub.keys.p256dh,
+        sub.keys.auth
+      ]
+    );
+
+    res.sendStatus(201);
+
+  } catch (err) {
+    console.error("Error guardando suscripción:", err);
+    res.status(500).send("Error");
   }
+
 });
 
 // ================= RUTA PRINCIPAL =================
@@ -266,36 +279,44 @@ app.post('/tareas', async (req, res) => {
   const { descripcion, encargado, fecha } = req.body;
 
   try {
-
+    // 1. guardar tarea
     await db.query(
       'INSERT INTO tareas (descripcion, encargado, fecha, estado) VALUES ($1,$2,$3,$4)',
       [descripcion, encargado, fecha, 'pendiente']
     );
 
-    // 🔔 ENVIAR NOTIFICACIÓN
+    // 2. payload
     const payload = JSON.stringify({
       title: "📋 Nueva tarea",
       body: descripcion
     });
 
-    suscripciones.forEach(sub => {
-      webpush.sendNotification(sub, payload)
-        .catch(err => console.log("Error push:", err));
-    });
+    // 3. traer suscripciones
+    const subs = await db.query('SELECT * FROM suscripciones');
+
+    // 4. enviar notificación
+    for (const sub of subs.rows) {
+
+      const pushSubscription = {
+        endpoint: sub.endpoint,
+        keys: {
+          p256dh: sub.p256dh,
+          auth: sub.auth
+        }
+      };
+
+      try {
+        await webpush.sendNotification(pushSubscription, payload);
+      } catch (err) {
+        console.log("Error push:", err.statusCode || err);
+      }
+    }
 
     res.send('Tarea creada');
 
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
-  }
-});
-app.delete('/tareas/:id', async (req, res) => {
-  try {
-    await db.query('DELETE FROM tareas WHERE id=$1', [req.params.id]);
-    res.send('Eliminado');
-  } catch (err) {
-    res.status(500).send(err);
   }
 });
 
