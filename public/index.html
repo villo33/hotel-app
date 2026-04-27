@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="manifest" href="/manifest.json">
 <meta name="theme-color" content="#1e1e2f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
 
 <title>CASA NOA - PANEL PRINCIPAL</title>
 <link rel="icon" href="/logo.png">
@@ -129,6 +131,11 @@ function urlBase64ToUint8Array(base64String) {
   const rawData = atob(base64);
   return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
 }
+/* ================= PWA INSTALL EVENT ================= */
+window.addEventListener("beforeinstallprompt", (e) => {
+  e.preventDefault();
+  console.log("PWA lista para instalar");
+});
 
 /* ================= ACTIVAR NOTIFICACIONES ================= */
 async function activarNotificaciones() {
