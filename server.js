@@ -4,10 +4,27 @@ const cors = require('cors');
 const path = require('path');
 
 const app = express();
+const webpush = require('web-push');
+
+const PUBLIC_KEY = 'BJ9e4DSpEVY0_Nq_FJ6py3oGRBKFl7BCh5wunz4q5bDjA87IaJP2vw902IOj4rNllyV0B8ddg52vwrA5gXq0DSw';
+const PRIVATE_KEY = 'UF2t6HaUoxPp33coN4MVWxS82cjPBNh3w0gHrKXdZEc';
+
+webpush.setVapidDetails(
+  'mailto:tu@email.com',
+  PUBLIC_KEY,
+  PRIVATE_KEY
+);
+
+// 🔥 guardar suscripciones
+let suscripciones = [];
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+app.post('/suscribir', (req, res) => {
+  suscripciones.push(req.body);
+  res.sendStatus(201);
+});
 
 // ================= POSTGRES (SUPABASE) =================
 const db = new Pool({
@@ -249,28 +266,30 @@ app.post('/tareas', async (req, res) => {
   const { descripcion, encargado, fecha } = req.body;
 
   try {
+
     await db.query(
       'INSERT INTO tareas (descripcion, encargado, fecha, estado) VALUES ($1,$2,$3,$4)',
       [descripcion, encargado, fecha, 'pendiente']
     );
+
+    // 🔔 ENVIAR NOTIFICACIÓN
+    const payload = JSON.stringify({
+      title: "📋 Nueva tarea",
+      body: descripcion
+    });
+
+    suscripciones.forEach(sub => {
+      webpush.sendNotification(sub, payload)
+        .catch(err => console.log("Error push:", err));
+    });
+
     res.send('Tarea creada');
+
   } catch (err) {
-    res.status(500).send(err);
+    console.error(err);
+    res.status(500).send(err.message);
   }
 });
-
-app.put('/tareas/:id', async (req, res) => {
-  try {
-    await db.query(
-      'UPDATE tareas SET estado=$1 WHERE id=$2',
-      ['hecho', req.params.id]
-    );
-    res.send('Actualizado');
-  } catch (err) {
-    res.status(500).send(err);
-  }
-});
-
 app.delete('/tareas/:id', async (req, res) => {
   try {
     await db.query('DELETE FROM tareas WHERE id=$1', [req.params.id]);
