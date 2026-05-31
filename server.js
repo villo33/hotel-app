@@ -19,9 +19,6 @@ const db = new Pool({
   ssl: { rejectUnauthorized: false }
 });
 
-app.use(cors());
-app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
 app.post('/suscribir', async (req, res) => {
   try {
 
@@ -29,7 +26,7 @@ app.post('/suscribir', async (req, res) => {
 
     // 🔥 EVITAR DUPLICADOS
     const existe = await db.query(
-      'SELECT 1 FROM suscripciones WHERE endpoint = $1',
+      'SELECT 1 FROM suscripciones_hotel WHERE endpoint = $1',
       [sub.endpoint]
     );
 
@@ -38,7 +35,7 @@ app.post('/suscribir', async (req, res) => {
     }
 
     await db.query(
-      `INSERT INTO suscripciones (endpoint, p256dh, auth)
+      `INSERT INTO suscripciones_hotel (endpoint, p256dh, auth)
        VALUES ($1, $2, $3)`,
       [
         sub.endpoint,
@@ -47,7 +44,7 @@ app.post('/suscribir', async (req, res) => {
       ]
     );
 
-    console.log("✅ Nueva suscripción guardada");
+    console.log("✅ Nueva suscripción hotel guardada");
 
     res.sendStatus(201);
 
@@ -303,7 +300,7 @@ app.post('/tareas', async (req, res) => {
       body: descripcion
     });
 
-    const subs = await db.query('SELECT * FROM suscripciones');
+   const subs = await db.query('SELECT * FROM suscripciones_hotel');
 
     for (const sub of subs.rows) {
 
@@ -323,7 +320,7 @@ app.post('/tareas', async (req, res) => {
 
         if (err.statusCode === 410 || err.statusCode === 404) {
           await db.query(
-            'DELETE FROM suscripciones WHERE endpoint = $1',
+            'DELETE FROM suscripciones_hotel WHERE endpoint = $1',
             [sub.endpoint]
           );
         }
@@ -361,7 +358,7 @@ app.put('/tareas/:id', async (req, res) => {
       body: `${tarea.descripcion} fue finalizada por ${realizado_por}`
     });
 
-    const subs = await db.query('SELECT * FROM suscripciones');
+    const subs = await db.query('SELECT * FROM suscripciones_hotel');
 
     for (const sub of subs.rows) {
 
@@ -379,7 +376,7 @@ app.put('/tareas/:id', async (req, res) => {
 
         if (err.statusCode === 410 || err.statusCode === 404) {
           await db.query(
-            'DELETE FROM suscripciones WHERE endpoint = $1',
+            'DELETE FROM suscripciones_hotel WHERE endpoint = $1',
             [sub.endpoint]
           );
         }
