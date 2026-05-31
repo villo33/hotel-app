@@ -274,12 +274,13 @@ app.delete('/limpieza/:id', async (req, res) => {
     res.status(500).send(err);
   }
 });
+
 // ================= TAREAS =================
 
 // 🔹 OBTENER TAREAS
 app.get('/tareas', async (req, res) => {
   try {
-    const result = await db.query('SELECT * FROM tareas ORDER BY id DESC');
+    const result = await db.query('SELECT * FROM tareas_hotel ORDER BY id DESC');
     res.json(result.rows);
   } catch (err) {
     res.status(500).send(err);
@@ -293,8 +294,8 @@ app.post('/tareas', async (req, res) => {
   try {
 
     await db.query(
-      'INSERT INTO tareas (descripcion, asignado_por, fecha, estado) VALUES ($1,$2,$3,$4)',
-[descripcion, asignado_por, fecha, 'pendiente']
+      'INSERT INTO tareas_hotel (descripcion, asignado_por, fecha, estado) VALUES ($1,$2,$3,$4)',
+      [descripcion, asignado_por, fecha, 'pendiente']
     );
 
     const payload = JSON.stringify({
@@ -337,30 +338,29 @@ app.post('/tareas', async (req, res) => {
   }
 });
 
-// 🔥 COMPLETAR TAREA + NOTIFICAR (ESTA ES LA CLAVE)
+// 🔥 COMPLETAR TAREA + NOTIFICAR
 app.put('/tareas/:id', async (req, res) => {
   try {
+
     const id = req.params.id;
     const { realizado_por } = req.body;
 
-    // 1. actualizar tarea
     const result = await db.query(
-      `UPDATE tareas 
-       SET estado = 'hecho', realizado_por = $1 
-       WHERE id = $2 
+      `UPDATE tareas_hotel
+       SET estado = 'hecho',
+           realizado_por = $1
+       WHERE id = $2
        RETURNING *`,
       [realizado_por, id]
     );
 
     const tarea = result.rows[0];
 
-    // 2. payload con nombre 🔥
     const payload = JSON.stringify({
       title: "✅ Tarea completada",
       body: `${tarea.descripcion} fue finalizada por ${realizado_por}`
     });
 
-    // 3. enviar notificaciones
     const subs = await db.query('SELECT * FROM suscripciones');
 
     for (const sub of subs.rows) {
@@ -376,6 +376,7 @@ app.put('/tareas/:id', async (req, res) => {
       try {
         await webpush.sendNotification(pushSubscription, payload);
       } catch (err) {
+
         if (err.statusCode === 410 || err.statusCode === 404) {
           await db.query(
             'DELETE FROM suscripciones WHERE endpoint = $1',
@@ -396,10 +397,11 @@ app.put('/tareas/:id', async (req, res) => {
 // 🔥 ELIMINAR TAREA
 app.delete('/tareas/:id', async (req, res) => {
   try {
+
     const id = req.params.id;
 
     await db.query(
-      'DELETE FROM tareas WHERE id = $1',
+      'DELETE FROM tareas_hotel WHERE id = $1',
       [id]
     );
 
