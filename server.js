@@ -9,10 +9,11 @@ const webpush = require('web-push');
 app.use(cors());
 app.use(express.json());
 
-app.use(express.static(path.join(__dirname, 'public')));
 
 const PUBLIC_KEY = 'BJ9e4DSpEVY0_Nq_FJ6py3oGRBKFl7BCh5wunz4q5bDjA87IaJP2vw902IOj4rNllyV0B8ddg52vwrA5gXq0DSw';
 const PRIVATE_KEY = 'UF2t6HaUoxPp33coN4MVWxS82cjPBNh3w0gHrKXdZEc';
+
+app.use(express.static(path.join(__dirname, 'public')));
 
 webpush.setVapidDetails(
   'mailto:tu@email.com',
@@ -70,7 +71,8 @@ app.get('/inventario', async (req, res) => {
     const result = await db.query('SELECT * FROM inventario');
     res.json(result.rows);
   } catch (err) {
-    res.status(500).send(err);
+    console.error("🔥 ERROR REAL INVENTARIO:", err);
+    res.status(500).send(err.message);
   }
 });
 
