@@ -2,1505 +2,2612 @@
 <html lang="es">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>CASA NOA | Panel Principal</title>
-
-  <link rel="manifest" href="/manifest.json">
-
-  <meta name="theme-color" content="#0f172a">
-
-  <link rel="icon" type="image/png" href="/logo.png">
-  <link rel="apple-touch-icon" href="/logo-192.png">
-
-  <style>
-    :root {
-      --primary: #2563eb;
-      --dark: #0f172a;
-      --background: #f4f7fb;
-      --white: #ffffff;
-      --text: #172033;
-      --text-soft: #64748b;
-      --border: #e2e8f0;
-      --green: #16a34a;
-      --orange: #ea580c;
-      --purple: #7c3aed;
-      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      min-height: 100vh;
-      font-family:
-        Inter,
-        -apple-system,
-        BlinkMacSystemFont,
-        "Segoe UI",
-        Arial,
-        sans-serif;
 
-      color: var(--text);
+    <meta charset="UTF-8">
 
-      background:
-        radial-gradient(
-          circle at 90% 0%,
-          rgba(37, 99, 235, 0.09),
-          transparent 28%
-        ),
-        linear-gradient(
-          180deg,
-          #f8fafc 0%,
-          #f4f7fb 100%
-        );
-    }
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    a {
-      color: inherit;
-    }
+    <title>CASA NOA | Panel Principal</title>
 
-    button {
-      font-family: inherit;
-    }
+    <link
+        rel="manifest"
+        href="/manifest.json"
+    >
 
-    .app {
-      width: 100%;
-      max-width: 1280px;
-      margin: auto;
-      padding: 28px 22px 50px;
-    }
+    <meta
+        name="theme-color"
+        content="#0f172a"
+    >
 
-    /* HEADER */
+    <link
+        rel="icon"
+        type="image/png"
+        href="/logo.png"
+    >
 
-    .header {
-      position: relative;
+    <link
+        rel="apple-touch-icon"
+        href="/logo-192.png"
+    >
 
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
 
-      gap: 25px;
+    <style>
 
-      min-height: 150px;
+        :root {
 
-      padding: 30px 34px;
+            --primary: #2563eb;
 
-      overflow: hidden;
+            --primary-dark: #1d4ed8;
 
-      color: white;
+            --dark: #0f172a;
 
-      border-radius: 26px;
+            --background: #f4f7fb;
 
-      background:
-        linear-gradient(
-          135deg,
-          #0f172a 0%,
-          #172554 50%,
-          #2563eb 100%
-        );
+            --white: #ffffff;
 
-      box-shadow:
-        0 20px 45px rgba(15, 23, 42, 0.20);
-    }
+            --text: #172033;
 
-    .header::before {
-      content: "";
+            --text-soft: #64748b;
 
-      position: absolute;
+            --border: #e2e8f0;
 
-      width: 280px;
-      height: 280px;
+            --green: #16a34a;
 
-      right: -90px;
-      top: -140px;
+            --orange: #ea580c;
 
-      border-radius: 50%;
+            --purple: #7c3aed;
 
-      background:
-        rgba(255, 255, 255, 0.07);
-    }
+            --shadow:
+                0 10px 30px rgba(15, 23, 42, 0.08);
 
-    .brand {
-      position: relative;
-      z-index: 2;
+            --shadow-hover:
+                0 18px 40px rgba(15, 23, 42, 0.14);
 
-      display: flex;
-      align-items: center;
+        }
 
-      gap: 18px;
-    }
 
-    .brand-logo {
-      width: 70px;
-      height: 70px;
+        * {
 
-      padding: 8px;
+            box-sizing: border-box;
 
-      object-fit: contain;
+            margin: 0;
 
-      border-radius: 18px;
+            padding: 0;
 
-      background: white;
+        }
 
-      box-shadow:
-        0 10px 25px rgba(0, 0, 0, 0.15);
-    }
 
-    .brand-info h1 {
-      margin-bottom: 8px;
+        body {
 
-      font-size: 31px;
+            min-height: 100vh;
 
-      line-height: 1;
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
 
-      letter-spacing: -1px;
-    }
+            color: var(--text);
 
-    .brand-info p {
-      color: #cbd5e1;
-      font-size: 14px;
-    }
+            background:
+                radial-gradient(
+                    circle at 90% 0%,
+                    rgba(37, 99, 235, 0.09),
+                    transparent 28%
+                ),
+                linear-gradient(
+                    180deg,
+                    #f8fafc 0%,
+                    #f4f7fb 100%
+                );
 
-    .header-actions {
-      position: relative;
-      z-index: 2;
+        }
 
-      display: flex;
-      align-items: center;
 
-      gap: 10px;
-    }
+        a {
 
-    .header-button {
-      padding: 12px 16px;
+            color: inherit;
 
-      border: 0;
-      border-radius: 12px;
+        }
 
-      font-size: 13px;
-      font-weight: 700;
 
-      cursor: pointer;
+        button {
 
-      transition:
-        transform 0.2s ease,
-        opacity 0.2s ease;
-    }
+            font-family: inherit;
 
-    .header-button:hover {
-      opacity: 0.92;
-      transform: translateY(-2px);
-    }
+        }
 
-    .notification-button {
-      color: white;
 
-      border:
-        1px solid rgba(255, 255, 255, 0.15);
+        /* =====================================================
+           APP
+        ===================================================== */
 
-      background:
-        rgba(255, 255, 255, 0.13);
-    }
+        .app {
 
-    .install-button {
-      display: none;
+            width: 100%;
 
-      color: var(--primary);
+            max-width: 1280px;
 
-      background: white;
-    }
+            margin: auto;
 
-    /* WELCOME */
+            padding:
+                28px
+                22px
+                50px;
 
-    .welcome {
-      padding: 30px 3px 20px;
-    }
+        }
 
-    .welcome h2 {
-      margin-bottom: 7px;
 
-      color: var(--dark);
+        /* =====================================================
+           HEADER
+        ===================================================== */
 
-      font-size: 23px;
+        .header {
 
-      letter-spacing: -0.4px;
-    }
+            position: relative;
 
-    .welcome p {
-      color: var(--text-soft);
-      font-size: 14px;
-    }
+            display: flex;
 
-    /* ESTADÍSTICAS */
+            align-items: center;
 
-    .statistics {
-      display: grid;
+            justify-content: space-between;
 
-      grid-template-columns:
-        repeat(4, 1fr);
+            gap: 25px;
 
-      gap: 16px;
+            min-height: 150px;
 
-      margin-bottom: 34px;
-    }
+            padding:
+                30px
+                34px;
 
-    .stat-card {
-      padding: 21px;
+            overflow: hidden;
 
-      border:
-        1px solid var(--border);
+            color: white;
 
-      border-radius: 18px;
+            border-radius: 26px;
 
-      background: var(--white);
+            background:
+                linear-gradient(
+                    135deg,
+                    #0f172a 0%,
+                    #172554 50%,
+                    #2563eb 100%
+                );
 
-      box-shadow: var(--shadow);
+            box-shadow:
+                0 20px 45px
+                rgba(15, 23, 42, 0.20);
 
-      transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease;
-    }
+        }
 
-    .stat-card:hover {
-      transform: translateY(-4px);
 
-      box-shadow:
-        0 18px 40px rgba(15, 23, 42, 0.13);
-    }
+        .header::before {
 
-    .stat-header {
-      display: flex;
+            content: "";
 
-      align-items: center;
-      justify-content: space-between;
+            position: absolute;
 
-      margin-bottom: 17px;
-    }
+            width: 280px;
 
-    .stat-title {
-      color: var(--text-soft);
+            height: 280px;
 
-      font-size: 13px;
+            right: -90px;
 
-      font-weight: 700;
-    }
+            top: -140px;
 
-    .stat-icon {
-      width: 43px;
-      height: 43px;
+            border-radius: 50%;
 
-      display: flex;
+            background:
+                rgba(255, 255, 255, 0.07);
 
-      align-items: center;
-      justify-content: center;
+        }
 
-      border-radius: 13px;
 
-      font-size: 21px;
-    }
+        .header::after {
 
-    .stat-blue .stat-icon {
-      background: #eff6ff;
-    }
+            content: "";
 
-    .stat-green .stat-icon {
-      background: #ecfdf5;
-    }
+            position: absolute;
 
-    .stat-orange .stat-icon {
-      background: #fff7ed;
-    }
+            width: 180px;
 
-    .stat-purple .stat-icon {
-      background: #f5f3ff;
-    }
+            height: 180px;
 
-    .stat-number {
-      color: var(--dark);
+            left: 35%;
 
-      font-size: 30px;
+            bottom: -140px;
 
-      font-weight: 800;
+            border-radius: 50%;
 
-      line-height: 1;
-    }
+            background:
+                rgba(255, 255, 255, 0.04);
 
-    /* SECCIÓN */
+        }
 
-    .section-header {
-      display: flex;
 
-      align-items: flex-end;
-      justify-content: space-between;
+        .brand {
 
-      margin-bottom: 16px;
-    }
+            position: relative;
 
-    .section-header h2 {
-      margin-bottom: 5px;
+            z-index: 2;
 
-      color: var(--dark);
+            display: flex;
 
-      font-size: 20px;
-    }
+            align-items: center;
 
-    .section-header p {
-      color: var(--text-soft);
-      font-size: 13px;
-    }
+            gap: 18px;
 
-    /* MÓDULOS */
+        }
 
-    .modules {
-      display: grid;
 
-      grid-template-columns:
-        repeat(2, 1fr);
+        .brand-logo {
 
-      gap: 16px;
-    }
+            width: 70px;
 
-    .module {
-      display: flex;
+            height: 70px;
 
-      align-items: center;
+            padding: 8px;
 
-      gap: 17px;
+            object-fit: contain;
 
-      min-height: 112px;
+            border-radius: 18px;
 
-      padding: 20px;
+            background: white;
 
-      text-decoration: none;
+            box-shadow:
+                0 10px 25px
+                rgba(0, 0, 0, 0.15);
 
-      border:
-        1px solid var(--border);
+        }
 
-      border-radius: 19px;
 
-      background: white;
+        .brand-info h1 {
 
-      box-shadow: var(--shadow);
+            margin-bottom: 8px;
 
-      transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        border-color 0.2s ease;
-    }
+            font-size: 31px;
 
-    .module:hover {
-      transform: translateY(-4px);
+            line-height: 1;
 
-      border-color: #bfdbfe;
+            letter-spacing: -1px;
 
-      box-shadow:
-        0 18px 40px rgba(15, 23, 42, 0.13);
-    }
+        }
 
-    .module-icon {
-      width: 58px;
-      height: 58px;
 
-      display: flex;
+        .brand-info p {
 
-      align-items: center;
-      justify-content: center;
+            color: #cbd5e1;
 
-      flex-shrink: 0;
+            font-size: 14px;
 
-      border-radius: 16px;
+        }
 
-      font-size: 27px;
-    }
 
-    .module-info {
-      flex: 1;
-    }
+        .header-actions {
 
-    .module-info h3 {
-      margin-bottom: 6px;
+            position: relative;
 
-      color: var(--dark);
+            z-index: 2;
 
-      font-size: 16px;
-    }
+            display: flex;
 
-    .module-info p {
-      color: var(--text-soft);
+            align-items: center;
 
-      font-size: 13px;
+            gap: 10px;
 
-      line-height: 1.45;
-    }
+        }
 
-    .module-arrow {
-      color: #94a3b8;
 
-      font-size: 22px;
+        .header-button {
 
-      transition:
-        transform 0.2s ease,
-        color 0.2s ease;
-    }
+            padding:
+                12px
+                16px;
 
-    .module:hover .module-arrow {
-      color: var(--primary);
+            border: 0;
 
-      transform:
-        translateX(5px);
-    }
+            border-radius: 12px;
 
-    .module-habitaciones .module-icon {
-      background: #eff6ff;
-    }
+            font-size: 13px;
 
-    .module-limpieza .module-icon {
-      background: #ecfdf5;
-    }
+            font-weight: 700;
 
-    .module-mantenimiento .module-icon {
-      background: #fff7ed;
-    }
+            cursor: pointer;
 
-    .module-inventario .module-icon {
-      background: #fef2f2;
-    }
+            transition:
+                transform 0.2s ease,
+                opacity 0.2s ease;
 
-    .module-tareas .module-icon {
-      background: #f5f3ff;
-    }
+        }
 
-    /* ACCESO RÁPIDO */
 
-    .quick-access {
-      margin-top: 32px;
+        .header-button:hover {
 
-      padding: 23px;
+            opacity: 0.92;
 
-      border:
-        1px solid var(--border);
+            transform:
+                translateY(-2px);
 
-      border-radius: 20px;
+        }
 
-      background: white;
 
-      box-shadow: var(--shadow);
-    }
+        .header-button:disabled {
 
-    .quick-access h2 {
-      margin-bottom: 16px;
+            cursor: default;
 
-      color: var(--dark);
+            opacity: 0.9;
 
-      font-size: 18px;
-    }
+            transform: none;
 
-    .quick-list {
-      display: flex;
+        }
 
-      flex-wrap: wrap;
 
-      gap: 10px;
-    }
+        .notification-button {
 
-    .quick-link {
-      display: inline-flex;
+            color: white;
 
-      align-items: center;
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.15);
 
-      gap: 7px;
+            background:
+                rgba(255, 255, 255, 0.13);
 
-      padding: 10px 14px;
+        }
 
-      color: #334155;
 
-      font-size: 13px;
+        .install-button {
 
-      font-weight: 700;
+            display: none;
 
-      text-decoration: none;
+            color: var(--primary);
 
-      border:
-        1px solid var(--border);
+            background: white;
 
-      border-radius: 11px;
+        }
 
-      background: #f8fafc;
 
-      transition:
-        background 0.2s ease,
-        color 0.2s ease,
-        border-color 0.2s ease;
-    }
+        /* =====================================================
+           WELCOME
+        ===================================================== */
 
-    .quick-link:hover {
-      color: var(--primary);
+        .welcome {
 
-      border-color: #bfdbfe;
+            padding:
+                30px
+                3px
+                20px;
 
-      background: #eff6ff;
-    }
+        }
 
-    /* NOTIFICACIONES */
 
-    .notification-status {
-      display: flex;
+        .welcome h2 {
 
-      align-items: center;
+            margin-bottom: 7px;
 
-      gap: 10px;
+            color: var(--dark);
 
-      margin-top: 18px;
+            font-size: 23px;
 
-      padding: 13px 16px;
+            letter-spacing: -0.4px;
 
-      color: #475569;
+        }
 
-      font-size: 13px;
 
-      border:
-        1px solid var(--border);
+        .welcome p {
 
-      border-radius: 13px;
+            color: var(--text-soft);
 
-      background: #f8fafc;
-    }
+            font-size: 14px;
 
-    .status-dot {
-      width: 9px;
-      height: 9px;
+        }
 
-      border-radius: 50%;
 
-      background: #94a3b8;
-    }
+        /* =====================================================
+           FECHA DEL PANEL
+        ===================================================== */
 
-    .status-dot.active {
-      background: #16a34a;
+        .dashboard-date {
 
-      box-shadow:
-        0 0 0 4px rgba(22, 163, 74, 0.12);
-    }
+            display: flex;
 
-    /* FOOTER */
+            align-items: center;
 
-    .footer {
-      padding-top: 35px;
+            gap: 9px;
 
-      text-align: center;
+            margin-top: 12px;
 
-      color: #94a3b8;
+            color: #475569;
 
-      font-size: 12px;
-    }
+            font-size: 13px;
 
-    /* RESPONSIVE */
+            font-weight: 600;
 
-    @media (max-width: 900px) {
+        }
 
-      .statistics {
-        grid-template-columns:
-          repeat(2, 1fr);
-      }
 
-      .header {
-        padding: 26px;
-      }
-    }
+        .dashboard-date span:first-child {
 
-    @media (max-width: 680px) {
+            display: flex;
 
-      .app {
-        padding:
-          14px
-          12px
-          35px;
-      }
+            align-items: center;
 
-      .header {
-        align-items: flex-start;
+            justify-content: center;
 
-        flex-direction: column;
+            width: 30px;
 
-        padding: 22px;
+            height: 30px;
 
-        border-radius: 21px;
-      }
+            border-radius: 9px;
 
-      .brand-logo {
-        width: 58px;
-        height: 58px;
-      }
+            background: #eff6ff;
 
-      .brand-info h1 {
-        font-size: 25px;
-      }
+            font-size: 15px;
 
-      .header-actions {
-        width: 100%;
-      }
+        }
 
-      .header-button {
-        flex: 1;
-      }
 
-      .statistics {
-        grid-template-columns:
-          1fr 1fr;
+        /* =====================================================
+           ESTADÍSTICAS
+        ===================================================== */
 
-        gap: 10px;
-      }
+        .statistics {
 
-      .stat-card {
-        padding: 17px;
-      }
+            display: grid;
 
-      .stat-number {
-        font-size: 25px;
-      }
+            grid-template-columns:
+                repeat(4, 1fr);
 
-      .modules {
-        grid-template-columns: 1fr;
-      }
+            gap: 16px;
 
-      .module {
-        min-height: 100px;
-      }
-    }
+            margin-bottom: 34px;
 
-    @media (max-width: 430px) {
+        }
 
-      .statistics {
-        grid-template-columns: 1fr;
-      }
 
-      .brand-info p {
-        font-size: 12px;
-      }
+        .stat-card {
 
-      .quick-access {
-        padding: 18px;
-      }
-    }
-  </style>
+            position: relative;
+
+            padding: 21px;
+
+            overflow: hidden;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 18px;
+
+            background: var(--white);
+
+            box-shadow: var(--shadow);
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease;
+
+        }
+
+
+        .stat-card::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 90px;
+
+            height: 90px;
+
+            right: -35px;
+
+            bottom: -35px;
+
+            border-radius: 50%;
+
+            background:
+                rgba(37, 99, 235, 0.04);
+
+        }
+
+
+        .stat-card:hover {
+
+            transform:
+                translateY(-4px);
+
+            box-shadow:
+                var(--shadow-hover);
+
+        }
+
+
+        .stat-header {
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            margin-bottom: 17px;
+
+        }
+
+
+        .stat-title {
+
+            color: var(--text-soft);
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+        }
+
+
+        .stat-icon {
+
+            width: 43px;
+
+            height: 43px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 13px;
+
+            font-size: 21px;
+
+        }
+
+
+        .stat-blue .stat-icon {
+
+            background: #eff6ff;
+
+        }
+
+
+        .stat-green .stat-icon {
+
+            background: #ecfdf5;
+
+        }
+
+
+        .stat-orange .stat-icon {
+
+            background: #fff7ed;
+
+        }
+
+
+        .stat-purple .stat-icon {
+
+            background: #f5f3ff;
+
+        }
+
+
+        .stat-number {
+
+            color: var(--dark);
+
+            font-size: 30px;
+
+            font-weight: 800;
+
+            line-height: 1;
+
+        }
+
+
+        .stat-subtitle {
+
+            margin-top: 8px;
+
+            color: #94a3b8;
+
+            font-size: 11px;
+
+        }
+
+
+        /* =====================================================
+           SECCIÓN
+        ===================================================== */
+
+        .section-header {
+
+            display: flex;
+
+            align-items: flex-end;
+
+            justify-content: space-between;
+
+            margin-bottom: 16px;
+
+        }
+
+
+        .section-header h2 {
+
+            margin-bottom: 5px;
+
+            color: var(--dark);
+
+            font-size: 20px;
+
+        }
+
+
+        .section-header p {
+
+            color: var(--text-soft);
+
+            font-size: 13px;
+
+        }
+
+
+        /* =====================================================
+           MÓDULOS
+        ===================================================== */
+
+        .modules {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 16px;
+
+        }
+
+
+        .module {
+
+            position: relative;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 17px;
+
+            min-height: 112px;
+
+            padding: 20px;
+
+            text-decoration: none;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 19px;
+
+            background: white;
+
+            box-shadow: var(--shadow);
+
+            transition:
+                transform 0.2s ease,
+                box-shadow 0.2s ease,
+                border-color 0.2s ease;
+
+        }
+
+
+        .module:hover {
+
+            transform:
+                translateY(-4px);
+
+            border-color:
+                #bfdbfe;
+
+            box-shadow:
+                var(--shadow-hover);
+
+        }
+
+
+        .module-icon {
+
+            width: 58px;
+
+            height: 58px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-shrink: 0;
+
+            border-radius: 16px;
+
+            font-size: 27px;
+
+        }
+
+
+        .module-info {
+
+            flex: 1;
+
+        }
+
+
+        .module-info h3 {
+
+            margin-bottom: 6px;
+
+            color: var(--dark);
+
+            font-size: 16px;
+
+        }
+
+
+        .module-info p {
+
+            color: var(--text-soft);
+
+            font-size: 13px;
+
+            line-height: 1.45;
+
+        }
+
+
+        .module-arrow {
+
+            color: #94a3b8;
+
+            font-size: 22px;
+
+            transition:
+                transform 0.2s ease,
+                color 0.2s ease;
+
+        }
+
+
+        .module:hover .module-arrow {
+
+            color: var(--primary);
+
+            transform:
+                translateX(5px);
+
+        }
+
+
+        .module-habitaciones .module-icon {
+
+            background: #eff6ff;
+
+        }
+
+
+        .module-limpieza .module-icon {
+
+            background: #ecfdf5;
+
+        }
+
+
+        .module-mantenimiento .module-icon {
+
+            background: #fff7ed;
+
+        }
+
+
+        .module-inventario .module-icon {
+
+            background: #fef2f2;
+
+        }
+
+
+        .module-tareas .module-icon {
+
+            background: #f5f3ff;
+
+        }
+
+
+        /* =====================================================
+           ACCESO RÁPIDO
+        ===================================================== */
+
+        .quick-access {
+
+            margin-top: 32px;
+
+            padding: 23px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 20px;
+
+            background: white;
+
+            box-shadow: var(--shadow);
+
+        }
+
+
+        .quick-access h2 {
+
+            margin-bottom: 16px;
+
+            color: var(--dark);
+
+            font-size: 18px;
+
+        }
+
+
+        .quick-list {
+
+            display: flex;
+
+            flex-wrap: wrap;
+
+            gap: 10px;
+
+        }
+
+
+        .quick-link {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 7px;
+
+            padding:
+                10px
+                14px;
+
+            color: #334155;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            text-decoration: none;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 11px;
+
+            background: #f8fafc;
+
+            transition:
+                background 0.2s ease,
+                color 0.2s ease,
+                border-color 0.2s ease;
+
+        }
+
+
+        .quick-link:hover {
+
+            color: var(--primary);
+
+            border-color:
+                #bfdbfe;
+
+            background:
+                #eff6ff;
+
+        }
+
+
+        /* =====================================================
+           NOTIFICACIONES
+        ===================================================== */
+
+        .notification-status {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            margin-top: 18px;
+
+            padding:
+                13px
+                16px;
+
+            color: #475569;
+
+            font-size: 13px;
+
+            border:
+                1px solid var(--border);
+
+            border-radius: 13px;
+
+            background:
+                #f8fafc;
+
+        }
+
+
+        .status-dot {
+
+            width: 9px;
+
+            height: 9px;
+
+            flex-shrink: 0;
+
+            border-radius: 50%;
+
+            background:
+                #94a3b8;
+
+        }
+
+
+        .status-dot.active {
+
+            background:
+                #16a34a;
+
+            box-shadow:
+                0 0 0 4px
+                rgba(22, 163, 74, 0.12);
+
+        }
+
+
+        /* =====================================================
+           FOOTER
+        ===================================================== */
+
+        .footer {
+
+            padding-top: 35px;
+
+            text-align: center;
+
+            color: #94a3b8;
+
+            font-size: 12px;
+
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 900px) {
+
+            .statistics {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+            }
+
+
+            .header {
+
+                padding: 26px;
+
+            }
+
+        }
+
+
+        @media (max-width: 680px) {
+
+            .app {
+
+                padding:
+                    14px
+                    12px
+                    35px;
+
+            }
+
+
+            .header {
+
+                align-items: flex-start;
+
+                flex-direction: column;
+
+                padding: 22px;
+
+                border-radius: 21px;
+
+            }
+
+
+            .brand-logo {
+
+                width: 58px;
+
+                height: 58px;
+
+            }
+
+
+            .brand-info h1 {
+
+                font-size: 25px;
+
+            }
+
+
+            .header-actions {
+
+                width: 100%;
+
+            }
+
+
+            .header-button {
+
+                flex: 1;
+
+            }
+
+
+            .statistics {
+
+                grid-template-columns:
+                    1fr 1fr;
+
+                gap: 10px;
+
+            }
+
+
+            .stat-card {
+
+                padding: 17px;
+
+            }
+
+
+            .stat-number {
+
+                font-size: 25px;
+
+            }
+
+
+            .modules {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .module {
+
+                min-height: 100px;
+
+            }
+
+        }
+
+
+        @media (max-width: 430px) {
+
+            .statistics {
+
+                grid-template-columns: 1fr;
+
+            }
+
+
+            .brand-info p {
+
+                font-size: 12px;
+
+            }
+
+
+            .quick-access {
+
+                padding: 18px;
+
+            }
+
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
-  <main class="app">
+
+<main class="app">
+
+
+    <!-- ===================================================
+         HEADER
+    =================================================== -->
 
     <header class="header">
 
-      <div class="brand">
 
-        <img
-          src="/logo.png"
-          alt="CASA NOA"
-          class="brand-logo"
-        >
+        <div class="brand">
 
-        <div class="brand-info">
 
-          <h1>CASA NOA</h1>
+            <img
+                src="/logo.png"
+                alt="CASA NOA"
+                class="brand-logo"
+            >
 
-          <p>
-            Gestión hotelera
-          </p>
+
+            <div class="brand-info">
+
+                <h1>
+                    CASA NOA
+                </h1>
+
+                <p>
+                    Gestión hotelera
+                </p>
+
+            </div>
+
 
         </div>
 
-      </div>
 
-      <div class="header-actions">
 
-        <button
-          id="btnNotificaciones"
-          class="header-button notification-button"
-          onclick="activarNotificaciones()"
-        >
-          🔔 Activar notificaciones
-        </button>
+        <div class="header-actions">
 
-        <button
-          id="btnInstalar"
-          class="header-button install-button"
-        >
-          📱 Instalar app
-        </button>
 
-      </div>
+            <button
+                id="btnNotificaciones"
+                class="header-button notification-button"
+                onclick="activarNotificaciones()"
+            >
+                🔔 Activar notificaciones
+            </button>
+
+
+            <button
+                id="btnInstalar"
+                class="header-button install-button"
+            >
+                📱 Instalar app
+            </button>
+
+
+        </div>
+
 
     </header>
 
 
+
+    <!-- ===================================================
+         BIENVENIDA
+    =================================================== -->
+
     <section class="welcome">
 
-      <h2>
-        Panel principal
-      </h2>
 
-      <p>
-        Administra de forma sencilla las operaciones diarias de CASA NOA.
-      </p>
+        <h2>
+            Panel principal
+        </h2>
+
+
+        <p>
+            Administra de forma sencilla las operaciones
+            diarias de CASA NOA.
+        </p>
+
+
+        <div class="dashboard-date">
+
+
+            <span>
+                📅
+            </span>
+
+
+            <span id="fechaPanel">
+                Cargando fecha...
+            </span>
+
+
+        </div>
+
 
     </section>
 
+
+
+    <!-- ===================================================
+         ESTADÍSTICAS
+    =================================================== -->
 
     <section class="statistics">
 
-      <article class="stat-card stat-blue">
 
-        <div class="stat-header">
+        <!-- HABITACIONES -->
 
-          <span class="stat-title">
-            Habitaciones
-          </span>
-
-          <div class="stat-icon">
-            🛏️
-          </div>
-
-        </div>
-
-        <div
-          id="totalHabitaciones"
-          class="stat-number"
-        >
-          —
-        </div>
-
-      </article>
+        <article class="stat-card stat-blue">
 
 
-      <article class="stat-card stat-green">
+            <div class="stat-header">
 
-        <div class="stat-header">
-
-          <span class="stat-title">
-            Limpiezas
-          </span>
-
-          <div class="stat-icon">
-            🧹
-          </div>
-
-        </div>
-
-        <div
-          id="totalLimpiezas"
-          class="stat-number"
-        >
-          —
-        </div>
-
-      </article>
+                <span class="stat-title">
+                    Habitaciones
+                </span>
 
 
-      <article class="stat-card stat-orange">
+                <div class="stat-icon">
+                    🛏️
+                </div>
 
-        <div class="stat-header">
-
-          <span class="stat-title">
-            Mantenimientos
-          </span>
-
-          <div class="stat-icon">
-            🔧
-          </div>
-
-        </div>
-
-        <div
-          id="totalMantenimientos"
-          class="stat-number"
-        >
-          —
-        </div>
-
-      </article>
+            </div>
 
 
-      <article class="stat-card stat-purple">
+            <div
+                id="totalHabitaciones"
+                class="stat-number"
+            >
+                —
+            </div>
 
-        <div class="stat-header">
 
-          <span class="stat-title">
-            Tareas
-          </span>
+            <div class="stat-subtitle">
+                Registros del día
+            </div>
 
-          <div class="stat-icon">
-            📋
-          </div>
 
-        </div>
+        </article>
 
-        <div
-          id="totalTareas"
-          class="stat-number"
-        >
-          —
-        </div>
 
-      </article>
+
+        <!-- LIMPIEZAS -->
+
+        <article class="stat-card stat-green">
+
+
+            <div class="stat-header">
+
+                <span class="stat-title">
+                    Limpiezas
+                </span>
+
+
+                <div class="stat-icon">
+                    🧹
+                </div>
+
+            </div>
+
+
+            <div
+                id="totalLimpiezas"
+                class="stat-number"
+            >
+                —
+            </div>
+
+
+            <div
+                id="subLimpiezas"
+                class="stat-subtitle"
+            >
+                Registros del mes actual
+            </div>
+
+
+        </article>
+
+
+
+        <!-- MANTENIMIENTOS -->
+
+        <article class="stat-card stat-orange">
+
+
+            <div class="stat-header">
+
+                <span class="stat-title">
+                    Mantenimientos
+                </span>
+
+
+                <div class="stat-icon">
+                    🔧
+                </div>
+
+            </div>
+
+
+            <div
+                id="totalMantenimientos"
+                class="stat-number"
+            >
+                —
+            </div>
+
+
+            <div class="stat-subtitle">
+                Registros actuales
+            </div>
+
+
+        </article>
+
+
+
+        <!-- TAREAS -->
+
+        <article class="stat-card stat-purple">
+
+
+            <div class="stat-header">
+
+                <span class="stat-title">
+                    Tareas
+                </span>
+
+
+                <div class="stat-icon">
+                    📋
+                </div>
+
+            </div>
+
+
+            <div
+                id="totalTareas"
+                class="stat-number"
+            >
+                —
+            </div>
+
+
+            <div class="stat-subtitle">
+                Registros actuales
+            </div>
+
+
+        </article>
+
 
     </section>
 
+
+
+    <!-- ===================================================
+         MÓDULOS
+    =================================================== -->
 
     <section>
 
-      <div class="section-header">
 
-        <div>
+        <div class="section-header">
 
-          <h2>
-            Gestión del hotel
-          </h2>
 
-          <p>
-            Accede rápidamente a cada módulo.
-          </p>
+            <div>
+
+                <h2>
+                    Gestión del hotel
+                </h2>
+
+
+                <p>
+                    Accede rápidamente a cada módulo.
+                </p>
+
+            </div>
+
 
         </div>
 
-      </div>
 
 
-      <div class="modules">
-
-        <a
-          href="/habitaciones.html"
-          class="module module-habitaciones"
-        >
-
-          <div class="module-icon">
-            🛏️
-          </div>
-
-          <div class="module-info">
-
-            <h3>
-              Habitaciones
-            </h3>
-
-            <p>
-              Consulta y administra las habitaciones del hotel.
-            </p>
-
-          </div>
-
-          <span class="module-arrow">
-            →
-          </span>
-
-        </a>
+        <div class="modules">
 
 
-        <a
-          href="/limpieza.html"
-          class="module module-limpieza"
-        >
+            <!-- HABITACIONES -->
 
-          <div class="module-icon">
-            🧹
-          </div>
+            <a
+                href="/habitaciones.html"
+                class="module module-habitaciones"
+            >
 
-          <div class="module-info">
-
-            <h3>
-              Limpieza
-            </h3>
-
-            <p>
-              Controla el estado y las actividades de limpieza.
-            </p>
-
-          </div>
-
-          <span class="module-arrow">
-            →
-          </span>
-
-        </a>
+                <div class="module-icon">
+                    🛏️
+                </div>
 
 
-        <a
-          href="/mantenimiento.html"
-          class="module module-mantenimiento"
-        >
+                <div class="module-info">
 
-          <div class="module-icon">
-            🔧
-          </div>
-
-          <div class="module-info">
-
-            <h3>
-              Mantenimiento
-            </h3>
-
-            <p>
-              Registra y controla reparaciones y mantenimientos.
-            </p>
-
-          </div>
-
-          <span class="module-arrow">
-            →
-          </span>
-
-        </a>
+                    <h3>
+                        Habitaciones
+                    </h3>
 
 
-        <a
-          href="/inventario.html"
-          class="module module-inventario"
-        >
+                    <p>
+                        Consulta y administra las habitaciones del hotel.
+                    </p>
 
-          <div class="module-icon">
-            📦
-          </div>
-
-          <div class="module-info">
-
-            <h3>
-              Inventario
-            </h3>
-
-            <p>
-              Administra productos, existencias y movimientos.
-            </p>
-
-          </div>
-
-          <span class="module-arrow">
-            →
-          </span>
-
-        </a>
+                </div>
 
 
-        <a
-          href="/tareas.html"
-          class="module module-tareas"
-        >
+                <span class="module-arrow">
+                    →
+                </span>
 
-          <div class="module-icon">
-            📋
-          </div>
+            </a>
 
-          <div class="module-info">
 
-            <h3>
-              Tareas
-            </h3>
 
-            <p>
-              Organiza, consulta y controla las tareas pendientes.
-            </p>
+            <!-- LIMPIEZA -->
 
-          </div>
+            <a
+                href="/limpieza.html"
+                class="module module-limpieza"
+            >
 
-          <span class="module-arrow">
-            →
-          </span>
+                <div class="module-icon">
+                    🧹
+                </div>
 
-        </a>
 
-      </div>
+                <div class="module-info">
+
+                    <h3>
+                        Limpieza
+                    </h3>
+
+
+                    <p>
+                        Controla las actividades organizadas por mes.
+                    </p>
+
+                </div>
+
+
+                <span class="module-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+
+            <!-- MANTENIMIENTO -->
+
+            <a
+                href="/mantenimiento.html"
+                class="module module-mantenimiento"
+            >
+
+                <div class="module-icon">
+                    🔧
+                </div>
+
+
+                <div class="module-info">
+
+                    <h3>
+                        Mantenimiento
+                    </h3>
+
+
+                    <p>
+                        Registra y controla reparaciones y mantenimientos.
+                    </p>
+
+                </div>
+
+
+                <span class="module-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+
+            <!-- INVENTARIO -->
+
+            <a
+                href="/inventario.html"
+                class="module module-inventario"
+            >
+
+                <div class="module-icon">
+                    📦
+                </div>
+
+
+                <div class="module-info">
+
+                    <h3>
+                        Inventario
+                    </h3>
+
+
+                    <p>
+                        Administra productos, existencias y movimientos.
+                    </p>
+
+                </div>
+
+
+                <span class="module-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+
+            <!-- TAREAS -->
+
+            <a
+                href="/tareas.html"
+                class="module module-tareas"
+            >
+
+                <div class="module-icon">
+                    📋
+                </div>
+
+
+                <div class="module-info">
+
+                    <h3>
+                        Tareas
+                    </h3>
+
+
+                    <p>
+                        Organiza, consulta y controla las tareas pendientes.
+                    </p>
+
+                </div>
+
+
+                <span class="module-arrow">
+                    →
+                </span>
+
+            </a>
+
+
+        </div>
+
 
     </section>
 
+
+
+    <!-- ===================================================
+         ACCESO RÁPIDO
+    =================================================== -->
 
     <section class="quick-access">
 
-      <h2>
-        Acceso rápido
-      </h2>
 
-      <div class="quick-list">
-
-        <a
-          href="/habitaciones.html"
-          class="quick-link"
-        >
-          🛏️ Habitaciones
-        </a>
-
-        <a
-          href="/limpieza.html"
-          class="quick-link"
-        >
-          🧹 Limpieza
-        </a>
-
-        <a
-          href="/mantenimiento.html"
-          class="quick-link"
-        >
-          🔧 Mantenimiento
-        </a>
-
-        <a
-          href="/inventario.html"
-          class="quick-link"
-        >
-          📦 Inventario
-        </a>
-
-        <a
-          href="/tareas.html"
-          class="quick-link"
-        >
-          📋 Tareas
-        </a>
-
-      </div>
+        <h2>
+            Acceso rápido
+        </h2>
 
 
-      <div class="notification-status">
+        <div class="quick-list">
 
-        <span
-          id="statusDot"
-          class="status-dot"
-        ></span>
 
-        <span id="notificationStatus">
-          Las notificaciones están desactivadas.
-        </span>
+            <a
+                href="/habitaciones.html"
+                class="quick-link"
+            >
+                🛏️ Habitaciones
+            </a>
 
-      </div>
+
+            <a
+                href="/limpieza.html"
+                class="quick-link"
+            >
+                🧹 Limpieza
+            </a>
+
+
+            <a
+                href="/mantenimiento.html"
+                class="quick-link"
+            >
+                🔧 Mantenimiento
+            </a>
+
+
+            <a
+                href="/inventario.html"
+                class="quick-link"
+            >
+                📦 Inventario
+            </a>
+
+
+            <a
+                href="/tareas.html"
+                class="quick-link"
+            >
+                📋 Tareas
+            </a>
+
+
+        </div>
+
+
+
+        <!-- NOTIFICACIONES -->
+
+        <div class="notification-status">
+
+
+            <span
+                id="statusDot"
+                class="status-dot"
+            ></span>
+
+
+            <span id="notificationStatus">
+                Las notificaciones están desactivadas.
+            </span>
+
+
+        </div>
+
 
     </section>
 
 
+
+    <!-- ===================================================
+         FOOTER
+    =================================================== -->
+
     <footer class="footer">
 
-      CASA NOA · Panel de gestión hotelera
+        CASA NOA · Panel de gestión hotelera
 
     </footer>
 
-  </main>
+
+</main>
 
 
-  <script>
+
+<script>
+
+
+    /* =====================================================
+       📅 FECHA ACTUAL
+    ===================================================== */
+
+    function obtenerFechaLocal() {
+
+        const ahora =
+            new Date();
+
+
+        const año =
+            ahora.getFullYear();
+
+
+        const mes =
+            String(
+                ahora.getMonth() + 1
+            ).padStart(
+                2,
+                "0"
+            );
+
+
+        const dia =
+            String(
+                ahora.getDate()
+            ).padStart(
+                2,
+                "0"
+            );
+
+
+        return `${año}-${mes}-${dia}`;
+
+    }
+
+
+
+    function mostrarFechaPanel() {
+
+        const elemento =
+            document.getElementById(
+                "fechaPanel"
+            );
+
+
+        const ahora =
+            new Date();
+
+
+        const fechaFormateada =
+            ahora.toLocaleDateString(
+                "es-CO",
+                {
+                    weekday: "long",
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+
+
+        elemento.textContent =
+            fechaFormateada
+                .charAt(0)
+                .toUpperCase()
+            +
+            fechaFormateada.slice(1);
+
+    }
+
+
+
+    /* =====================================================
+       📅 MES ACTUAL
+    ===================================================== */
+
+    function obtenerMesActualTexto() {
+
+        const ahora =
+            new Date();
+
+
+        return ahora.toLocaleDateString(
+            "es-CO",
+            {
+                month: "long",
+                year: "numeric"
+            }
+        );
+
+    }
+
+
+
+    /* =====================================================
+       📅 COMPROBAR SI ES DEL MES ACTUAL
+    ===================================================== */
+
+    function perteneceAlMesActual(
+        fecha
+    ) {
+
+        if (!fecha) {
+
+            return false;
+
+        }
+
+
+        const texto =
+            String(fecha)
+                .split("T")[0]
+                .split(" ")[0]
+                .trim();
+
+
+        const partes =
+            texto.split("-");
+
+
+        if (
+            partes.length !== 3
+        ) {
+
+            return false;
+
+        }
+
+
+        const año =
+            Number(
+                partes[0]
+            );
+
+
+        const mes =
+            Number(
+                partes[1]
+            );
+
+
+        const ahora =
+            new Date();
+
+
+        return (
+            año ===
+                ahora.getFullYear()
+            &&
+            mes ===
+                ahora.getMonth() + 1
+        );
+
+    }
+
+
+
+    /* =====================================================
+       🛏️ CARGAR ESTADÍSTICAS
+    ===================================================== */
 
     async function cargarEstadisticas() {
 
-      const elementos = {
 
-        habitaciones:
-          document.getElementById(
-            "totalHabitaciones"
-          ),
-
-        limpieza:
-          document.getElementById(
-            "totalLimpiezas"
-          ),
-
-        mantenimiento:
-          document.getElementById(
-            "totalMantenimientos"
-          ),
-
-        tareas:
-          document.getElementById(
-            "totalTareas"
-          )
-
-      };
+        const elementos = {
 
 
-      const endpoints = {
-
-        habitaciones:
-          "/habitaciones",
-
-        limpieza:
-          "/limpieza",
-
-        mantenimiento:
-          "/mantenimiento",
-
-        tareas:
-          "/tareas"
-
-      };
+            habitaciones:
+                document.getElementById(
+                    "totalHabitaciones"
+                ),
 
 
-      for (const tipo in endpoints) {
-
-        try {
-
-          const respuesta =
-            await fetch(
-              endpoints[tipo]
-            );
-
-          if (!respuesta.ok) {
-            throw new Error(
-              "Error HTTP"
-            );
-          }
-
-          const datos =
-            await respuesta.json();
+            limpieza:
+                document.getElementById(
+                    "totalLimpiezas"
+                ),
 
 
-          elementos[tipo].textContent =
-            Array.isArray(datos)
-              ? datos.length
-              : 0;
+            mantenimiento:
+                document.getElementById(
+                    "totalMantenimientos"
+                ),
 
-        } catch (error) {
 
-          console.error(
-            `Error cargando ${tipo}:`,
-            error
-          );
+            tareas:
+                document.getElementById(
+                    "totalTareas"
+                )
 
-          elementos[tipo].textContent =
-            "—";
+
+        };
+
+
+
+        const endpoints = {
+
+
+            habitaciones:
+                "/habitaciones",
+
+
+            limpieza:
+                "/limpieza",
+
+
+            mantenimiento:
+                "/mantenimiento",
+
+
+            tareas:
+                "/tareas"
+
+
+        };
+
+
+
+        const fechaHoy =
+            obtenerFechaLocal();
+
+
+
+        for (
+            const tipo in endpoints
+        ) {
+
+
+            try {
+
+
+                const respuesta =
+                    await fetch(
+                        endpoints[tipo]
+                    );
+
+
+
+                if (
+                    !respuesta.ok
+                ) {
+
+                    throw new Error(
+                        `HTTP ${respuesta.status}`
+                    );
+
+                }
+
+
+
+                const datos =
+                    await respuesta.json();
+
+
+
+                if (
+                    !Array.isArray(
+                        datos
+                    )
+                ) {
+
+                    elementos[tipo]
+                        .textContent = 0;
+
+                    continue;
+
+                }
+
+
+
+                /* =========================================
+                   HABITACIONES DEL DÍA
+                ========================================= */
+
+                if (
+                    tipo ===
+                    "habitaciones"
+                ) {
+
+
+                    const habitacionesHoy =
+                        datos.filter(
+                            item => {
+
+
+                                if (
+                                    !item.fecha
+                                ) {
+
+                                    return false;
+
+                                }
+
+
+
+                                const fecha =
+                                    String(
+                                        item.fecha
+                                    )
+                                    .split("T")[0]
+                                    .split(" ")[0]
+                                    .trim();
+
+
+
+                                return (
+                                    fecha ===
+                                    fechaHoy
+                                );
+
+                            }
+                        );
+
+
+
+                    elementos[tipo]
+                        .textContent =
+                            habitacionesHoy.length;
+
+
+                }
+
+
+                /* =========================================
+                   LIMPIEZA DEL MES ACTUAL
+                ========================================= */
+
+                else if (
+                    tipo ===
+                    "limpieza"
+                ) {
+
+
+                    const limpiezasMes =
+                        datos.filter(
+                            item =>
+                                perteneceAlMesActual(
+                                    item.fecha
+                                )
+                        );
+
+
+
+                    elementos[tipo]
+                        .textContent =
+                            limpiezasMes.length;
+
+
+
+                    const subtitulo =
+                        document.getElementById(
+                            "subLimpiezas"
+                        );
+
+
+
+                    subtitulo.textContent =
+                        `${obtenerMesActualTexto()} · ${limpiezasMes.length} actividad${
+                            limpiezasMes.length === 1
+                                ? ""
+                                : "es"
+                        }`;
+
+                }
+
+
+                /* =========================================
+                   MANTENIMIENTO
+                ========================================= */
+
+                else {
+
+
+                    elementos[tipo]
+                        .textContent =
+                            datos.length;
+
+                }
+
+
+            } catch (error) {
+
+
+                console.error(
+                    `Error cargando ${tipo}:`,
+                    error
+                );
+
+
+                elementos[tipo]
+                    .textContent =
+                        "—";
+
+            }
+
         }
-      }
+
     }
 
 
+
+    /* =====================================================
+       🔔 VAPID PUBLIC KEY
+    ===================================================== */
+
     const VAPID_PUBLIC_KEY =
-      "BJ9e4DSpEVY0_Nq_FJ6py3oGRBKFl7BCh5wunz4q5bDjA87IaJP2vw902IOj4rNllyV0B8ddg52vwrA5gXq0DSw";
+        "BJ9e4DSpEVY0_Nq_FJ6py3oGRBKFl7BCh5wunz4q5bDjA87IaJP2vw902IOj4rNllyV0B8ddg52vwrA5gXq0DSw";
+
 
 
     function urlBase64ToUint8Array(
-      base64String
+        base64String
     ) {
 
-      const padding =
-        "=".repeat(
-          (4 -
-            base64String.length % 4) % 4
+
+        const padding =
+            "=".repeat(
+                (
+                    4 -
+                    base64String.length % 4
+                ) % 4
+            );
+
+
+
+        const base64 =
+            (
+                base64String
+                    .replace(
+                        /-/g,
+                        "+"
+                    )
+                    .replace(
+                        /_/g,
+                        "/"
+                    )
+                +
+                padding
+            );
+
+
+
+        const rawData =
+            window.atob(
+                base64
+            );
+
+
+
+        return Uint8Array.from(
+            [...rawData].map(
+                char =>
+                    char.charCodeAt(0)
+            )
         );
 
-      const base64 =
-        (
-          base64String
-            .replace(/-/g, "+")
-            .replace(/_/g, "/")
-          + padding
-        );
-
-      const rawData =
-        window.atob(base64);
-
-      return Uint8Array.from(
-        [...rawData].map(
-          char =>
-            char.charCodeAt(0)
-        )
-      );
     }
 
+
+
+    /* =====================================================
+       🔔 ACTIVAR NOTIFICACIONES
+    ===================================================== */
 
     async function activarNotificaciones() {
 
-      const boton =
-        document.getElementById(
-          "btnNotificaciones"
-        );
 
-      const estado =
-        document.getElementById(
-          "notificationStatus"
-        );
-
-      const punto =
-        document.getElementById(
-          "statusDot"
-        );
+        const boton =
+            document.getElementById(
+                "btnNotificaciones"
+            );
 
 
-      if (
-        !("Notification" in window)
-      ) {
-
-        estado.textContent =
-          "Este navegador no admite notificaciones.";
-
-        return;
-      }
+        const estado =
+            document.getElementById(
+                "notificationStatus"
+            );
 
 
-      if (
-        !("serviceWorker" in navigator)
-      ) {
-
-        estado.textContent =
-          "Este navegador no admite Service Worker.";
-
-        return;
-      }
+        const punto =
+            document.getElementById(
+                "statusDot"
+            );
 
 
-      try {
 
-        boton.disabled = true;
+        if (
+            !("Notification" in window)
+        ) {
 
-        boton.textContent =
-          "Activando...";
+            estado.textContent =
+                "Este navegador no admite notificaciones.";
 
+            return;
 
-        const permiso =
-          await Notification.requestPermission();
-
-
-        if (permiso !== "granted") {
-
-          estado.textContent =
-            "Permiso de notificaciones no concedido.";
-
-          boton.disabled = false;
-
-          boton.textContent =
-            "🔔 Activar notificaciones";
-
-          return;
         }
 
 
-        const registro =
-          await navigator.serviceWorker.ready;
 
+        if (
+            !("serviceWorker" in navigator)
+        ) {
 
-        let suscripcion =
-          await registro.pushManager
-            .getSubscription();
+            estado.textContent =
+                "Este navegador no admite Service Worker.";
 
+            return;
 
-        if (!suscripcion) {
-
-          suscripcion =
-            await registro.pushManager.subscribe({
-
-              userVisibleOnly: true,
-
-              applicationServerKey:
-                urlBase64ToUint8Array(
-                  VAPID_PUBLIC_KEY
-                )
-
-            });
         }
 
 
-        const respuesta =
-          await fetch(
-            "/suscribir",
-            {
-              method: "POST",
 
-              headers: {
-                "Content-Type":
-                  "application/json"
-              },
+        try {
 
-              body:
-                JSON.stringify(
-                  suscripcion
-                )
+
+            boton.disabled = true;
+
+            boton.textContent =
+                "Activando...";
+
+
+
+            const permiso =
+                await Notification.requestPermission();
+
+
+
+            if (
+                permiso !==
+                "granted"
+            ) {
+
+
+                estado.textContent =
+                    "Permiso de notificaciones no concedido.";
+
+
+                boton.disabled =
+                    false;
+
+
+                boton.textContent =
+                    "🔔 Activar notificaciones";
+
+
+                return;
+
             }
-          );
 
 
-        if (!respuesta.ok) {
 
-          throw new Error(
-            "No se pudo registrar la suscripción."
-          );
+            const registro =
+                await navigator
+                    .serviceWorker
+                    .ready;
+
+
+
+            let suscripcion =
+                await registro
+                    .pushManager
+                    .getSubscription();
+
+
+
+            if (!suscripcion) {
+
+
+                suscripcion =
+                    await registro
+                        .pushManager
+                        .subscribe({
+
+                            userVisibleOnly:
+                                true,
+
+                            applicationServerKey:
+                                urlBase64ToUint8Array(
+                                    VAPID_PUBLIC_KEY
+                                )
+
+                        });
+
+            }
+
+
+
+            const respuesta =
+                await fetch(
+                    "/suscribir",
+                    {
+
+                        method:
+                            "POST",
+
+                        headers: {
+
+                            "Content-Type":
+                                "application/json"
+
+                        },
+
+                        body:
+                            JSON.stringify(
+                                suscripcion
+                            )
+
+                    }
+                );
+
+
+
+            if (
+                !respuesta.ok
+            ) {
+
+                throw new Error(
+                    "No se pudo registrar la suscripción."
+                );
+
+            }
+
+
+
+            estado.textContent =
+                "Notificaciones activadas correctamente.";
+
+
+            punto.classList.add(
+                "active"
+            );
+
+
+            boton.textContent =
+                "✓ Notificaciones activas";
+
+
+            boton.disabled =
+                true;
+
+
+
+        } catch (error) {
+
+
+            console.error(
+                "Error activando notificaciones:",
+                error
+            );
+
+
+            estado.textContent =
+                "No fue posible activar las notificaciones.";
+
+
+            boton.disabled =
+                false;
+
+
+            boton.textContent =
+                "🔔 Activar notificaciones";
+
         }
 
-
-        estado.textContent =
-          "Notificaciones activadas correctamente.";
-
-        punto.classList.add(
-          "active"
-        );
-
-        boton.textContent =
-          "✓ Notificaciones activas";
-
-        boton.disabled = true;
-
-
-      } catch (error) {
-
-        console.error(
-          "Error activando notificaciones:",
-          error
-        );
-
-        estado.textContent =
-          "No fue posible activar las notificaciones.";
-
-        boton.disabled = false;
-
-        boton.textContent =
-          "🔔 Activar notificaciones";
-      }
     }
 
+
+
+    /* =====================================================
+       🔔 COMPROBAR NOTIFICACIONES
+    ===================================================== */
 
     async function comprobarNotificaciones() {
 
-      const estado =
-        document.getElementById(
-          "notificationStatus"
-        );
 
-      const punto =
-        document.getElementById(
-          "statusDot"
-        );
-
-      const boton =
-        document.getElementById(
-          "btnNotificaciones"
-        );
+        const estado =
+            document.getElementById(
+                "notificationStatus"
+            );
 
 
-      if (
-        !("Notification" in window)
-      ) {
-        return;
-      }
+        const punto =
+            document.getElementById(
+                "statusDot"
+            );
 
 
-      if (
-        Notification.permission ===
-        "granted"
-      ) {
+        const boton =
+            document.getElementById(
+                "btnNotificaciones"
+            );
 
-        estado.textContent =
-          "Las notificaciones están activadas.";
 
-        punto.classList.add(
-          "active"
-        );
 
-        boton.textContent =
-          "✓ Notificaciones activas";
-      }
+        if (
+            !("Notification" in window)
+        ) {
+
+            return;
+
+        }
+
+
+
+        if (
+            Notification.permission ===
+            "granted"
+        ) {
+
+
+            estado.textContent =
+                "Las notificaciones están activadas.";
+
+
+            punto.classList.add(
+                "active"
+            );
+
+
+            boton.textContent =
+                "✓ Notificaciones activas";
+
+        }
+
     }
 
+
+
+    /* =====================================================
+       📱 INSTALACIÓN PWA
+    ===================================================== */
 
     let deferredPrompt = null;
 
 
+
     window.addEventListener(
-      "beforeinstallprompt",
-      event => {
+        "beforeinstallprompt",
+        event => {
 
-        event.preventDefault();
 
-        deferredPrompt = event;
+            event.preventDefault();
 
-        document
-          .getElementById(
-            "btnInstalar"
-          )
-          .style.display = "block";
-      }
+
+            deferredPrompt =
+                event;
+
+
+            document
+                .getElementById(
+                    "btnInstalar"
+                )
+                .style.display =
+                "block";
+
+        }
     );
+
 
 
     document
-      .getElementById(
-        "btnInstalar"
-      )
-      .addEventListener(
-        "click",
-        async () => {
+        .getElementById(
+            "btnInstalar"
+        )
+        .addEventListener(
+            "click",
+            async () => {
 
-          if (!deferredPrompt) {
-            return;
-          }
 
-          deferredPrompt.prompt();
+                if (
+                    !deferredPrompt
+                ) {
 
-          await deferredPrompt.userChoice;
+                    return;
 
-          deferredPrompt = null;
+                }
 
-          document
-            .getElementById(
-              "btnInstalar"
-            )
-            .style.display = "none";
-        }
-      );
+
+                deferredPrompt.prompt();
+
+
+                await deferredPrompt.userChoice;
+
+
+                deferredPrompt =
+                    null;
+
+
+                document
+                    .getElementById(
+                        "btnInstalar"
+                    )
+                    .style.display =
+                    "none";
+
+            }
+        );
+
 
 
     window.addEventListener(
-      "appinstalled",
-      () => {
+        "appinstalled",
+        () => {
 
-        deferredPrompt = null;
 
-        document
-          .getElementById(
-            "btnInstalar"
-          )
-          .style.display = "none";
-      }
+            deferredPrompt =
+                null;
+
+
+            document
+                .getElementById(
+                    "btnInstalar"
+                )
+                .style.display =
+                "none";
+
+        }
     );
 
 
+
+    /* =====================================================
+       ⚙️ SERVICE WORKER
+    ===================================================== */
+
     if (
-      "serviceWorker" in navigator
+        "serviceWorker" in navigator
     ) {
 
-      window.addEventListener(
-        "load",
-        async () => {
 
-          try {
+        window.addEventListener(
+            "load",
+            async () => {
 
-            await navigator.serviceWorker.register(
-              "/service-worker.js"
-            );
 
-            console.log(
-              "Service Worker registrado correctamente."
-            );
+                try {
 
-          } catch (error) {
 
-            console.error(
-              "Error registrando Service Worker:",
-              error
-            );
-          }
-        }
-      );
+                    await navigator
+                        .serviceWorker
+                        .register(
+                            "/service-worker.js"
+                        );
+
+
+                    console.log(
+                        "Service Worker registrado correctamente."
+                    );
+
+
+                } catch (error) {
+
+
+                    console.error(
+                        "Error registrando Service Worker:",
+                        error
+                    );
+
+                }
+
+            }
+        );
+
     }
 
 
+
+    /* =====================================================
+       🚀 INICIO
+    ===================================================== */
+
     document.addEventListener(
-      "DOMContentLoaded",
-      () => {
+        "DOMContentLoaded",
+        () => {
 
-        cargarEstadisticas();
 
-        comprobarNotificaciones();
+            mostrarFechaPanel();
 
-      }
+
+            cargarEstadisticas();
+
+
+            comprobarNotificaciones();
+
+
+        }
     );
 
-  </script>
+
+</script>
+
 
 </body>
 

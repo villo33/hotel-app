@@ -1,316 +1,1672 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>🛠️ Mantenimiento</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f172a">
+  <title>🛠️ Mantenimiento | CASA NOA</title>
 
-<style>
-.btn-guardar {
-  background: #007BFF;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-.btn-guardar:hover {
-  background: #0056b3;
-}
-body {
-  font-family: Arial;
-  background: #f4f6f9;
-  margin: 0;
-  text-align: center;
-}
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(37, 99, 235, 0.08), transparent 30%),
+        linear-gradient(180deg, #f4f7fb 0%, #eef3f9 100%);
+      color: #172033;
+      min-height: 100vh;
+    }
 
-/* 🔹 HEADER */
-.header {
-  background: #1e1e2f;
-  color: white;
-  padding: 15px;
-  font-size: 20px;
-}
+    /* =========================
+       HEADER
+    ========================= */
 
-/* 🔹 TOP BAR */
-.top-bar {
-  display: flex;
-  justify-content: space-between;
-  padding: 10px 20px;
-}
+    .header {
+      background: linear-gradient(135deg, #0f172a, #172554);
+      color: white;
+      padding: 22px 30px;
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.18);
+    }
 
-.btn-inicio {
-  background: #28a745;
-}
+    .header-content {
+      max-width: 1250px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
 
-.btn-logout {
-  background: red;
-}
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
 
-button {
-  padding: 8px 15px;
-  border: none;
-  color: white;
-  cursor: pointer;
-  border-radius: 6px;
-}
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255, 255, 255, 0.12);
+      font-size: 25px;
+    }
 
-input, select {
-  padding: 8px;
-  margin: 5px;
-  width: 150px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-}
+    .brand h1 {
+      margin: 0;
+      font-size: 23px;
+      font-weight: 700;
+    }
 
-/* 🔹 FORM */
-.form {
-  margin: 15px;
-}
+    .brand p {
+      margin: 4px 0 0;
+      color: #bfdbfe;
+      font-size: 13px;
+    }
 
-/* 🔹 TABLA */
-table {
-  margin: auto;
-  margin-top: 20px;
-  border-collapse: collapse;
-  width: 90%;
-  background: white;
-}
+    /* =========================
+       CONTENEDOR
+    ========================= */
 
-th {
-  background: #007BFF;
-  color: white;
-  padding: 10px;
-}
+    .container {
+      width: min(1250px, calc(100% - 32px));
+      margin: 28px auto 50px;
+    }
 
-td {
-  padding: 8px;
-  border: 1px solid #ccc;
-}
+    /* =========================
+       TOP BAR
+    ========================= */
 
-.descripcion {
-  max-width: 200px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 22px;
+    }
 
-.btn-editar {
-  background: orange;
-}
+    .btn {
+      border: none;
+      border-radius: 11px;
+      padding: 11px 17px;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    }
 
-.btn-eliminar {
-  background: red;
-}
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 7px 18px rgba(0, 0, 0, 0.12);
+    }
 
-</style>
+    .btn-inicio {
+      background: #16a34a;
+    }
+
+    .btn-logout {
+      background: #dc2626;
+    }
+
+    /* =========================
+       TITULO
+    ========================= */
+
+    .page-title {
+      margin-bottom: 22px;
+    }
+
+    .page-title h2 {
+      margin: 0;
+      font-size: 27px;
+      color: #0f172a;
+    }
+
+    .page-title p {
+      margin: 7px 0 0;
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    /* =========================
+       NAVEGADOR DE MESES
+    ========================= */
+
+    .month-card {
+      background: white;
+      border-radius: 18px;
+      padding: 18px 22px;
+      box-shadow: 0 8px 25px rgba(15, 23, 42, 0.07);
+      border: 1px solid #e5eaf1;
+      margin-bottom: 20px;
+    }
+
+    .month-navigation {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .month-button {
+      width: 45px;
+      height: 45px;
+      border: none;
+      border-radius: 12px;
+      background: #eff6ff;
+      color: #2563eb;
+      font-size: 24px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .month-button:hover {
+      background: #dbeafe;
+      transform: scale(1.04);
+    }
+
+    .month-center {
+      text-align: center;
+      flex: 1;
+    }
+
+    .month-center .label {
+      color: #64748b;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      font-weight: 600;
+    }
+
+    .month-center h3 {
+      margin: 4px 0 0;
+      font-size: 23px;
+      color: #0f172a;
+      text-transform: capitalize;
+    }
+
+    /* =========================
+       RESUMEN
+    ========================= */
+
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .summary-card {
+      background: white;
+      border: 1px solid #e5eaf1;
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: 0 7px 22px rgba(15, 23, 42, 0.06);
+    }
+
+    .summary-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .summary-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #eff6ff;
+      font-size: 21px;
+    }
+
+    .summary-card strong {
+      display: block;
+      margin-top: 12px;
+      font-size: 28px;
+      color: #0f172a;
+    }
+
+    .summary-card span {
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    /* =========================
+       FORMULARIO
+    ========================= */
+
+    .form-card {
+      background: white;
+      border-radius: 18px;
+      padding: 24px;
+      border: 1px solid #e5eaf1;
+      box-shadow: 0 8px 25px rgba(15, 23, 42, 0.07);
+      margin-bottom: 24px;
+    }
+
+    .form-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .form-header h3 {
+      margin: 0;
+      color: #0f172a;
+      font-size: 19px;
+    }
+
+    .form-header p {
+      margin: 4px 0 0;
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 150px 1.6fr 1fr 170px auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field label {
+      font-size: 12px;
+      color: #475569;
+      font-weight: 600;
+    }
+
+    input,
+    select {
+      width: 100%;
+      height: 43px;
+      padding: 0 12px;
+      border-radius: 10px;
+      border: 1px solid #d7dee8;
+      background: #f8fafc;
+      color: #172033;
+      outline: none;
+      font-size: 14px;
+      transition: 0.2s ease;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #2563eb;
+      background: white;
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+    }
+
+    .btn-guardar {
+      height: 43px;
+      background: #2563eb;
+      white-space: nowrap;
+    }
+
+    .btn-guardar:hover {
+      background: #1d4ed8;
+    }
+
+    .btn-cancelar {
+      display: none;
+      height: 43px;
+      background: #64748b;
+    }
+
+    /* =========================
+       TABLA
+    ========================= */
+
+    .table-card {
+      background: white;
+      border-radius: 18px;
+      border: 1px solid #e5eaf1;
+      box-shadow: 0 8px 25px rgba(15, 23, 42, 0.07);
+      overflow: hidden;
+    }
+
+    .table-header {
+      padding: 20px 22px;
+      border-bottom: 1px solid #edf1f5;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .table-header h3 {
+      margin: 0;
+      font-size: 18px;
+      color: #0f172a;
+    }
+
+    .table-header span {
+      color: #64748b;
+      font-size: 13px;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 850px;
+    }
+
+    th {
+      background: #f8fafc;
+      color: #475569;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid #e5eaf1;
+    }
+
+    td {
+      padding: 15px 16px;
+      border-bottom: 1px solid #edf1f5;
+      color: #334155;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    tbody tr:hover {
+      background: #f8fbff;
+    }
+
+    .habitacion-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 52px;
+      padding: 6px 9px;
+      border-radius: 8px;
+      background: #eff6ff;
+      color: #1d4ed8;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .descripcion {
+      max-width: 300px;
+      line-height: 1.45;
+    }
+
+    .encargado {
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .fecha {
+      white-space: nowrap;
+      color: #64748b;
+    }
+
+    .acciones {
+      display: flex;
+      gap: 7px;
+    }
+
+    .btn-editar,
+    .btn-eliminar {
+      width: 36px;
+      height: 36px;
+      padding: 0;
+      border-radius: 9px;
+      border: none;
+      cursor: pointer;
+      font-size: 15px;
+      transition: 0.2s ease;
+    }
+
+    .btn-editar {
+      background: #fff7ed;
+      color: #ea580c;
+    }
+
+    .btn-editar:hover {
+      background: #ffedd5;
+      transform: translateY(-1px);
+    }
+
+    .btn-eliminar {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+
+    .btn-eliminar:hover {
+      background: #fee2e2;
+      transform: translateY(-1px);
+    }
+
+    /* =========================
+       ESTADO VACÍO
+    ========================= */
+
+    .empty-state {
+      padding: 55px 20px;
+      text-align: center;
+    }
+
+    .empty-icon {
+      width: 62px;
+      height: 62px;
+      margin: 0 auto 14px;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #eff6ff;
+      font-size: 28px;
+    }
+
+    .empty-state h3 {
+      margin: 0;
+      color: #334155;
+      font-size: 17px;
+    }
+
+    .empty-state p {
+      margin: 7px 0 0;
+      color: #94a3b8;
+      font-size: 13px;
+    }
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    .footer {
+      text-align: center;
+      padding: 28px 0 10px;
+      color: #94a3b8;
+      font-size: 12px;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================= */
+
+    @media (max-width: 1000px) {
+      .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .btn-guardar,
+      .btn-cancelar {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .header {
+        padding: 18px;
+      }
+
+      .brand h1 {
+        font-size: 19px;
+      }
+
+      .container {
+        width: calc(100% - 20px);
+        margin-top: 18px;
+      }
+
+      .top-bar {
+        flex-direction: row;
+      }
+
+      .top-bar .btn {
+        flex: 1;
+      }
+
+      .page-title h2 {
+        font-size: 23px;
+      }
+
+      .summary {
+        grid-template-columns: 1fr;
+      }
+
+      .form-card {
+        padding: 18px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .month-card {
+        padding: 14px;
+      }
+
+      .month-center h3 {
+        font-size: 19px;
+      }
+
+      .month-button {
+        width: 40px;
+        height: 40px;
+      }
+
+      .table-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="header">
-🛠️ Mantenimiento CASA NOA
-</div>
+  <header class="header">
+    <div class="header-content">
 
-<div class="top-bar">
-  <button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>
-  <button class="btn-logout" onclick="logout()">🚪 Cerrar sesión</button>
-</div>
+      <div class="brand">
 
-<script>
+        <div class="brand-icon">
+          🛠️
+        </div>
 
-// 🔥 API DINÁMICA (IMPORTANTE)
-const API = window.location.origin;
+        <div>
+          <h1>CASA NOA</h1>
+          <p>Gestión de mantenimiento</p>
+        </div>
 
-// 🔥 NAVEGACIÓN CORREGIDA
-function irInicio() {
-  window.location.href = "/";
-}
+      </div>
 
-function logout() {
-  localStorage.removeItem('logueado');
-  window.location.href = '/';
-}
+    </div>
+  </header>
 
-</script>
 
-<div class="form">
-  <select id="habitacion">
-    <option value="">Habitación</option>
-  </select>
+  <main class="container">
 
-  <input type="text" id="descripcion" placeholder="Descripción">
-  <input type="text" id="encargado" placeholder="Encargado">
-  <input type="date" id="fecha">
+    <div class="top-bar">
 
-  <button class="btn-guardar" onclick="guardar()">💾 Guardar</button>
-</div>
+      <button
+        class="btn btn-inicio"
+        onclick="irInicio()"
+      >
+        🏠 Inicio
+      </button>
 
-<table>
-  <thead>
-    <tr>
-      <th>Habitación</th>
-      <th>Descripción</th>
-      <th>Encargado</th>
-      <th>Fecha</th>
-      <th>Acciones</th>
-    </tr>
-  </thead>
+      <button
+        class="btn btn-logout"
+        onclick="logout()"
+      >
+        🚪 Cerrar sesión
+      </button>
 
-  <tbody id="tabla"></tbody>
-</table>
+    </div>
 
-<script>
 
-let editandoId = null;
+    <section class="page-title">
 
-// 🔹 FORMATO FECHA
-function formatearFecha(fecha) {
-  return new Date(fecha).toLocaleDateString();
-}
+      <h2>
+        Mantenimiento
+      </h2>
 
-// 🔹 HABITACIONES
-function cargarHabitaciones() {
-  const select = document.getElementById("habitacion");
+      <p>
+        Control y seguimiento de reparaciones y novedades del hotel.
+      </p>
 
-  const habitaciones = [
-    101,102,103,104,105,106,107,
-    201,202,203,204,205,206,207,
-    301,302,303,304,305,306
-  ];
+    </section>
 
-  habitaciones.forEach(h => {
-    const option = document.createElement("option");
-    option.value = h;
-    option.textContent = h;
-    select.appendChild(option);
-  });
-}
 
-// 🔹 CARGAR
-async function cargar() {
-  try {
+    <!-- NAVEGACIÓN DE MESES -->
 
-    const res = await fetch(`${API}/mantenimiento`);
-    const data = await res.json();
+    <section class="month-card">
 
-    data.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+      <div class="month-navigation">
 
-    const tabla = document.getElementById('tabla');
-    tabla.innerHTML = '';
+        <button
+          class="month-button"
+          onclick="cambiarMes(-1)"
+          title="Mes anterior"
+        >
+          ‹
+        </button>
 
-    if (data.length === 0) {
-      tabla.innerHTML = `<tr><td colspan="6">Sin datos</td></tr>`;
-      return;
+
+        <div class="month-center">
+
+          <div class="label">
+            Mes seleccionado
+          </div>
+
+          <h3 id="mesActual">
+            Cargando...
+          </h3>
+
+        </div>
+
+
+        <button
+          class="month-button"
+          onclick="cambiarMes(1)"
+          title="Mes siguiente"
+        >
+          ›
+        </button>
+
+      </div>
+
+    </section>
+
+
+    <!-- RESUMEN -->
+
+    <section class="summary">
+
+      <div class="summary-card">
+
+        <div class="summary-top">
+
+          <div>
+
+            <span>
+              Registros del mes
+            </span>
+
+            <strong id="totalMantenimientos">
+              0
+            </strong>
+
+          </div>
+
+          <div class="summary-icon">
+            🛠️
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="summary-card">
+
+        <div class="summary-top">
+
+          <div>
+
+            <span>
+              Habitaciones afectadas
+            </span>
+
+            <strong id="habitacionesAfectadas">
+              0
+            </strong>
+
+          </div>
+
+          <div class="summary-icon">
+            🏨
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- FORMULARIO -->
+
+    <section class="form-card">
+
+      <div class="form-header">
+
+        <div>
+
+          <h3 id="tituloFormulario">
+            Registrar mantenimiento
+          </h3>
+
+          <p id="textoFormulario">
+            Agrega una nueva reparación o novedad.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="form-grid">
+
+        <div class="field">
+
+          <label for="habitacion">
+            Habitación
+          </label>
+
+          <select id="habitacion">
+
+            <option value="">
+              Seleccionar
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="descripcion">
+            Descripción
+          </label>
+
+          <input
+            type="text"
+            id="descripcion"
+            placeholder="Ej. Reparar aire acondicionado"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="encargado">
+            Encargado
+          </label>
+
+          <input
+            type="text"
+            id="encargado"
+            placeholder="Nombre del responsable"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <label for="fecha">
+            Fecha
+          </label>
+
+          <input
+            type="date"
+            id="fecha"
+          >
+
+        </div>
+
+
+        <div class="field">
+
+          <button
+            class="btn btn-guardar"
+            onclick="guardar()"
+            id="btnGuardar"
+          >
+            💾 Guardar
+          </button>
+
+          <button
+            class="btn btn-cancelar"
+            onclick="limpiar()"
+            id="btnCancelar"
+          >
+            Cancelar
+          </button>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- TABLA -->
+
+    <section class="table-card">
+
+      <div class="table-header">
+
+        <div>
+
+          <h3>
+            Historial de mantenimiento
+          </h3>
+
+          <span id="textoRegistros">
+            Registros del mes seleccionado
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+
+            <tr>
+              <th>Habitación</th>
+              <th>Descripción</th>
+              <th>Encargado</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+
+          </thead>
+
+          <tbody id="tabla"></tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+    <footer class="footer">
+      CASA NOA · Sistema de gestión hotelera
+    </footer>
+
+  </main>
+
+
+  <script>
+
+    const API = window.location.origin;
+
+    let editandoId = null;
+
+    let todosLosMantenimientos = [];
+
+    let mesSeleccionado = new Date(
+      new Date().getFullYear(),
+      new Date().getMonth(),
+      1
+    );
+
+
+    /* =========================
+       NAVEGACIÓN
+    ========================= */
+
+    function irInicio() {
+      window.location.href = "/";
     }
 
-    data.forEach(item => {
 
-      // 🔥 EVITA ERRORES CON COMILLAS
-      const desc = (item.descripcion || '').replace(/'/g, "\\'");
-      const encargado = (item.encargado || '').replace(/'/g, "\\'");
+    function logout() {
+      localStorage.removeItem("logueado");
+      window.location.href = "/";
+    }
 
-      const fila = document.createElement('tr');
 
-      fila.innerHTML = `
-        <td>${item.habitacion}</td>
-        <td class="descripcion" title="${item.descripcion}">
-          ${item.descripcion}
-        </td>
-        <td>${item.encargado}</td>
-        <td>${formatearFecha(item.fecha)}</td>
-        <td>
-          <button class="btn-editar"
-            onclick="editar(${item.id}, '${item.habitacion}', '${desc}', '${encargado}', '${item.fecha}')">
-            ✏️
-          </button>
-          <button class="btn-eliminar" onclick="eliminar(${item.id})">
-            ❌
-          </button>
-        </td>
-      `;
+    /* =========================
+       MESES
+    ========================= */
 
-      tabla.appendChild(fila);
-    });
+    function obtenerClaveMes(fecha) {
 
-  } catch (error) {
-    alert("Error cargando datos ❌");
-    console.log(error);
-  }
-}
+      if (!fecha) {
+        return "";
+      }
 
-// 🔹 GUARDAR
-async function guardar() {
+      return String(fecha).substring(0, 7);
+    }
 
-  const habitacion = document.getElementById('habitacion').value;
-  const descripcion = document.getElementById('descripcion').value;
-  const encargado = document.getElementById('encargado').value;
-  const fecha = document.getElementById('fecha').value;
 
-  if (!habitacion || !descripcion || !encargado || !fecha) {
-    alert("Completa todos los campos");
-    return;
-  }
+    function obtenerClaveMesSeleccionado() {
 
-  try {
+      const año =
+        mesSeleccionado.getFullYear();
 
-    await fetch(`${API}/mantenimiento`, {
-      method: editandoId ? 'PUT' : 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: editandoId,
-        habitacion,
-        descripcion,
-        encargado,
-        fecha
-      })
-    });
+      const mes =
+        String(
+          mesSeleccionado.getMonth() + 1
+        ).padStart(2, "0");
 
-    limpiar();
+      return `${año}-${mes}`;
+    }
+
+
+    function actualizarTituloMes() {
+
+      const texto =
+        mesSeleccionado.toLocaleDateString(
+          "es-CO",
+          {
+            month: "long",
+            year: "numeric"
+          }
+        );
+
+      document.getElementById(
+        "mesActual"
+      ).textContent = texto;
+
+
+      document.getElementById(
+        "textoRegistros"
+      ).textContent =
+        `Registros de ${texto}`;
+    }
+
+
+    function cambiarMes(direccion) {
+
+      mesSeleccionado = new Date(
+        mesSeleccionado.getFullYear(),
+        mesSeleccionado.getMonth() + direccion,
+        1
+      );
+
+      actualizarTituloMes();
+
+      mostrarDatos();
+    }
+
+
+    /* =========================
+       FECHA
+    ========================= */
+
+    function formatearFecha(fecha) {
+
+      if (!fecha) {
+        return "";
+      }
+
+      const partes =
+        String(fecha)
+          .substring(0, 10)
+          .split("-");
+
+
+      if (partes.length !== 3) {
+        return fecha;
+      }
+
+
+      return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+
+
+    /* =========================
+       HABITACIONES
+    ========================= */
+
+    function cargarHabitaciones() {
+
+      const select =
+        document.getElementById("habitacion");
+
+
+      const habitaciones = [
+        101, 102, 103, 104, 105, 106, 107,
+        201, 202, 203, 204, 205, 206, 207,
+        301, 302, 303, 304, 305, 306
+      ];
+
+
+      habitaciones.forEach(
+        habitacion => {
+
+          const option =
+            document.createElement("option");
+
+          option.value = habitacion;
+
+          option.textContent =
+            habitacion;
+
+          select.appendChild(option);
+
+        }
+      );
+
+    }
+
+
+    /* =========================
+       CARGAR DATOS
+    ========================= */
+
+    async function cargar() {
+
+      try {
+
+        const res =
+          await fetch(
+            `${API}/mantenimiento`
+          );
+
+
+        if (!res.ok) {
+          throw new Error(
+            "Error del servidor"
+          );
+        }
+
+
+        todosLosMantenimientos =
+          await res.json();
+
+
+        mostrarDatos();
+
+
+      } catch (error) {
+
+        console.error(error);
+
+
+        document.getElementById(
+          "tabla"
+        ).innerHTML = `
+
+          <tr>
+
+            <td colspan="5">
+
+              <div class="empty-state">
+
+                <div class="empty-icon">
+                  ⚠️
+                </div>
+
+                <h3>
+                  No se pudieron cargar los registros
+                </h3>
+
+                <p>
+                  Verifica la conexión con el servidor.
+                </p>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        `;
+
+      }
+
+    }
+
+
+    /* =========================
+       MOSTRAR DATOS
+    ========================= */
+
+    function mostrarDatos() {
+
+      actualizarTituloMes();
+
+
+      const mesActual =
+        obtenerClaveMesSeleccionado();
+
+
+      const datosMes =
+        todosLosMantenimientos
+          .filter(
+            item =>
+              obtenerClaveMes(item.fecha) ===
+              mesActual
+          )
+          .sort(
+            (a, b) =>
+              String(b.fecha)
+                .localeCompare(
+                  String(a.fecha)
+                )
+          );
+
+
+      document.getElementById(
+        "totalMantenimientos"
+      ).textContent =
+        datosMes.length;
+
+
+      const habitaciones =
+        new Set(
+          datosMes.map(
+            item =>
+              String(item.habitacion)
+          )
+        );
+
+
+      document.getElementById(
+        "habitacionesAfectadas"
+      ).textContent =
+        habitaciones.size;
+
+
+      const tabla =
+        document.getElementById("tabla");
+
+
+      tabla.innerHTML = "";
+
+
+      if (datosMes.length === 0) {
+
+        tabla.innerHTML = `
+
+          <tr>
+
+            <td colspan="5">
+
+              <div class="empty-state">
+
+                <div class="empty-icon">
+                  🛠️
+                </div>
+
+                <h3>
+                  No hay mantenimientos este mes
+                </h3>
+
+                <p>
+                  No existen registros para el mes seleccionado.
+                </p>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+        `;
+
+        return;
+      }
+
+
+      datosMes.forEach(item => {
+
+        const fila =
+          document.createElement("tr");
+
+
+        const habitacion =
+          document.createElement("td");
+
+
+        habitacion.innerHTML = `
+
+          <span class="habitacion-badge">
+            ${escapeHTML(item.habitacion)}
+          </span>
+
+        `;
+
+
+        const descripcion =
+          document.createElement("td");
+
+        descripcion.className =
+          "descripcion";
+
+        descripcion.textContent =
+          item.descripcion || "";
+
+
+        const encargado =
+          document.createElement("td");
+
+        encargado.className =
+          "encargado";
+
+        encargado.textContent =
+          item.encargado || "";
+
+
+        const fecha =
+          document.createElement("td");
+
+        fecha.className =
+          "fecha";
+
+        fecha.textContent =
+          formatearFecha(item.fecha);
+
+
+        const acciones =
+          document.createElement("td");
+
+        acciones.className =
+          "acciones";
+
+
+        const editarBtn =
+          document.createElement("button");
+
+        editarBtn.className =
+          "btn-editar";
+
+        editarBtn.title =
+          "Editar mantenimiento";
+
+        editarBtn.textContent =
+          "✏️";
+
+
+        editarBtn.addEventListener(
+          "click",
+          () => editar(item)
+        );
+
+
+        const eliminarBtn =
+          document.createElement("button");
+
+        eliminarBtn.className =
+          "btn-eliminar";
+
+        eliminarBtn.title =
+          "Eliminar mantenimiento";
+
+        eliminarBtn.textContent =
+          "🗑️";
+
+
+        eliminarBtn.addEventListener(
+          "click",
+          () => eliminar(item.id)
+        );
+
+
+        acciones.appendChild(
+          editarBtn
+        );
+
+        acciones.appendChild(
+          eliminarBtn
+        );
+
+
+        fila.appendChild(
+          habitacion
+        );
+
+        fila.appendChild(
+          descripcion
+        );
+
+        fila.appendChild(
+          encargado
+        );
+
+        fila.appendChild(
+          fecha
+        );
+
+        fila.appendChild(
+          acciones
+        );
+
+
+        tabla.appendChild(
+          fila
+        );
+
+      });
+
+    }
+
+
+    /* =========================
+       SEGURIDAD HTML
+    ========================= */
+
+    function escapeHTML(valor) {
+
+      return String(valor ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+    }
+
+
+    /* =========================
+       GUARDAR
+    ========================= */
+
+    async function guardar() {
+
+      const habitacion =
+        document.getElementById(
+          "habitacion"
+        ).value;
+
+
+      const descripcion =
+        document.getElementById(
+          "descripcion"
+        ).value.trim();
+
+
+      const encargado =
+        document.getElementById(
+          "encargado"
+        ).value.trim();
+
+
+      const fecha =
+        document.getElementById(
+          "fecha"
+        ).value;
+
+
+      if (
+        !habitacion ||
+        !descripcion ||
+        !encargado ||
+        !fecha
+      ) {
+
+        alert(
+          "Completa todos los campos."
+        );
+
+        return;
+      }
+
+
+      try {
+
+        const respuesta =
+          await fetch(
+            `${API}/mantenimiento`,
+            {
+
+              method:
+                editandoId
+                  ? "PUT"
+                  : "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body: JSON.stringify({
+
+                id: editandoId,
+
+                habitacion,
+
+                descripcion,
+
+                encargado,
+
+                fecha
+
+              })
+
+            }
+          );
+
+
+        if (!respuesta.ok) {
+          throw new Error(
+            "No se pudo guardar"
+          );
+        }
+
+
+        limpiar();
+
+        await cargar();
+
+
+        const fechaNueva =
+          new Date(
+            `${fecha}T12:00:00`
+          );
+
+
+        mesSeleccionado =
+          new Date(
+            fechaNueva.getFullYear(),
+            fechaNueva.getMonth(),
+            1
+          );
+
+
+        mostrarDatos();
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        alert(
+          "Error guardando el mantenimiento ❌"
+        );
+
+      }
+
+    }
+
+
+    /* =========================
+       EDITAR
+    ========================= */
+
+    function editar(item) {
+
+      document.getElementById(
+        "habitacion"
+      ).value =
+        item.habitacion;
+
+
+      document.getElementById(
+        "descripcion"
+      ).value =
+        item.descripcion || "";
+
+
+      document.getElementById(
+        "encargado"
+      ).value =
+        item.encargado || "";
+
+
+      document.getElementById(
+        "fecha"
+      ).value =
+        String(item.fecha)
+          .substring(0, 10);
+
+
+      editandoId =
+        item.id;
+
+
+      document.getElementById(
+        "tituloFormulario"
+      ).textContent =
+        "Editar mantenimiento";
+
+
+      document.getElementById(
+        "textoFormulario"
+      ).textContent =
+        "Modifica los datos del mantenimiento.";
+
+
+      document.getElementById(
+        "btnGuardar"
+      ).textContent =
+        "💾 Actualizar";
+
+
+      document.getElementById(
+        "btnCancelar"
+      ).style.display =
+        "block";
+
+
+      document.querySelector(
+        ".form-card"
+      ).scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+
+    }
+
+
+    /* =========================
+       ELIMINAR
+    ========================= */
+
+    async function eliminar(id) {
+
+      const confirmar =
+        confirm(
+          "¿Seguro que deseas eliminar este mantenimiento?"
+        );
+
+
+      if (!confirmar) {
+        return;
+      }
+
+
+      try {
+
+        const respuesta =
+          await fetch(
+            `${API}/mantenimiento/${id}`,
+            {
+              method: "DELETE"
+            }
+          );
+
+
+        if (!respuesta.ok) {
+          throw new Error(
+            "No se pudo eliminar"
+          );
+        }
+
+
+        await cargar();
+
+
+      } catch (error) {
+
+        console.error(error);
+
+        alert(
+          "Error eliminando el mantenimiento ❌"
+        );
+
+      }
+
+    }
+
+
+    /* =========================
+       LIMPIAR
+    ========================= */
+
+    function limpiar() {
+
+      document.getElementById(
+        "habitacion"
+      ).value = "";
+
+
+      document.getElementById(
+        "descripcion"
+      ).value = "";
+
+
+      document.getElementById(
+        "encargado"
+      ).value = "";
+
+
+      document.getElementById(
+        "fecha"
+      ).value = "";
+
+
+      editandoId = null;
+
+
+      document.getElementById(
+        "tituloFormulario"
+      ).textContent =
+        "Registrar mantenimiento";
+
+
+      document.getElementById(
+        "textoFormulario"
+      ).textContent =
+        "Agrega una nueva reparación o novedad.";
+
+
+      document.getElementById(
+        "btnGuardar"
+      ).textContent =
+        "💾 Guardar";
+
+
+      document.getElementById(
+        "btnCancelar"
+      ).style.display =
+        "none";
+
+    }
+
+
+    /* =========================
+       INICIO
+    ========================= */
+
+    cargarHabitaciones();
+
+    actualizarTituloMes();
+
     cargar();
 
-  } catch (error) {
-    alert("Error guardando ❌");
-  }
-}
-
-// 🔹 EDITAR (MEJORADO)
-function editar(id, habitacion, descripcion, encargado, fecha) {
-
-  document.getElementById('habitacion').value = habitacion;
-  document.getElementById('descripcion').value = descripcion;
-  document.getElementById('encargado').value = encargado;
-  document.getElementById('fecha').value = fecha.split('T')[0];
-
-  editandoId = id;
-}
-
-// 🔹 ELIMINAR
-async function eliminar(id) {
-
-  if (!confirm("¿Eliminar?")) return;
-
-  try {
-    await fetch(`${API}/mantenimiento/${id}`, {
-      method: 'DELETE'
-    });
-
-    cargar();
-
-  } catch (error) {
-    alert("Error eliminando ❌");
-  }
-}
-
-// 🔹 LIMPIAR
-function limpiar() {
-  document.getElementById('habitacion').value = '';
-  document.getElementById('descripcion').value = '';
-  document.getElementById('encargado').value = '';
-  document.getElementById('fecha').value = '';
-  editandoId = null;
-}
-
-// 🔹 INIT
-cargarHabitaciones();
-cargar();
-
-</script>
+  </script>
 
 </body>
 </html>

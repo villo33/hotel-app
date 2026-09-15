@@ -1,297 +1,2778 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<title>Control de Limpieza</title>
 
-<style>
-body{
-    font-family: Arial;
-    background: #f5f5f5;
-    padding: 20px;
-}
+    <meta charset="UTF-8">
 
-/* 🔥 BARRA SUPERIOR */
-.top-bar{
-    position: absolute;
-    top: 10px;
-    left: 10px;
-}
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-.top-bar button{
-    margin-right: 5px;
-}
+    <title>Control de Limpieza | CASA NOA</title>
 
-.btn-inicio{
-    background: #28a745;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 6px;
-}
 
-.btn-logout{
-    background: #dc3545;
-    color: white;
-    padding: 10px 15px;
-    border-radius: 6px;
-}
+    <style>
 
-/* TITULO */
-h2{
-    text-align: center;
-    margin-top: 50px;
-    margin-bottom: 20px;
-}
-
-/* FORMULARIO */
-.form{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-input, select, textarea{
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-}
-
-textarea{
-    resize: none;
-    height: 40px;
-}
-
-button{
-    background: linear-gradient(to right, #0d6efd, #0dcaf0);
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    border-radius: 6px;
-    cursor: pointer;
-}
-
-button:hover{
-    opacity: 0.9;
-}
-
-/* TABLA */
-table{
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-}
-
-th{
-    background: linear-gradient(to right, #0d6efd, #0dcaf0);
-    color: white;
-}
-
-td, th{
-    padding: 10px;
-    text-align: center;
-    border: 1px solid #ddd;
-}
-</style>
-
-</head>
-<body>
-
-<!-- 🔥 BARRA SUPERIOR -->
-<div class="top-bar">
-    <button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>
-    <button class="btn-logout" onclick="logout()">🚪 Cerrar sesión</button>
-</div>
-
-<script>
-
-// 🔥 API DINÁMICA
-const API = window.location.origin;
-
-// 🔥 NAVEGACIÓN (CORREGIDO)
-function irInicio() {
-    window.location.href = "/";
-}
-
-function logout() {
-    localStorage.removeItem('logueado');
-    window.location.href = '/';
-}
-</script>
-
-<h2>🧹 Control de Limpieza</h2>
-
-<div class="form">
-
-    <input type="number" id="habitacion" placeholder="Habitación">
-
-    <select id="tipo_accion">
-        <option value="">Seleccione acción</option>
-        <option value="Cambio de plumones">Cambio de plumones</option>
-        <option value="Cambio de pie de cama">Cambio de pie de cama</option>
-        <option value="Cabecera aspirada">Cabecera aspirada</option>
-        <option value="Limpieza general">Limpieza general</option>
-    </select>
-
-    <input type="date" id="fecha">
-    <input type="text" id="empleado" placeholder="Empleado">
-    <textarea id="observacion" placeholder="Observación"></textarea>
-
-    <button onclick="guardar()">Guardar</button>
-
-</div>
-
-<table>
-<thead>
-<tr>
-    <th>Habitación</th>
-    <th>Acción</th>
-    <th>Fecha</th>
-    <th>Empleado</th>
-    <th>Observación</th>
-    <th>Estado</th>
-    <th>Acciones</th>
-</tr>
-</thead>
-<tbody id="tabla"></tbody>
-</table>
-
-<script>
-
-let editando = false;
-let idEditar = null;
-
-// 🔥 GUARDAR
-async function guardar(){
-
-    let habitacion = document.getElementById("habitacion").value;
-    let tipo_accion = document.getElementById("tipo_accion").value;
-    let fecha = document.getElementById("fecha").value;
-    let empleado = document.getElementById("empleado").value;
-    let observacion = document.getElementById("observacion").value;
-
-    if(!habitacion || !tipo_accion || !fecha || !empleado){
-        alert("Completa todos los campos obligatorios");
-        return;
-    }
-
-    try {
-
-        await fetch(`${API}/limpieza`, {
-            method: editando ? 'PUT' : 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                id: idEditar,
-                habitacion,
-                tipo_accion,
-                fecha,
-                empleado,
-                observacion
-            })
-        });
-
-        editando = false;
-        idEditar = null;
-
-        limpiarFormulario();
-        cargar();
-
-    } catch (error) {
-        alert("Error guardando ❌");
-        console.log(error);
-    }
-}
-
-// 🔥 LIMPIAR
-function limpiarFormulario(){
-    document.getElementById("habitacion").value = "";
-    document.getElementById("tipo_accion").value = "";
-    document.getElementById("fecha").value = "";
-    document.getElementById("empleado").value = "";
-    document.getElementById("observacion").value = "";
-}
-
-// 🔥 ELIMINAR
-async function eliminar(id){
-
-    if(!confirm("¿Eliminar registro?")) return;
-
-    try {
-        await fetch(`${API}/limpieza/` + id, {
-            method: 'DELETE'
-        });
-
-        cargar();
-
-    } catch (error) {
-        alert("Error eliminando ❌");
-    }
-}
-
-// 🔥 EDITAR
-function editar(id, habitacion, tipo_accion, fecha, empleado, observacion){
-
-    document.getElementById("habitacion").value = habitacion;
-    document.getElementById("tipo_accion").value = tipo_accion;
-    document.getElementById("fecha").value = fecha.split("T")[0];
-    document.getElementById("empleado").value = empleado;
-    document.getElementById("observacion").value = observacion;
-
-    editando = true;
-    idEditar = id;
-}
-
-// 🔥 CARGAR
-async function cargar(){
-
-    try {
-
-        const res = await fetch(`${API}/limpieza`);
-        const data = await res.json();
-
-        let tabla = document.getElementById("tabla");
-        tabla.innerHTML = "";
-
-        if(data.length === 0){
-            tabla.innerHTML = `<tr><td colspan="7">No hay registros aún</td></tr>`;
-            return;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        data.forEach(item => {
 
-            // 🔥 EVITA ERRORES CON COMILLAS
-            const empleado = (item.empleado || '').replace(/'/g, "\\'");
-            const obs = (item.observacion || '').replace(/'/g, "\\'");
+        body {
 
-            let fechaFormateada = new Date(item.fecha).toLocaleDateString();
+            font-family:
+                Inter,
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Arial,
+                sans-serif;
 
-            tabla.innerHTML += `
-                <tr>
-                    <td>${item.habitacion}</td>
-                    <td>${item.tipo_accion}</td>
-                    <td>${fechaFormateada}</td>
-                    <td>${item.empleado}</td>
-                    <td>${item.observacion || ''}</td>
-                    <td>${item.estado}</td>
-                    <td>
-                        <button onclick="editar(${item.id}, '${item.habitacion}', '${item.tipo_accion}', '${item.fecha}', '${empleado}', '${obs}')">✏️</button>
-                        <button onclick="eliminar(${item.id})">🗑</button>
-                    </td>
-                </tr>
-            `;
+            min-height: 100vh;
+
+            background:
+                radial-gradient(
+                    circle at top right,
+                    rgba(20, 184, 166, 0.10),
+                    transparent 30%
+                ),
+                linear-gradient(
+                    135deg,
+                    #f8fafc 0%,
+                    #eef2f7 100%
+                );
+
+            color: #172033;
+
+        }
+
+
+        /* =====================================================
+           BARRA SUPERIOR
+        ===================================================== */
+
+        .top-bar {
+
+            width: 100%;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            padding: 18px 28px;
+
+            background:
+                rgba(255, 255, 255, 0.94);
+
+            border-bottom:
+                1px solid #e5e7eb;
+
+            box-shadow:
+                0 4px 20px rgba(15, 23, 42, 0.05);
+
+            position: sticky;
+
+            top: 0;
+
+            z-index: 100;
+
+        }
+
+
+        .brand {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+
+        }
+
+
+        .brand-icon {
+
+            width: 44px;
+
+            height: 44px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 13px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #0f766e,
+                    #14b8a6
+                );
+
+            color: white;
+
+            font-size: 21px;
+
+            box-shadow:
+                0 8px 18px
+                rgba(20, 184, 166, 0.25);
+
+        }
+
+
+        .brand-text h1 {
+
+            font-size: 17px;
+
+            font-weight: 800;
+
+            color: #111827;
+
+        }
+
+
+        .brand-text span {
+
+            display: block;
+
+            margin-top: 2px;
+
+            font-size: 12px;
+
+            color: #64748b;
+
+        }
+
+
+        .top-actions {
+
+            display: flex;
+
+            gap: 9px;
+
+        }
+
+
+        .btn-top {
+
+            border: none;
+
+            padding: 10px 15px;
+
+            border-radius: 10px;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease;
+
+        }
+
+
+        .btn-top:hover {
+
+            transform:
+                translateY(-1px);
+
+        }
+
+
+        .btn-inicio {
+
+            background: #ecfdf5;
+
+            color: #047857;
+
+        }
+
+
+        .btn-logout {
+
+            background: #fef2f2;
+
+            color: #dc2626;
+
+        }
+
+
+        /* =====================================================
+           CONTENEDOR
+        ===================================================== */
+
+        .page {
+
+            width: min(1400px, 94%);
+
+            margin: 0 auto;
+
+            padding: 35px 0 50px;
+
+        }
+
+
+        /* =====================================================
+           CABECERA
+        ===================================================== */
+
+        .page-header {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: flex-end;
+
+            gap: 20px;
+
+            margin-bottom: 26px;
+
+        }
+
+
+        .page-header h2 {
+
+            font-size: 29px;
+
+            font-weight: 800;
+
+            letter-spacing: -0.7px;
+
+            color: #111827;
+
+        }
+
+
+        .page-header p {
+
+            margin-top: 7px;
+
+            color: #64748b;
+
+            font-size: 14px;
+
+        }
+
+
+        .today-badge {
+
+            background: white;
+
+            border: 1px solid #e2e8f0;
+
+            border-radius: 12px;
+
+            padding: 10px 15px;
+
+            color: #475569;
+
+            font-size: 13px;
+
+            box-shadow:
+                0 5px 18px
+                rgba(15, 23, 42, 0.04);
+
+        }
+
+
+        /* =====================================================
+           TARJETAS
+        ===================================================== */
+
+        .card {
+
+            background:
+                rgba(255, 255, 255, 0.95);
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 18px;
+
+            box-shadow:
+                0 12px 35px
+                rgba(15, 23, 42, 0.06);
+
+            overflow: hidden;
+
+        }
+
+
+        .card-header {
+
+            padding: 20px 22px;
+
+            border-bottom:
+                1px solid #edf0f4;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 15px;
+
+        }
+
+
+        .card-title {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 11px;
+
+        }
+
+
+        .card-title-icon {
+
+            width: 38px;
+
+            height: 38px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border-radius: 10px;
+
+            background: #f0fdfa;
+
+            color: #0f766e;
+
+            font-size: 18px;
+
+        }
+
+
+        .card-title h3 {
+
+            font-size: 16px;
+
+            font-weight: 800;
+
+            color: #1e293b;
+
+        }
+
+
+        .card-title span {
+
+            display: block;
+
+            margin-top: 2px;
+
+            font-size: 12px;
+
+            color: #94a3b8;
+
+        }
+
+
+        /* =====================================================
+           FORMULARIO
+        ===================================================== */
+
+        .form-container {
+
+            padding: 23px;
+
+        }
+
+
+        .form {
+
+            display: grid;
+
+            grid-template-columns:
+                .8fr
+                1.5fr
+                1fr
+                1.2fr
+                1.6fr
+                auto;
+
+            gap: 13px;
+
+            align-items: end;
+
+        }
+
+
+        .field {
+
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 7px;
+
+        }
+
+
+        .field label {
+
+            font-size: 12px;
+
+            font-weight: 700;
+
+            color: #475569;
+
+        }
+
+
+        input,
+        select,
+        textarea {
+
+            width: 100%;
+
+            border:
+                1px solid #dbe2ea;
+
+            background: #f8fafc;
+
+            color: #1e293b;
+
+            border-radius: 10px;
+
+            padding: 11px 12px;
+
+            outline: none;
+
+            font-family: inherit;
+
+            font-size: 13px;
+
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease,
+                background .2s ease;
+
+        }
+
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+
+            border-color:
+                #14b8a6;
+
+            background: white;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(20, 184, 166, 0.12);
+
+        }
+
+
+        textarea {
+
+            min-height: 41px;
+
+            resize: vertical;
+
+        }
+
+
+        .btn-guardar {
+
+            height: 41px;
+
+            border: none;
+
+            padding: 0 19px;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #0f766e,
+                    #14b8a6
+                );
+
+            color: white;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+            white-space: nowrap;
+
+            box-shadow:
+                0 7px 16px
+                rgba(20, 184, 166, 0.20);
+
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease;
+
+        }
+
+
+        .btn-guardar:hover {
+
+            transform:
+                translateY(-1px);
+
+            box-shadow:
+                0 10px 22px
+                rgba(20, 184, 166, 0.28);
+
+        }
+
+
+        /* =====================================================
+           CONTROL DEL MES
+        ===================================================== */
+
+        .month-card {
+
+            margin-top: 24px;
+
+            padding: 20px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: space-between;
+
+            gap: 20px;
+
+        }
+
+
+        .month-navigation {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+        }
+
+
+        .month-button {
+
+            width: 40px;
+
+            height: 40px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background: #f1f5f9;
+
+            color: #334155;
+
+            font-size: 19px;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+            transition:
+                background .2s ease,
+                transform .2s ease;
+
+        }
+
+
+        .month-button:hover {
+
+            background: #e2e8f0;
+
+            transform:
+                translateY(-1px);
+
+        }
+
+
+        .month-name {
+
+            min-width: 210px;
+
+            text-align: center;
+
+            font-size: 20px;
+
+            font-weight: 800;
+
+            color: #111827;
+
+            text-transform: capitalize;
+
+        }
+
+
+        .btn-hoy {
+
+            border: none;
+
+            background: #ecfdf5;
+
+            color: #047857;
+
+            padding: 10px 15px;
+
+            border-radius: 10px;
+
+            font-weight: 800;
+
+            cursor: pointer;
+
+        }
+
+
+        /* =====================================================
+           ESTADÍSTICAS
+        ===================================================== */
+
+        .stats {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 15px;
+
+            margin-top: 18px;
+
+        }
+
+
+        .stat {
+
+            background: white;
+
+            border:
+                1px solid #e2e8f0;
+
+            border-radius: 15px;
+
+            padding: 18px;
+
+            box-shadow:
+                0 7px 20px
+                rgba(15, 23, 42, 0.04);
+
+        }
+
+
+        .stat-label {
+
+            font-size: 11px;
+
+            color: #64748b;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            letter-spacing: .4px;
+
+        }
+
+
+        .stat-value {
+
+            margin-top: 8px;
+
+            font-size: 27px;
+
+            font-weight: 850;
+
+            color: #111827;
+
+        }
+
+
+        .stat-sub {
+
+            margin-top: 4px;
+
+            font-size: 11px;
+
+            color: #94a3b8;
+
+        }
+
+
+        /* =====================================================
+           HISTORIAL
+        ===================================================== */
+
+        .table-section {
+
+            margin-top: 24px;
+
+        }
+
+
+        .history-actions {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+        }
+
+
+        .search {
+
+            width: 220px;
+
+        }
+
+
+        .table-wrapper {
+
+            width: 100%;
+
+            overflow-x: auto;
+
+        }
+
+
+        table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            min-width: 900px;
+
+        }
+
+
+        thead {
+
+            background: #f8fafc;
+
+        }
+
+
+        th {
+
+            padding: 14px 16px;
+
+            text-align: left;
+
+            border-bottom:
+                1px solid #e2e8f0;
+
+            color: #64748b;
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+            text-transform: uppercase;
+
+            letter-spacing: .5px;
+
+        }
+
+
+        td {
+
+            padding: 15px 16px;
+
+            border-bottom:
+                1px solid #edf1f5;
+
+            color: #334155;
+
+            font-size: 13px;
+
+            vertical-align: middle;
+
+        }
+
+
+        tbody tr {
+
+            transition:
+                background .18s ease;
+
+        }
+
+
+        tbody tr:hover {
+
+            background: #f8fafc;
+
+        }
+
+
+        tbody tr:last-child td {
+
+            border-bottom: none;
+
+        }
+
+
+        /* =====================================================
+           HABITACIÓN
+        ===================================================== */
+
+        .room-number {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            min-width: 48px;
+
+            padding: 7px 10px;
+
+            border-radius: 8px;
+
+            background: #f0fdfa;
+
+            color: #0f766e;
+
+            font-weight: 800;
+
+        }
+
+
+        .action-text {
+
+            font-weight: 700;
+
+            color: #334155;
+
+        }
+
+
+        /* =====================================================
+           ESTADO
+        ===================================================== */
+
+        .status {
+
+            display: inline-flex;
+
+            align-items: center;
+
+            gap: 6px;
+
+            padding: 6px 10px;
+
+            border-radius: 999px;
+
+            background: #ecfdf5;
+
+            color: #047857;
+
+            font-size: 11px;
+
+            font-weight: 800;
+
+        }
+
+
+        .status::before {
+
+            content: "";
+
+            width: 6px;
+
+            height: 6px;
+
+            border-radius: 50%;
+
+            background: #10b981;
+
+        }
+
+
+        /* =====================================================
+           ACCIONES
+        ===================================================== */
+
+        .actions {
+
+            display: flex;
+
+            gap: 7px;
+
+        }
+
+
+        .btn-action {
+
+            width: 34px;
+
+            height: 34px;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            border: none;
+
+            border-radius: 8px;
+
+            cursor: pointer;
+
+            font-size: 14px;
+
+            transition:
+                transform .18s ease;
+
+        }
+
+
+        .btn-action:hover {
+
+            transform:
+                translateY(-1px);
+
+        }
+
+
+        .btn-edit {
+
+            background: #fff7ed;
+
+            color: #ea580c;
+
+        }
+
+
+        .btn-delete {
+
+            background: #fef2f2;
+
+            color: #dc2626;
+
+        }
+
+
+        /* =====================================================
+           VACÍO
+        ===================================================== */
+
+        .empty {
+
+            padding: 55px 20px;
+
+            text-align: center;
+
+            color: #94a3b8;
+
+        }
+
+
+        .empty-icon {
+
+            font-size: 38px;
+
+            margin-bottom: 9px;
+
+        }
+
+
+        .empty strong {
+
+            display: block;
+
+            color: #475569;
+
+            margin-bottom: 4px;
+
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 1150px) {
+
+            .form {
+
+                grid-template-columns:
+                    repeat(3, 1fr);
+
+            }
+
+            .btn-guardar {
+
+                width: 100%;
+
+            }
+
+        }
+
+
+        @media (max-width: 850px) {
+
+            .stats {
+
+                grid-template-columns:
+                    repeat(2, 1fr);
+
+            }
+
+            .month-card {
+
+                flex-direction: column;
+
+                align-items: stretch;
+
+            }
+
+            .month-navigation {
+
+                justify-content: center;
+
+            }
+
+            .btn-hoy {
+
+                width: 100%;
+
+            }
+
+            .history-actions {
+
+                width: 100%;
+
+            }
+
+            .search {
+
+                width: 100%;
+
+            }
+
+        }
+
+
+        @media (max-width: 700px) {
+
+            .top-bar {
+
+                padding: 14px 16px;
+
+            }
+
+            .brand-text span {
+
+                display: none;
+
+            }
+
+            .brand-text h1 {
+
+                font-size: 15px;
+
+            }
+
+            .brand-icon {
+
+                width: 39px;
+
+                height: 39px;
+
+            }
+
+            .btn-top {
+
+                padding: 9px 10px;
+
+                font-size: 12px;
+
+            }
+
+            .page {
+
+                width: 94%;
+
+                padding-top: 25px;
+
+            }
+
+            .page-header {
+
+                flex-direction: column;
+
+                align-items: flex-start;
+
+            }
+
+            .page-header h2 {
+
+                font-size: 24px;
+
+            }
+
+            .today-badge {
+
+                width: 100%;
+
+            }
+
+            .form {
+
+                grid-template-columns: 1fr;
+
+            }
+
+            .form-container {
+
+                padding: 17px;
+
+            }
+
+            .card-header {
+
+                padding: 17px;
+
+            }
+
+            .month-name {
+
+                min-width: 170px;
+
+                font-size: 17px;
+
+            }
+
+        }
+
+
+        @media (max-width: 480px) {
+
+            .stats {
+
+                grid-template-columns: 1fr;
+
+            }
+
+            .month-name {
+
+                min-width: 150px;
+
+            }
+
+            .btn-top {
+
+                font-size: 0;
+
+                width: 38px;
+
+                height: 38px;
+
+                padding: 0;
+
+            }
+
+            .btn-top::first-letter {
+
+                font-size: 17px;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     BARRA SUPERIOR
+===================================================== -->
+
+<header class="top-bar">
+
+    <div class="brand">
+
+        <div class="brand-icon">
+            🧹
+        </div>
+
+        <div class="brand-text">
+
+            <h1>
+                CASA NOA
+            </h1>
+
+            <span>
+                Gestión hotelera
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <div class="top-actions">
+
+        <button
+            class="btn-top btn-inicio"
+            onclick="irInicio()"
+        >
+            🏠 Inicio
+        </button>
+
+
+        <button
+            class="btn-top btn-logout"
+            onclick="logout()"
+        >
+            🚪 Cerrar sesión
+        </button>
+
+    </div>
+
+</header>
+
+
+
+<main class="page">
+
+
+    <!-- =================================================
+         CABECERA
+    ================================================= -->
+
+    <section class="page-header">
+
+        <div>
+
+            <h2>
+                Control de Limpieza
+            </h2>
+
+            <p>
+                Gestiona las actividades de limpieza
+                y consulta el historial mensual.
+            </p>
+
+        </div>
+
+
+        <div class="today-badge">
+            📅 <span id="fechaActual"></span>
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         REGISTRO
+    ================================================= -->
+
+    <section class="card">
+
+        <div class="card-header">
+
+            <div class="card-title">
+
+                <div class="card-title-icon">
+                    ✨
+                </div>
+
+                <div>
+
+                    <h3>
+                        Registrar actividad
+                    </h3>
+
+                    <span>
+                        Nueva actividad de limpieza
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="form-container">
+
+            <div class="form">
+
+
+                <div class="field">
+
+                    <label for="habitacion">
+                        Habitación
+                    </label>
+
+                    <input
+                        type="number"
+                        id="habitacion"
+                        placeholder="Ej. 101"
+                    >
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label for="tipo_accion">
+                        Tipo de actividad
+                    </label>
+
+                    <select id="tipo_accion">
+
+                        <option value="">
+                            Seleccione acción
+                        </option>
+
+                        <option value="Cambio de plumones">
+                            Cambio de plumones
+                        </option>
+
+                        <option value="Cambio de pie de cama">
+                            Cambio de pie de cama
+                        </option>
+
+                        <option value="Cabecera aspirada">
+                            Cabecera aspirada
+                        </option>
+
+                        <option value="Limpieza general">
+                            Limpieza general
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label for="fecha">
+                        Fecha
+                    </label>
+
+                    <input
+                        type="date"
+                        id="fecha"
+                    >
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label for="empleado">
+                        Empleado
+                    </label>
+
+                    <input
+                        type="text"
+                        id="empleado"
+                        placeholder="Nombre del empleado"
+                    >
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label for="observacion">
+                        Observación
+                    </label>
+
+                    <textarea
+                        id="observacion"
+                        placeholder="Observación opcional"
+                    ></textarea>
+
+                </div>
+
+
+
+                <button
+                    class="btn-guardar"
+                    onclick="guardar()"
+                >
+                    💾 Guardar
+                </button>
+
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+
+    <!-- =================================================
+         NAVEGACIÓN MES
+    ================================================= -->
+
+    <section class="card month-card">
+
+
+        <div class="month-navigation">
+
+            <button
+                class="month-button"
+                onclick="mesAnterior()"
+                title="Mes anterior"
+            >
+                ‹
+            </button>
+
+
+            <div
+                class="month-name"
+                id="mesNombre"
+            >
+                Septiembre 2026
+            </div>
+
+
+            <button
+                class="month-button"
+                onclick="mesSiguiente()"
+                title="Mes siguiente"
+            >
+                ›
+            </button>
+
+        </div>
+
+
+        <button
+            class="btn-hoy"
+            onclick="irAlMesActual()"
+        >
+            📅 Mes actual
+        </button>
+
+
+    </section>
+
+
+
+    <!-- =================================================
+         ESTADÍSTICAS
+    ================================================= -->
+
+    <section class="stats">
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Actividades
+            </div>
+
+            <div
+                class="stat-value"
+                id="totalActividades"
+            >
+                0
+            </div>
+
+            <div class="stat-sub">
+                Registradas este mes
+            </div>
+
+        </div>
+
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Limpieza general
+            </div>
+
+            <div
+                class="stat-value"
+                id="totalGeneral"
+            >
+                0
+            </div>
+
+            <div class="stat-sub">
+                Actividades
+            </div>
+
+        </div>
+
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Cambios
+            </div>
+
+            <div
+                class="stat-value"
+                id="totalCambios"
+            >
+                0
+            </div>
+
+            <div class="stat-sub">
+                Plumones y pie de cama
+            </div>
+
+        </div>
+
+
+
+        <div class="stat">
+
+            <div class="stat-label">
+                Habitaciones
+            </div>
+
+            <div
+                class="stat-value"
+                id="totalHabitaciones"
+            >
+                0
+            </div>
+
+            <div class="stat-sub">
+                Habitaciones atendidas
+            </div>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =================================================
+         HISTORIAL
+    ================================================= -->
+
+    <section class="card table-section">
+
+
+        <div class="card-header">
+
+
+            <div class="card-title">
+
+                <div class="card-title-icon">
+                    📋
+                </div>
+
+                <div>
+
+                    <h3>
+                        Historial mensual
+                    </h3>
+
+                    <span id="textoHistorial">
+                        Registros del mes
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="history-actions">
+
+                <input
+                    class="search"
+                    id="buscar"
+                    type="search"
+                    placeholder="🔎 Buscar habitación o empleado..."
+                    oninput="renderizar()"
+                >
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+
+                        <th>
+                            Habitación
+                        </th>
+
+                        <th>
+                            Actividad
+                        </th>
+
+                        <th>
+                            Fecha
+                        </th>
+
+                        <th>
+                            Empleado
+                        </th>
+
+                        <th>
+                            Observación
+                        </th>
+
+                        <th>
+                            Estado
+                        </th>
+
+                        <th>
+                            Acciones
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="tabla"></tbody>
+
+            </table>
+
+        </div>
+
+
+    </section>
+
+
+</main>
+
+
+
+<script>
+
+
+    // =====================================================
+    // API
+    // =====================================================
+
+    const API =
+        window.location.origin;
+
+
+
+    // =====================================================
+    // VARIABLES
+    // =====================================================
+
+    let editando = false;
+
+    let idEditar = null;
+
+    let registros = [];
+
+    let mesSeleccionado =
+        new Date().getMonth();
+
+    let anioSeleccionado =
+        new Date().getFullYear();
+
+
+
+    // =====================================================
+    // NAVEGACIÓN
+    // =====================================================
+
+    function irInicio() {
+
+        window.location.href = "/";
+
+    }
+
+
+    function logout() {
+
+        localStorage.removeItem(
+            "logueado"
+        );
+
+        window.location.href = "/";
+
+    }
+
+
+
+    // =====================================================
+    // FORMATO MES
+    // =====================================================
+
+    function obtenerNombreMes(
+        mes,
+        anio
+    ) {
+
+        const fecha =
+            new Date(
+                anio,
+                mes,
+                1
+            );
+
+
+        return fecha.toLocaleDateString(
+            "es-CO",
+            {
+                month: "long",
+                year: "numeric"
+            }
+        );
+
+    }
+
+
+
+    // =====================================================
+    // ACTUALIZAR CABECERA MES
+    // =====================================================
+
+    function actualizarMes() {
+
+        const nombre =
+            obtenerNombreMes(
+                mesSeleccionado,
+                anioSeleccionado
+            );
+
+
+        document.getElementById(
+            "mesNombre"
+        ).textContent = nombre;
+
+
+        document.getElementById(
+            "textoHistorial"
+        ).textContent =
+            `Registros de ${nombre}`;
+
+
+        actualizarEstadisticas();
+
+        renderizar();
+
+    }
+
+
+
+    // =====================================================
+    // MES ANTERIOR
+    // =====================================================
+
+    function mesAnterior() {
+
+        mesSeleccionado--;
+
+        if (
+            mesSeleccionado < 0
+        ) {
+
+            mesSeleccionado = 11;
+
+            anioSeleccionado--;
+
+        }
+
+
+        actualizarMes();
+
+    }
+
+
+
+    // =====================================================
+    // MES SIGUIENTE
+    // =====================================================
+
+    function mesSiguiente() {
+
+        mesSeleccionado++;
+
+        if (
+            mesSeleccionado > 11
+        ) {
+
+            mesSeleccionado = 0;
+
+            anioSeleccionado++;
+
+        }
+
+
+        actualizarMes();
+
+    }
+
+
+
+    // =====================================================
+    // MES ACTUAL
+    // =====================================================
+
+    function irAlMesActual() {
+
+        const ahora =
+            new Date();
+
+
+        mesSeleccionado =
+            ahora.getMonth();
+
+
+        anioSeleccionado =
+            ahora.getFullYear();
+
+
+        actualizarMes();
+
+    }
+
+
+
+    // =====================================================
+    // COMPROBAR SI FECHA PERTENECE AL MES
+    // =====================================================
+
+    function perteneceAlMes(
+        fecha
+    ) {
+
+        if (!fecha) {
+
+            return false;
+
+        }
+
+
+        const f =
+            new Date(fecha);
+
+
+        return (
+            f.getMonth() ===
+                mesSeleccionado &&
+            f.getFullYear() ===
+                anioSeleccionado
+        );
+
+    }
+
+
+
+    // =====================================================
+    // ESTADÍSTICAS
+    // =====================================================
+
+    function actualizarEstadisticas() {
+
+        const registrosMes =
+            registros.filter(
+                item =>
+                    perteneceAlMes(
+                        item.fecha
+                    )
+            );
+
+
+        document.getElementById(
+            "totalActividades"
+        ).textContent =
+            registrosMes.length;
+
+
+        const generales =
+            registrosMes.filter(
+                item =>
+                    item.tipo_accion ===
+                    "Limpieza general"
+            ).length;
+
+
+        document.getElementById(
+            "totalGeneral"
+        ).textContent =
+            generales;
+
+
+        const cambios =
+            registrosMes.filter(
+                item =>
+                    item.tipo_accion ===
+                        "Cambio de plumones" ||
+                    item.tipo_accion ===
+                        "Cambio de pie de cama"
+            ).length;
+
+
+        document.getElementById(
+            "totalCambios"
+        ).textContent =
+            cambios;
+
+
+        const habitaciones =
+            new Set(
+                registrosMes.map(
+                    item =>
+                        String(
+                            item.habitacion
+                        )
+                )
+            );
+
+
+        document.getElementById(
+            "totalHabitaciones"
+        ).textContent =
+            habitaciones.size;
+
+    }
+
+
+
+    // =====================================================
+    // GUARDAR
+    // =====================================================
+
+    async function guardar() {
+
+        const habitacion =
+            document.getElementById(
+                "habitacion"
+            ).value;
+
+
+        const tipo_accion =
+            document.getElementById(
+                "tipo_accion"
+            ).value;
+
+
+        const fecha =
+            document.getElementById(
+                "fecha"
+            ).value;
+
+
+        const empleado =
+            document.getElementById(
+                "empleado"
+            ).value;
+
+
+        const observacion =
+            document.getElementById(
+                "observacion"
+            ).value;
+
+
+        if (
+            !habitacion ||
+            !tipo_accion ||
+            !fecha ||
+            !empleado
+        ) {
+
+            alert(
+                "Completa todos los campos obligatorios"
+            );
+
+            return;
+
+        }
+
+
+        try {
+
+            const respuesta =
+                await fetch(
+                    `${API}/limpieza`,
+                    {
+
+                        method:
+                            editando
+                                ? "PUT"
+                                : "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                id: idEditar,
+
+                                habitacion,
+
+                                tipo_accion,
+
+                                fecha,
+
+                                empleado,
+
+                                observacion
+
+                            })
+
+                    }
+                );
+
+
+            if (!respuesta.ok) {
+
+                const error =
+                    await respuesta.text();
+
+
+                console.error(
+                    "Error servidor:",
+                    error
+                );
+
+
+                alert(
+                    "No se pudo guardar ❌"
+                );
+
+
+                return;
+
+            }
+
+
+            editando = false;
+
+            idEditar = null;
+
+
+            limpiarFormulario();
+
+            await cargar();
+
+
+        } catch (error) {
+
+            console.error(
+                "Error guardando:",
+                error
+            );
+
+
+            alert(
+                "Error de conexión ❌"
+            );
+
+        }
+
+    }
+
+
+
+    // =====================================================
+    // LIMPIAR FORMULARIO
+    // =====================================================
+
+    function limpiarFormulario() {
+
+        document.getElementById(
+            "habitacion"
+        ).value = "";
+
+
+        document.getElementById(
+            "tipo_accion"
+        ).value = "";
+
+
+        document.getElementById(
+            "fecha"
+        ).value = "";
+
+
+        document.getElementById(
+            "empleado"
+        ).value = "";
+
+
+        document.getElementById(
+            "observacion"
+        ).value = "";
+
+
+        editando = false;
+
+        idEditar = null;
+
+    }
+
+
+
+    // =====================================================
+    // ELIMINAR
+    // =====================================================
+
+    async function eliminar(
+        id
+    ) {
+
+        if (
+            !confirm(
+                "¿Deseas eliminar este registro?"
+            )
+        ) {
+
+            return;
+
+        }
+
+
+        try {
+
+            const respuesta =
+                await fetch(
+                    `${API}/limpieza/${id}`,
+                    {
+                        method: "DELETE"
+                    }
+                );
+
+
+            if (!respuesta.ok) {
+
+                alert(
+                    "No se pudo eliminar ❌"
+                );
+
+                return;
+
+            }
+
+
+            await cargar();
+
+
+        } catch (error) {
+
+            console.error(
+                "Error eliminando:",
+                error
+            );
+
+
+            alert(
+                "Error de conexión ❌"
+            );
+
+        }
+
+    }
+
+
+
+    // =====================================================
+    // EDITAR
+    // =====================================================
+
+    function editar(
+        id,
+        habitacion,
+        tipo_accion,
+        fecha,
+        empleado,
+        observacion
+    ) {
+
+        document.getElementById(
+            "habitacion"
+        ).value =
+            habitacion;
+
+
+        document.getElementById(
+            "tipo_accion"
+        ).value =
+            tipo_accion;
+
+
+        document.getElementById(
+            "fecha"
+        ).value =
+            fecha
+                ? fecha.split("T")[0]
+                : "";
+
+
+        document.getElementById(
+            "empleado"
+        ).value =
+            empleado;
+
+
+        document.getElementById(
+            "observacion"
+        ).value =
+            observacion || "";
+
+
+        editando = true;
+
+        idEditar = id;
+
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
         });
 
-    } catch (error) {
-        alert("Error cargando datos ❌");
-        console.log(error);
     }
-}
 
-// 🔥 INICIO
-cargar();
+
+
+    // =====================================================
+    // ESCAPAR HTML
+    // =====================================================
+
+    function escapeHTML(
+        valor
+    ) {
+
+        return String(
+            valor ?? ""
+        )
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+    }
+
+
+
+    // =====================================================
+    // CARGAR
+    // =====================================================
+
+    async function cargar() {
+
+        try {
+
+            const res =
+                await fetch(
+                    `${API}/limpieza`
+                );
+
+
+            if (!res.ok) {
+
+                throw new Error(
+                    "Error del servidor"
+                );
+
+            }
+
+
+            const data =
+                await res.json();
+
+
+            registros =
+                Array.isArray(data)
+                    ? data
+                    : [];
+
+
+            actualizarEstadisticas();
+
+            renderizar();
+
+
+        } catch (error) {
+
+            console.error(
+                "Error cargando:",
+                error
+            );
+
+
+            document.getElementById(
+                "tabla"
+            ).innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="empty"
+                    >
+
+                        <div class="empty-icon">
+                            ⚠️
+                        </div>
+
+                        <strong>
+                            No se pudieron cargar los registros
+                        </strong>
+
+                        <span>
+                            Verifica la conexión con el servidor.
+                        </span>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+
+    }
+
+
+
+    // =====================================================
+    // RENDERIZAR MES
+    // =====================================================
+
+    function renderizar() {
+
+        const tabla =
+            document.getElementById(
+                "tabla"
+            );
+
+
+        const textoBusqueda =
+            document.getElementById(
+                "buscar"
+            ).value
+            .trim()
+            .toLowerCase();
+
+
+        let datos =
+            registros.filter(
+                item =>
+                    perteneceAlMes(
+                        item.fecha
+                    )
+            );
+
+
+        if (textoBusqueda) {
+
+            datos =
+                datos.filter(
+                    item => {
+
+                        const habitacion =
+                            String(
+                                item.habitacion ||
+                                ""
+                            ).toLowerCase();
+
+
+                        const empleado =
+                            String(
+                                item.empleado ||
+                                ""
+                            ).toLowerCase();
+
+
+                        const actividad =
+                            String(
+                                item.tipo_accion ||
+                                ""
+                            ).toLowerCase();
+
+
+                        return (
+                            habitacion.includes(
+                                textoBusqueda
+                            ) ||
+                            empleado.includes(
+                                textoBusqueda
+                            ) ||
+                            actividad.includes(
+                                textoBusqueda
+                            )
+                        );
+
+                    }
+                );
+
+        }
+
+
+        tabla.innerHTML = "";
+
+
+        if (
+            datos.length === 0
+        ) {
+
+            tabla.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="7"
+                        class="empty"
+                    >
+
+                        <div class="empty-icon">
+                            🧹
+                        </div>
+
+                        <strong>
+                            No hay registros en este mes
+                        </strong>
+
+                        <span>
+                            Prueba con otro mes o registra una nueva actividad.
+                        </span>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+            return;
+
+        }
+
+
+        datos.sort(
+            (a, b) =>
+                new Date(b.fecha) -
+                new Date(a.fecha)
+        );
+
+
+        datos.forEach(
+            item => {
+
+
+                const habitacion =
+                    escapeHTML(
+                        item.habitacion
+                    );
+
+
+                const actividad =
+                    escapeHTML(
+                        item.tipo_accion
+                    );
+
+
+                const empleado =
+                    escapeHTML(
+                        item.empleado
+                    );
+
+
+                const observacion =
+                    escapeHTML(
+                        item.observacion
+                    );
+
+
+                const fecha =
+                    item.fecha
+                        ? new Date(
+                            item.fecha
+                        ).toLocaleDateString(
+                            "es-CO"
+                        )
+                        : "";
+
+
+                const habitacionJS =
+                    String(
+                        item.habitacion ||
+                        ""
+                    )
+                    .replace(
+                        /\\/g,
+                        "\\\\"
+                    )
+                    .replace(
+                        /'/g,
+                        "\\'"
+                    );
+
+
+                const actividadJS =
+                    String(
+                        item.tipo_accion ||
+                        ""
+                    )
+                    .replace(
+                        /\\/g,
+                        "\\\\"
+                    )
+                    .replace(
+                        /'/g,
+                        "\\'"
+                    );
+
+
+                const empleadoJS =
+                    String(
+                        item.empleado ||
+                        ""
+                    )
+                    .replace(
+                        /\\/g,
+                        "\\\\"
+                    )
+                    .replace(
+                        /'/g,
+                        "\\'"
+                    );
+
+
+                const observacionJS =
+                    String(
+                        item.observacion ||
+                        ""
+                    )
+                    .replace(
+                        /\\/g,
+                        "\\\\"
+                    )
+                    .replace(
+                        /'/g,
+                        "\\'"
+                    );
+
+
+                const fechaJS =
+                    String(
+                        item.fecha ||
+                        ""
+                    )
+                    .replace(
+                        /\\/g,
+                        "\\\\"
+                    )
+                    .replace(
+                        /'/g,
+                        "\\'"
+                    );
+
+
+                tabla.innerHTML += `
+
+                    <tr>
+
+                        <td>
+
+                            <span
+                                class="room-number"
+                            >
+                                ${habitacion}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="action-text"
+                            >
+                                ${actividad}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+                            ${fecha}
+                        </td>
+
+
+                        <td>
+                            ${empleado}
+                        </td>
+
+
+                        <td>
+                            ${observacion || "—"}
+                        </td>
+
+
+                        <td>
+
+                            <span
+                                class="status"
+                            >
+                                ${escapeHTML(
+                                    item.estado ||
+                                    "Hecho"
+                                )}
+                            </span>
+
+                        </td>
+
+
+                        <td>
+
+                            <div
+                                class="actions"
+                            >
+
+                                <button
+                                    class="btn-action btn-edit"
+                                    title="Editar"
+                                    onclick="editar(
+                                        ${item.id},
+                                        '${habitacionJS}',
+                                        '${actividadJS}',
+                                        '${fechaJS}',
+                                        '${empleadoJS}',
+                                        '${observacionJS}'
+                                    )"
+                                >
+                                    ✏️
+                                </button>
+
+
+                                <button
+                                    class="btn-action btn-delete"
+                                    title="Eliminar"
+                                    onclick="eliminar(
+                                        ${item.id}
+                                    )"
+                                >
+                                    🗑️
+                                </button>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                `;
+
+            }
+        );
+
+    }
+
+
+
+    // =====================================================
+    // FECHA ACTUAL
+    // =====================================================
+
+    function mostrarFechaActual() {
+
+        const ahora =
+            new Date();
+
+
+        document.getElementById(
+            "fechaActual"
+        ).textContent =
+            ahora.toLocaleDateString(
+                "es-CO",
+                {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric"
+                }
+            );
+
+    }
+
+
+
+    // =====================================================
+    // INICIO
+    // =====================================================
+
+    mostrarFechaActual();
+
+    actualizarMes();
+
+    cargar();
+
 
 </script>
 
+
 </body>
+
 </html>

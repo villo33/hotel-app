@@ -1,1306 +1,2947 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
+
 <head>
-<title>Habitaciones</title>
 
-<style>
+  <meta charset="UTF-8">
 
-/* 🔥 RESET */
-html, body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  overflow-x: auto;
-}
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
-/* 🌈 FONDO */
-body {
-  font-family: Arial, sans-serif;
-  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  background-attachment: fixed;
-  color: #333;
-}
+  <meta
+    name="theme-color"
+    content="#071a3a"
+  >
 
-/* ✨ EFECTO VISUAL */
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
+  <title>Habitaciones | CASA NOA</title>
 
-  background:
-    radial-gradient(
-      circle at 20% 30%,
-      rgba(255,255,255,0.08),
-      transparent
-    ),
-    radial-gradient(
-      circle at 80% 70%,
-      rgba(0,123,255,0.15),
-      transparent
-    );
+  <link
+    rel="icon"
+    type="image/png"
+    href="/logo192.png"
+  >
 
-  z-index: 0;
-  pointer-events: none;
-}
+  <style>
 
-/* 🔝 BARRA SUPERIOR */
-.top-bar {
-  position: fixed;
-  top: 15px;
-  left: 15px;
-  z-index: 1000;
-}
+    /* =====================================================
+       RESET
+    ===================================================== */
 
-/* 📦 CONTENEDOR */
-.container {
-  position: relative;
-  z-index: 1;
+    * {
+      box-sizing: border-box;
+    }
 
-  width: max-content;
-  min-width: 100%;
+    html,
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+    }
 
-  margin: 80px auto 20px;
+    body {
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-  background: rgba(255, 255, 255, 0.96);
-  backdrop-filter: blur(6px);
+      background:
+        radial-gradient(
+          circle at 10% 10%,
+          rgba(37, 99, 235, .12),
+          transparent 30%
+        ),
+        radial-gradient(
+          circle at 90% 80%,
+          rgba(14, 165, 233, .10),
+          transparent 30%
+        ),
+        linear-gradient(
+          135deg,
+          #071a3a 0%,
+          #0b294f 45%,
+          #123b5c 100%
+        );
 
-  padding: 20px;
-  border-radius: 15px;
+      background-attachment: fixed;
 
-  box-shadow: 0px 15px 40px rgba(0,0,0,0.4);
-  box-sizing: border-box;
-}
+      color: #172033;
 
-/* 📊 TABLA */
-table {
-  border-collapse: collapse;
-  width: max-content;
-  min-width: 100%;
-  background: white;
-}
+      overflow-x: auto;
+    }
 
-/* 🔝 ENCABEZADO */
-th {
-  background: linear-gradient(90deg, #2563eb, #1d4ed8);
-  color: white;
-  padding: 10px;
 
-  position: sticky;
-  top: 0;
-  z-index: 5;
-}
+    /* =====================================================
+       EFECTO DE FONDO
+    ===================================================== */
 
-/* 🔲 CELDAS */
-td {
-  border: 1px solid #ddd;
-  padding: 5px;
-  text-align: center;
-}
+    body::before {
 
-/* ✍️ INPUTS */
-input {
-  width: 80px;
-  font-size: 11px;
-  padding: 3px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  box-sizing: border-box;
-}
+      content: "";
 
-input[type="color"] {
-  width: 45px;
-  height: 25px;
-  padding: 1px;
-}
+      position: fixed;
 
-/* 🔘 BOTONES */
-button {
-  padding: 6px 12px;
-  margin: 3px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-size: 12px;
-  color: white;
-  transition: 0.3s;
-}
+      inset: 0;
 
-button:hover {
-  transform: scale(1.05);
-}
+      background:
+        radial-gradient(
+          circle at 20% 30%,
+          rgba(255,255,255,.06),
+          transparent 28%
+        ),
+        radial-gradient(
+          circle at 80% 70%,
+          rgba(59,130,246,.10),
+          transparent 30%
+        );
 
-/* 🎨 COLORES */
-.btn-inicio {
-  background: #22c55e;
-}
+      pointer-events: none;
 
-.btn-logout {
-  background: #ef4444;
-}
+      z-index: 0;
 
-.btn-guardar {
-  background: #3b82f6;
-}
+    }
 
-.btn-editar {
-  background: #facc15;
-  color: black;
-}
 
-.btn-eliminar {
-  background: #ef4444;
-}
+    /* =====================================================
+       HEADER
+    ===================================================== */
 
-/* ➕ BOTÓN AGREGAR */
-.btn-agregar {
-  background: #22c55e;
-  font-weight: bold;
-}
+    .top-bar {
 
-/* 🔢 TOTAL */
-.total {
-  color: #2563eb;
-  font-weight: bold;
-}
+      position: fixed;
 
-/* ✨ HOVER */
-tr:hover {
-  background: #f1f5f9;
-}
+      top: 0;
+      left: 0;
+      right: 0;
 
-/* 📅 FILA ACTIVA SEGÚN FECHA */
-.fila-fecha-activa {
-  background: #eff6ff;
-}
+      min-height: 76px;
 
-/* 🔎 SELECTOR DE FECHA */
-.filtro-fecha {
-  margin: 15px 0;
-  padding: 12px;
-  background: #f8fafc;
-  border: 1px solid #dbeafe;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-}
+      padding:
+        0 30px;
 
-.filtro-fecha label {
-  font-weight: bold;
-  color: #1e3a8a;
-}
+      display: flex;
 
-.filtro-fecha input {
-  width: 150px;
-  font-size: 13px;
-  padding: 7px;
-}
+      align-items: center;
 
-.btn-mostrar-todo {
-  background: #64748b;
-}
+      justify-content: space-between;
 
-.info-fecha {
-  color: #475569;
-  font-size: 13px;
-  font-weight: bold;
-}
+      z-index: 1000;
 
-/* 📱 RESPONSIVE */
-@media (max-width: 700px) {
+      background:
+        rgba(7,26,58,.94);
 
-  .container {
-    margin-top: 75px;
-    padding: 12px;
-  }
+      backdrop-filter:
+        blur(14px);
 
-  .top-bar {
-    top: 8px;
-    left: 8px;
-  }
+      -webkit-backdrop-filter:
+        blur(14px);
 
-  button {
-    font-size: 11px;
-    padding: 6px 9px;
-  }
+      border-bottom:
+        1px solid rgba(255,255,255,.08);
 
-}
+      box-shadow:
+        0 8px 30px
+        rgba(0,0,0,.20);
 
-</style>
+    }
+
+
+    .brand {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 12px;
+
+    }
+
+
+    .brand-logo {
+
+      width: 46px;
+      height: 46px;
+
+      object-fit: contain;
+
+      background: white;
+
+      border-radius: 12px;
+
+      padding: 3px;
+
+      box-shadow:
+        0 5px 16px
+        rgba(0,0,0,.20);
+
+    }
+
+
+    .brand-text h1 {
+
+      margin: 0;
+
+      color: white;
+
+      font-size: 19px;
+
+      font-weight: 800;
+
+      letter-spacing: .5px;
+
+    }
+
+
+    .brand-text span {
+
+      display: block;
+
+      margin-top: 2px;
+
+      color:
+        #aebed4;
+
+      font-size: 11px;
+
+    }
+
+
+    .top-actions {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 8px;
+
+    }
+
+
+    /* =====================================================
+       BOTONES SUPERIORES
+    ===================================================== */
+
+    button {
+
+      font-family: inherit;
+
+      border: none;
+
+      cursor: pointer;
+
+      transition:
+        .2s ease;
+
+    }
+
+
+    .top-btn {
+
+      padding:
+        10px 15px;
+
+      border-radius:
+        10px;
+
+      color: white;
+
+      border:
+        1px solid
+        rgba(255,255,255,.14);
+
+      background:
+        rgba(255,255,255,.08);
+
+      font-weight: 650;
+
+      font-size: 13px;
+
+    }
+
+
+    .top-btn:hover {
+
+      background:
+        rgba(255,255,255,.16);
+
+      transform:
+        translateY(-1px);
+
+    }
+
+
+    .top-btn.logout:hover {
+
+      background:
+        rgba(239,68,68,.18);
+
+      border-color:
+        rgba(248,113,113,.30);
+
+    }
+
+
+    /* =====================================================
+       CONTENEDOR PRINCIPAL
+    ===================================================== */
+
+    .container {
+
+      position: relative;
+
+      z-index: 1;
+
+      width: max-content;
+
+      min-width: calc(100% - 40px);
+
+      margin:
+        105px 20px 35px;
+
+      padding:
+        28px;
+
+      background:
+        rgba(255,255,255,.97);
+
+      border:
+        1px solid
+        rgba(255,255,255,.7);
+
+      border-radius:
+        22px;
+
+      box-shadow:
+        0 25px 70px
+        rgba(0,0,0,.28);
+
+    }
+
+
+    /* =====================================================
+       ENCABEZADO DE PÁGINA
+    ===================================================== */
+
+    .page-heading {
+
+      display: flex;
+
+      justify-content:
+        space-between;
+
+      align-items:
+        flex-start;
+
+      gap: 25px;
+
+      margin-bottom:
+        23px;
+
+    }
+
+
+    .page-heading h2 {
+
+      margin:
+        0 0 7px;
+
+      color:
+        #071a3a;
+
+      font-size:
+        29px;
+
+      font-weight:
+        800;
+
+      letter-spacing:
+        -.4px;
+
+    }
+
+
+    .page-heading p {
+
+      margin: 0;
+
+      color:
+        #64748b;
+
+      font-size:
+        13px;
+
+    }
+
+
+    .hotel-badge {
+
+      display:
+        inline-flex;
+
+      align-items:
+        center;
+
+      gap: 7px;
+
+      padding:
+        9px 13px;
+
+      border-radius:
+        999px;
+
+      background:
+        #eff6ff;
+
+      border:
+        1px solid
+        #dbeafe;
+
+      color:
+        #1d4ed8;
+
+      font-size:
+        12px;
+
+      font-weight:
+        750;
+
+    }
+
+
+    /* =====================================================
+       TARJETA DE ACCIÓN
+    ===================================================== */
+
+    .action-card {
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        space-between;
+
+      gap: 20px;
+
+      margin-bottom:
+        18px;
+
+      padding:
+        18px 20px;
+
+      border:
+        1px solid
+        #e2e8f0;
+
+      border-radius:
+        16px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #ffffff,
+          #f8fbff
+        );
+
+      box-shadow:
+        0 6px 20px
+        rgba(15,23,42,.045);
+
+    }
+
+
+    .action-info {
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      gap: 13px;
+
+    }
+
+
+    .action-icon {
+
+      width:
+        43px;
+
+      height:
+        43px;
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      border-radius:
+        12px;
+
+      background:
+        #eff6ff;
+
+      font-size:
+        21px;
+
+    }
+
+
+    .action-info strong {
+
+      display:
+        block;
+
+      color:
+        #172033;
+
+      font-size:
+        14px;
+
+    }
+
+
+    .action-info span {
+
+      display:
+        block;
+
+      margin-top:
+        3px;
+
+      color:
+        #64748b;
+
+      font-size:
+        12px;
+
+    }
+
+
+    .btn-agregar {
+
+      padding:
+        11px 17px;
+
+      border-radius:
+        10px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #2563eb,
+          #1d4ed8
+        );
+
+      color:
+        white;
+
+      font-size:
+        13px;
+
+      font-weight:
+        750;
+
+      box-shadow:
+        0 7px 18px
+        rgba(37,99,235,.20);
+
+    }
+
+
+    .btn-agregar:hover {
+
+      transform:
+        translateY(-1px);
+
+      box-shadow:
+        0 10px 23px
+        rgba(37,99,235,.28);
+
+    }
+
+
+    /* =====================================================
+       FILTRO DE FECHA
+    ===================================================== */
+
+    .filtro-fecha {
+
+      margin:
+        0 0 20px;
+
+      padding:
+        17px 18px;
+
+      background:
+        #f8fafc;
+
+      border:
+        1px solid
+        #e2e8f0;
+
+      border-radius:
+        15px;
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      gap:
+        11px;
+
+      flex-wrap:
+        wrap;
+
+    }
+
+
+    .filtro-icon {
+
+      width:
+        36px;
+
+      height:
+        36px;
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      background:
+        #e0edff;
+
+      border-radius:
+        9px;
+
+      font-size:
+        17px;
+
+    }
+
+
+    .filtro-fecha label {
+
+      font-weight:
+        750;
+
+      color:
+        #1e3a8a;
+
+      font-size:
+        13px;
+
+    }
+
+
+    .filtro-fecha input {
+
+      width:
+        155px;
+
+      font-size:
+        13px;
+
+      padding:
+        9px 10px;
+
+      border:
+        1px solid
+        #cbd5e1;
+
+      background:
+        white;
+
+      border-radius:
+        9px;
+
+      color:
+        #334155;
+
+      outline:
+        none;
+
+    }
+
+
+    .filtro-fecha input:focus {
+
+      border-color:
+        #3b82f6;
+
+      box-shadow:
+        0 0 0 3px
+        rgba(59,130,246,.10);
+
+    }
+
+
+    .btn-mostrar-todo {
+
+      padding:
+        9px 13px;
+
+      border-radius:
+        9px;
+
+      background:
+        #e2e8f0;
+
+      color:
+        #334155;
+
+      font-weight:
+        700;
+
+      font-size:
+        12px;
+
+    }
+
+
+    .btn-mostrar-todo:hover {
+
+      background:
+        #cbd5e1;
+
+    }
+
+
+    .info-fecha {
+
+      color:
+        #64748b;
+
+      font-size:
+        12px;
+
+      font-weight:
+        650;
+
+      margin-left:
+        3px;
+
+    }
+
+
+    /* =====================================================
+       CONTENEDOR DE TABLA
+    ===================================================== */
+
+    .table-card {
+
+      background:
+        white;
+
+      border:
+        1px solid
+        #e2e8f0;
+
+      border-radius:
+        17px;
+
+      overflow:
+        hidden;
+
+      box-shadow:
+        0 8px 25px
+        rgba(15,23,42,.045);
+
+    }
+
+
+    .table-header {
+
+      display:
+        flex;
+
+      justify-content:
+        space-between;
+
+      align-items:
+        center;
+
+      padding:
+        17px 19px;
+
+      border-bottom:
+        1px solid
+        #e8edf3;
+
+      background:
+        linear-gradient(
+          180deg,
+          #ffffff,
+          #fbfdff
+        );
+
+    }
+
+
+    .table-title {
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      gap:
+        10px;
+
+    }
+
+
+    .table-title-icon {
+
+      width:
+        35px;
+
+      height:
+        35px;
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      background:
+        #eef4ff;
+
+      border-radius:
+        9px;
+
+    }
+
+
+    .table-title strong {
+
+      display:
+        block;
+
+      color:
+        #172033;
+
+      font-size:
+        14px;
+
+    }
+
+
+    .table-title span {
+
+      display:
+        block;
+
+      margin-top:
+        2px;
+
+      color:
+        #94a3b8;
+
+      font-size:
+        11px;
+
+    }
+
+
+    .scroll-hint {
+
+      color:
+        #94a3b8;
+
+      font-size:
+        11px;
+
+      font-weight:
+        600;
+
+    }
+
+
+    .table-scroll {
+
+      overflow-x:
+        auto;
+
+      width:
+        100%;
+
+    }
+
+
+    /* =====================================================
+       TABLA
+    ===================================================== */
+
+    table {
+
+      border-collapse:
+        separate;
+
+      border-spacing:
+        0;
+
+      width:
+        max-content;
+
+      min-width:
+        100%;
+
+      background:
+        white;
+
+    }
+
+
+    th {
+
+      background:
+        #071a3a;
+
+      color:
+        white;
+
+      padding:
+        12px 10px;
+
+      position:
+        sticky;
+
+      top:
+        0;
+
+      z-index:
+        5;
+
+      font-size:
+        11px;
+
+      font-weight:
+        750;
+
+      letter-spacing:
+        .25px;
+
+      white-space:
+        nowrap;
+
+      border-right:
+        1px solid
+        rgba(255,255,255,.08);
+
+    }
+
+
+    th:first-child {
+
+      border-top-left-radius:
+        0;
+
+    }
+
+
+    th:last-child {
+
+      border-right:
+        none;
+
+    }
+
+
+    td {
+
+      border-right:
+        1px solid
+        #edf1f5;
+
+      border-bottom:
+        1px solid
+        #edf1f5;
+
+      padding:
+        7px;
+
+      text-align:
+        center;
+
+      background:
+        white;
+
+      font-size:
+        12px;
+
+    }
+
+
+    tr:last-child td {
+
+      border-bottom:
+        none;
+
+    }
+
+
+    tr:hover td {
+
+      background:
+        #f8fbff;
+
+    }
+
+
+    /* =====================================================
+       INPUTS
+    ===================================================== */
+
+    td input {
+
+      width:
+        82px;
+
+      font-size:
+        11px;
+
+      padding:
+        5px 5px;
+
+      border-radius:
+        6px;
+
+      border:
+        1px solid
+        #d8e0e9;
+
+      background:
+        #fbfdff;
+
+      color:
+        #334155;
+
+      box-sizing:
+        border-box;
+
+      outline:
+        none;
+
+    }
+
+
+    td input:focus {
+
+      border-color:
+        #60a5fa;
+
+      box-shadow:
+        0 0 0 2px
+        rgba(96,165,250,.10);
+
+    }
+
+
+    input[type="color"] {
+
+      width:
+        44px;
+
+      height:
+        25px;
+
+      padding:
+        2px;
+
+      border-radius:
+        6px;
+
+      cursor:
+        pointer;
+
+    }
+
+
+    .encargado {
+
+      font-weight:
+        700;
+
+    }
+
+
+    .fechaPrincipal {
+
+      margin-top:
+        2px;
+
+    }
+
+
+    /* =====================================================
+       TOTAL
+    ===================================================== */
+
+    .total {
+
+      color:
+        #1d4ed8;
+
+      font-weight:
+        800;
+
+      font-size:
+        13px;
+
+      min-width:
+        55px;
+
+    }
+
+
+    .dias {
+
+      margin-top:
+        3px;
+
+      min-height:
+        17px;
+
+      display:
+        flex;
+
+      align-items:
+        center;
+
+      justify-content:
+        center;
+
+      color:
+        #2563eb;
+
+      font-size:
+        11px;
+
+      font-weight:
+        800;
+
+    }
+
+
+    /* =====================================================
+       FILA ACTIVA
+    ===================================================== */
+
+    .fila-fecha-activa td {
+
+      background:
+        #eff6ff;
+
+    }
+
+
+    .fila-fecha-activa:hover td {
+
+      background:
+        #e6f0ff;
+
+    }
+
+
+    /* =====================================================
+       BOTONES DE TABLA
+    ===================================================== */
+
+    td button {
+
+      width:
+        34px;
+
+      height:
+        32px;
+
+      margin:
+        2px;
+
+      padding:
+        0;
+
+      border:
+        none;
+
+      border-radius:
+        8px;
+
+      font-size:
+        13px;
+
+      cursor:
+        pointer;
+
+      transition:
+        .2s ease;
+
+    }
+
+
+    td button:hover {
+
+      transform:
+        translateY(-1px);
+
+    }
+
+
+    .btn-guardar {
+
+      background:
+        #dbeafe;
+
+      color:
+        #1d4ed8;
+
+    }
+
+
+    .btn-guardar:hover {
+
+      background:
+        #bfdbfe;
+
+    }
+
+
+    .btn-editar {
+
+      background:
+        #fef3c7;
+
+      color:
+        #92400e;
+
+    }
+
+
+    .btn-editar:hover {
+
+      background:
+        #fde68a;
+
+    }
+
+
+    .btn-eliminar {
+
+      background:
+        #fee2e2;
+
+      color:
+        #b91c1c;
+
+    }
+
+
+    .btn-eliminar:hover {
+
+      background:
+        #fecaca;
+
+    }
+
+
+    /* =====================================================
+       RESPONSIVE
+    ===================================================== */
+
+    @media (max-width: 800px) {
+
+      .top-bar {
+
+        padding:
+          0 15px;
+
+      }
+
+
+      .brand-text span {
+
+        display:
+          none;
+
+      }
+
+
+      .container {
+
+        min-width:
+          calc(100% - 20px);
+
+        margin:
+          92px 10px 20px;
+
+        padding:
+          18px;
+
+        border-radius:
+          17px;
+
+      }
+
+
+      .page-heading {
+
+        flex-direction:
+          column;
+
+      }
+
+
+      .page-heading h2 {
+
+        font-size:
+          24px;
+
+      }
+
+
+      .action-card {
+
+        align-items:
+          flex-start;
+
+        flex-direction:
+          column;
+
+      }
+
+
+      .btn-agregar {
+
+        width:
+          100%;
+
+      }
+
+
+      .table-header {
+
+        align-items:
+          flex-start;
+
+        flex-direction:
+          column;
+
+        gap:
+          7px;
+
+      }
+
+
+      .scroll-hint {
+
+        display:
+          none;
+
+      }
+
+    }
+
+
+    @media (max-width: 520px) {
+
+      .top-btn {
+
+        padding:
+          9px 11px;
+
+        font-size:
+          11px;
+
+      }
+
+
+      .brand-logo {
+
+        width:
+          40px;
+
+        height:
+          40px;
+
+      }
+
+
+      .brand-text h1 {
+
+        font-size:
+          16px;
+
+      }
+
+
+      .filtro-fecha {
+
+        align-items:
+          flex-start;
+
+        flex-direction:
+          column;
+
+      }
+
+
+      .filtro-fecha input {
+
+        width:
+          100%;
+
+      }
+
+
+      .btn-mostrar-todo {
+
+        width:
+          100%;
+
+      }
+
+
+      .info-fecha {
+
+        margin:
+          3px 0 0;
+
+      }
+
+    }
+
+  </style>
+
 </head>
+
 
 <body>
 
-<div class="top-bar">
-  <button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>
-  <button class="btn-logout" onclick="logout()">🚪 Cerrar sesión</button>
-</div>
 
-<div class="container">
+  <!-- =====================================================
+       BARRA SUPERIOR
+  ====================================================== -->
 
-  <h2>🏨 CONTROL DE HABITACIONES</h2>
+  <div class="top-bar">
 
-  <button class="btn-agregar" onclick="agregarFila()">
-    ➕ Agregar Día
-  </button>
+    <div class="brand">
 
-  <!-- 🔎 FILTRO POR FECHA -->
-  <div class="filtro-fecha">
+      <img
+        class="brand-logo"
+        src="/logo192.png"
+        alt="CASA NOA"
+      >
 
-    <label for="filtroFecha">
-      📅 Ver habitaciones del día:
-    </label>
+      <div class="brand-text">
 
-    <input
-      type="date"
-      id="filtroFecha"
-      onchange="filtrarPorFecha()"
-    >
+        <h1>CASA NOA</h1>
 
-    <button
-      class="btn-mostrar-todo"
-      onclick="mostrarTodos()"
-    >
-      👁️ Mostrar todos
-    </button>
+        <span>
+          Control de habitaciones
+        </span>
 
-    <span
-      class="info-fecha"
-      id="infoFecha"
-    >
-      Mostrando todos los días
-    </span>
+      </div>
+
+    </div>
+
+
+    <div class="top-actions">
+
+      <button
+        class="top-btn"
+        onclick="irInicio()"
+      >
+        ← Inicio
+      </button>
+
+      <button
+        class="top-btn logout"
+        onclick="logout()"
+      >
+        🚪 Cerrar sesión
+      </button>
+
+    </div>
 
   </div>
 
-  <table>
 
-    <thead>
-      <tr>
+  <!-- =====================================================
+       CONTENIDO
+  ====================================================== -->
 
-        <th>ID</th>
-        <th>Encargado / Fecha</th>
-
-        <th>101</th>
-        <th>102</th>
-        <th>103</th>
-        <th>104</th>
-        <th>105</th>
-        <th>106</th>
-        <th>107</th>
-
-        <th>201</th>
-        <th>202</th>
-        <th>203</th>
-        <th>204</th>
-        <th>205</th>
-        <th>206</th>
-        <th>207</th>
-
-        <th>301</th>
-        <th>302</th>
-        <th>303</th>
-        <th>304</th>
-        <th>305</th>
-        <th>306</th>
-
-        <th>Total</th>
-        <th>Acciones</th>
-
-      </tr>
-    </thead>
-
-    <tbody id="cuerpo"></tbody>
-
-  </table>
-
-</div>
-
-<script>
-
-const API = window.location.origin;
-
-function irInicio() {
-  window.location.href = "/";
-}
-
-function logout() {
-  localStorage.removeItem("logueado");
-  window.location.href = "/";
-}
-
-const habitaciones = [
-  101,102,103,104,105,106,107,
-  201,202,203,204,205,206,207,
-  301,302,303,304,305,306
-];
-
-let contadorId = 1;
-
-/* =========================================================
-   🔥 VARIABLE PRINCIPAL DEL FILTRO
-   ========================================================= */
-
-let fechaSeleccionada = "";
+  <div class="container">
 
 
-/* =========================================================
-   📅 NORMALIZAR FECHAS
-   Evita problemas si PostgreSQL devuelve:
-   2026-09-10
-   2026-09-10T00:00:00.000Z
-   ========================================================= */
+    <!-- ===================================================
+         ENCABEZADO
+    ==================================================== -->
 
-function normalizarFecha(fecha) {
+    <div class="page-heading">
 
-  if (!fecha) {
-    return "";
-  }
+      <div>
 
-  return String(fecha)
-    .split("T")[0]
-    .split(" ")[0]
-    .trim();
+        <h2>
+          🏨 Control de habitaciones
+        </h2>
 
-}
+        <p>
+          Consulta y administra las fechas de ocupación
+          de las habitaciones de CASA NOA.
+        </p>
+
+      </div>
 
 
-/* =========================================================
-   ➕ AGREGAR FILA
-   ========================================================= */
+      <div class="hotel-badge">
 
-function agregarFila() {
+        🏨
 
-  const tabla = document.getElementById("cuerpo");
+        Gestión hotelera
 
-  const fila = document.createElement("tr");
+      </div>
 
-  let html = `
-    <td>${contadorId++}</td>
+    </div>
 
-    <td>
 
-      <input
-        class="encargado"
-        placeholder="Encargado"
-      ><br>
+    <!-- ===================================================
+         ACCIÓN PRINCIPAL
+    ==================================================== -->
 
-      <input
-        type="color"
-        class="color"
-        value="#2563eb"
-      ><br>
+    <div class="action-card">
+
+      <div class="action-info">
+
+        <div class="action-icon">
+          ➕
+        </div>
+
+        <div>
+
+          <strong>
+            Registrar nuevo día
+          </strong>
+
+          <span>
+            Agrega un nuevo registro de habitaciones
+            y sus fechas correspondientes.
+          </span>
+
+        </div>
+
+      </div>
+
+
+      <button
+        class="btn-agregar"
+        onclick="agregarFila()"
+      >
+        ➕ Agregar día
+      </button>
+
+    </div>
+
+
+    <!-- ===================================================
+         FILTRO
+    ==================================================== -->
+
+    <div class="filtro-fecha">
+
+      <div class="filtro-icon">
+        📅
+      </div>
+
+
+      <label
+        for="filtroFecha"
+      >
+        Ver habitaciones del día:
+      </label>
+
 
       <input
         type="date"
-        class="fechaPrincipal"
+        id="filtroFecha"
+        onchange="filtrarPorFecha()"
       >
 
-    </td>
-  `;
-
-
-  habitaciones.forEach(() => {
-
-    html += `
-      <td>
-
-        <input
-          type="date"
-          class="inicio"
-        ><br>
-
-        <input
-          type="date"
-          class="fin"
-        ><br>
-
-        <div class="dias">0</div>
-
-      </td>
-    `;
-
-  });
-
-
-  html += `
-    <td class="total">
-      0
-    </td>
-  `;
-
-
-  html += `
-    <td>
 
       <button
-        class="btn-guardar"
-        onclick="guardarFila(this)"
+        class="btn-mostrar-todo"
+        onclick="mostrarTodos()"
       >
-        💾
+        👁️ Mostrar todos
       </button>
 
-      <button
-        class="btn-editar"
-        onclick="editarFila(this)"
+
+      <span
+        class="info-fecha"
+        id="infoFecha"
       >
-        ✏️
-      </button>
+        Mostrando todos los días
+      </span>
 
-      <button
-        class="btn-eliminar"
-        onclick="eliminarFila(this)"
-      >
-        ❌
-      </button>
-
-    </td>
-  `;
+    </div>
 
 
-  fila.innerHTML = html;
+    <!-- ===================================================
+         TABLA
+    ==================================================== -->
 
-  tabla.insertBefore(
-    fila,
-    tabla.firstChild
-  );
-
-  activarEventos(fila);
-
-}
+    <div class="table-card">
 
 
-/* =========================================================
-   ✏️ EDITAR
-   ========================================================= */
+      <div class="table-header">
 
-function editarFila(btn) {
+        <div class="table-title">
 
-  const fila = btn.closest("tr");
+          <div class="table-title-icon">
+            🛏️
+          </div>
 
-  fila.querySelectorAll("input").forEach(input => {
+          <div>
 
-    input.disabled = !input.disabled;
+            <strong>
+              Registro de habitaciones
+            </strong>
 
-  });
+            <span>
+              Fechas de inicio, fin y días registrados
+            </span>
 
-}
+          </div>
 
-
-/* =========================================================
-   📅 EVENTOS
-   ========================================================= */
-
-function activarEventos(fila) {
-
-  const celdas = fila.querySelectorAll("td");
-
-  for (let i = 2; i <= 21; i++) {
-
-    const inicio =
-      celdas[i].querySelector(".inicio");
-
-    const fin =
-      celdas[i].querySelector(".fin");
-
-    const diasDiv =
-      celdas[i].querySelector(".dias");
+        </div>
 
 
-    function calcular() {
+        <div class="scroll-hint">
 
-      if (inicio.value && fin.value) {
+          ↔ Desliza horizontalmente para ver todas
+          las habitaciones
 
-        const f1 =
-          new Date(inicio.value + "T00:00:00");
+        </div>
 
-        const f2 =
-          new Date(fin.value + "T00:00:00");
+      </div>
 
-        const diff =
-          Math.floor(
-            (f2 - f1) /
-            (1000 * 60 * 60 * 24)
-          );
 
-        diasDiv.innerText =
-          diff > 0 ? diff : 0;
+      <div class="table-scroll">
 
-      } else {
+        <table>
 
-        diasDiv.innerText = 0;
+          <thead>
+
+            <tr>
+
+              <th>ID</th>
+
+              <th>
+                Encargado / Fecha
+              </th>
+
+
+              <th>101</th>
+              <th>102</th>
+              <th>103</th>
+              <th>104</th>
+              <th>105</th>
+              <th>106</th>
+              <th>107</th>
+
+
+              <th>201</th>
+              <th>202</th>
+              <th>203</th>
+              <th>204</th>
+              <th>205</th>
+              <th>206</th>
+              <th>207</th>
+
+
+              <th>301</th>
+              <th>302</th>
+              <th>303</th>
+              <th>304</th>
+              <th>305</th>
+              <th>306</th>
+
+
+              <th>Total</th>
+
+              <th>Acciones</th>
+
+            </tr>
+
+          </thead>
+
+
+          <tbody
+            id="cuerpo"
+          ></tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    const API =
+      window.location.origin;
+
+
+    function irInicio() {
+
+      window.location.href = "/";
+
+    }
+
+
+    function logout() {
+
+      localStorage.removeItem(
+        "logueado"
+      );
+
+      window.location.href = "/";
+
+    }
+
+
+    const habitaciones = [
+
+      101,102,103,104,105,106,107,
+
+      201,202,203,204,205,206,207,
+
+      301,302,303,304,305,306
+
+    ];
+
+
+    let contadorId = 1;
+
+
+    /* =========================================================
+       VARIABLE PRINCIPAL DEL FILTRO
+    ========================================================= */
+
+    let fechaSeleccionada = "";
+
+
+    /* =========================================================
+       NORMALIZAR FECHAS
+    ========================================================= */
+
+    function normalizarFecha(fecha) {
+
+      if (!fecha) {
+
+        return "";
 
       }
 
-      calcularTotalFila(fila);
+      return String(fecha)
 
-    }
+        .split("T")[0]
 
+        .split(" ")[0]
 
-    inicio.addEventListener(
-      "change",
-      calcular
-    );
-
-    fin.addEventListener(
-      "change",
-      calcular
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   🔢 TOTAL DE HABITACIONES DE LA FILA
-   ========================================================= */
-
-function calcularTotalFila(fila) {
-
-  let total = 0;
-
-  fila.querySelectorAll(".dias").forEach(dia => {
-
-    if (parseInt(dia.innerText) > 0) {
-      total++;
-    }
-
-  });
-
-  fila.querySelector(".total").innerText = total;
-
-}
-
-
-/* =========================================================
-   💾 GUARDAR
-   ========================================================= */
-
-async function guardarFila(btn) {
-
-  const fila = btn.closest("tr");
-
-  const encargado =
-    fila.querySelector(".encargado").value.trim();
-
-  const fecha =
-    fila.querySelector(".fechaPrincipal").value;
-
-  const color =
-    fila.querySelector(".color").value;
-
-
-  if (!encargado || !fecha) {
-
-    alert("Falta encargado o fecha");
-
-    return;
-
-  }
-
-
-  const celdas =
-    fila.querySelectorAll("td");
-
-  const requests = [];
-
-
-  for (let i = 2; i <= 21; i++) {
-
-    const inicio =
-      celdas[i].querySelector(".inicio").value;
-
-    const fin =
-      celdas[i].querySelector(".fin").value;
-
-
-    if (inicio && fin) {
-
-      const req = fetch(
-        `${API}/habitaciones`,
-        {
-          method: "POST",
-
-          headers: {
-            "Content-Type":
-              "application/json"
-          },
-
-          body: JSON.stringify({
-
-            habitacion:
-              habitaciones[i - 2],
-
-            encargado,
-
-            fecha,
-
-            color,
-
-            inicio,
-
-            fin
-
-          })
-
-        }
-      );
-
-      requests.push(req);
-
-    }
-
-  }
-
-
-  if (requests.length === 0) {
-
-    alert(
-      "No llenaste ninguna habitación"
-    );
-
-    return;
-
-  }
-
-
-  try {
-
-    await Promise.all(requests);
-
-    alert(
-      "Fila guardada ✅"
-    );
-
-    await cargarFilasGuardadas();
-
-  } catch (e) {
-
-    console.error(e);
-
-    alert(
-      "Error guardando ❌"
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   ❌ ELIMINAR FILA
-   ========================================================= */
-
-async function eliminarFila(btn) {
-
-  if (
-    !confirm(
-      "¿Eliminar fila?"
-    )
-  ) {
-    return;
-  }
-
-
-  const fila =
-    btn.closest("tr");
-
-
-  try {
-
-    const res =
-      await fetch(
-        `${API}/habitaciones`
-      );
-
-    const data =
-      await res.json();
-
-
-    const encargado =
-      fila
-        .querySelector(".encargado")
-        .value
         .trim();
 
-
-    const fecha =
-      normalizarFecha(
-        fila
-          .querySelector(
-            ".fechaPrincipal"
-          )
-          .value
-      );
-
-
-    const eliminar =
-      data.filter(item => {
-
-        return (
-          item.encargado?.trim() ===
-            encargado &&
-
-          normalizarFecha(
-            item.fecha
-          ) === fecha
-        );
-
-      });
-
-
-    if (
-      eliminar.length === 0
-    ) {
-
-      alert(
-        "No se encontró nada para eliminar ❌"
-      );
-
-      return;
-
     }
 
 
-    for (
-      const item of eliminar
-    ) {
+    /* =========================================================
+       AGREGAR FILA
+    ========================================================= */
 
-      await fetch(
-        `${API}/habitaciones/${item.id}`,
-        {
-          method: "DELETE"
-        }
-      );
+    function agregarFila() {
 
-    }
-
-
-    alert(
-      "Eliminado correctamente ✅"
-    );
-
-
-    await cargarFilasGuardadas();
-
-
-  } catch (err) {
-
-    console.error(err);
-
-    alert(
-      "Error eliminando ❌"
-    );
-
-  }
-
-}
-
-
-/* =========================================================
-   📥 CARGAR DATOS
-   ========================================================= */
-
-async function cargarFilasGuardadas() {
-
-  try {
-
-    const res =
-      await fetch(
-        `${API}/habitaciones`
-      );
-
-
-    if (!res.ok) {
-
-      throw new Error(
-        `Error servidor: ${res.status}`
-      );
-
-    }
-
-
-    const data =
-      await res.json();
-
-
-    const grupos = {};
-
-
-    /* =====================================================
-       🔥 AGRUPAR POR ENCARGADO + FECHA
-       ===================================================== */
-
-    data.forEach(item => {
-
-      const fecha =
-        normalizarFecha(
-          item.fecha
+      const tabla =
+        document.getElementById(
+          "cuerpo"
         );
 
 
-      const encargado =
-        item.encargado || "";
-
-
-      const key =
-        `${encargado}_${fecha}`;
-
-
-      if (!grupos[key]) {
-
-        grupos[key] = {
-
-          encargado,
-
-          fecha,
-
-          color:
-            item.color ||
-            "#2563eb",
-
-          habitaciones: []
-
-        };
-
-      }
-
-
-      grupos[key]
-        .habitaciones
-        .push(item);
-
-    });
-
-
-    /* =====================================================
-       📅 ORDENAR POR FECHA
-       ===================================================== */
-
-    const ordenados =
-      Object.values(grupos)
-        .sort(
-          (a, b) =>
-            new Date(b.fecha) -
-            new Date(a.fecha)
+      const fila =
+        document.createElement(
+          "tr"
         );
 
 
-    const tabla =
-      document.getElementById(
-        "cuerpo"
-      );
+      let html = `
+
+        <td>
+          ${contadorId++}
+        </td>
 
 
-    tabla.innerHTML = "";
+        <td>
+
+          <input
+            class="encargado"
+            placeholder="Encargado"
+          ><br>
+
+          <input
+            type="color"
+            class="color"
+            value="#2563eb"
+          ><br>
+
+          <input
+            type="date"
+            class="fechaPrincipal"
+          >
+
+        </td>
+
+      `;
 
 
-    /* =====================================================
-       🔥 MOSTRAR SOLAMENTE LA FECHA SELECCIONADA
-       ===================================================== */
+      habitaciones.forEach(() => {
 
-    let gruposMostrados =
-      ordenados;
-
-
-    if (fechaSeleccionada) {
-
-      gruposMostrados =
-        ordenados.filter(
-          grupo =>
-            normalizarFecha(
-              grupo.fecha
-            ) === fechaSeleccionada
-        );
-
-    }
-
-
-    /* =====================================================
-       🔢 ID VISUAL
-       ===================================================== */
-
-    gruposMostrados.forEach(
-      (grupo, index) => {
-
-        const idVisual =
-          gruposMostrados.length -
-          index;
-
-
-        const fila =
-          document.createElement("tr");
-
-
-        if (
-          fechaSeleccionada &&
-          grupo.fecha ===
-            fechaSeleccionada
-        ) {
-
-          fila.classList.add(
-            "fila-fecha-activa"
-          );
-
-        }
-
-
-        let html = `
-
-          <td>
-            ${idVisual}
-          </td>
+        html += `
 
           <td>
 
             <input
-              class="encargado"
-              value="${escapeHTML(
-                grupo.encargado
-              )}"
-              style="
-                color:${escapeHTML(
-                  grupo.color
-                )}
-              "
-            ><br>
-
-            <input
-              type="color"
-              class="color"
-              value="${escapeHTML(
-                grupo.color
-              )}"
+              type="date"
+              class="inicio"
             ><br>
 
             <input
               type="date"
-              class="fechaPrincipal"
-              value="${grupo.fecha}"
-            >
+              class="fin"
+            ><br>
+
+            <div class="dias">
+              0
+            </div>
 
           </td>
 
         `;
 
+      });
 
-        habitaciones.forEach(() => {
 
-          html += `
+      html += `
 
-            <td>
+        <td class="total">
+          0
+        </td>
 
-              <input
-                type="date"
-                class="inicio"
-              ><br>
+      `;
 
-              <input
-                type="date"
-                class="fin"
-              ><br>
 
-              <div class="dias">
-                0
-              </div>
+      html += `
 
-            </td>
+        <td>
 
-          `;
+          <button
+            class="btn-guardar"
+            onclick="guardarFila(this)"
+          >
+            💾
+          </button>
+
+          <button
+            class="btn-editar"
+            onclick="editarFila(this)"
+          >
+            ✏️
+          </button>
+
+          <button
+            class="btn-eliminar"
+            onclick="eliminarFila(this)"
+          >
+            ❌
+          </button>
+
+        </td>
+
+      `;
+
+
+      fila.innerHTML =
+        html;
+
+
+      tabla.insertBefore(
+        fila,
+        tabla.firstChild
+      );
+
+
+      activarEventos(
+        fila
+      );
+
+    }
+
+
+    /* =========================================================
+       EDITAR
+    ========================================================= */
+
+    function editarFila(btn) {
+
+      const fila =
+        btn.closest("tr");
+
+
+      fila
+        .querySelectorAll("input")
+        .forEach(input => {
+
+          input.disabled =
+            !input.disabled;
 
         });
 
-
-        html += `
-
-          <td class="total">
-            0
-          </td>
-
-        `;
+    }
 
 
-        html += `
+    /* =========================================================
+       EVENTOS
+    ========================================================= */
 
-          <td>
+    function activarEventos(fila) {
 
-            <button
-              class="btn-guardar"
-              onclick="guardarFila(this)"
-            >
-              💾
-            </button>
-
-            <button
-              class="btn-editar"
-              onclick="editarFila(this)"
-            >
-              ✏️
-            </button>
-
-            <button
-              class="btn-eliminar"
-              onclick="eliminarFila(this)"
-            >
-              ❌
-            </button>
-
-          </td>
-
-        `;
+      const celdas =
+        fila.querySelectorAll(
+          "td"
+        );
 
 
-        fila.innerHTML = html;
+      for (
+        let i = 2;
+        i <= 21;
+        i++
+      ) {
 
-        tabla.appendChild(fila);
-
-
-        const celdas =
-          fila.querySelectorAll("td");
-
-
-        /* =================================================
-           🔥 CARGAR HABITACIONES DEL GRUPO
-           ================================================= */
-
-        grupo.habitaciones.forEach(h => {
-
-          const indexHab =
-            habitaciones.indexOf(
-              Number(h.habitacion)
-            );
-
-
-          if (indexHab === -1) {
-            return;
-          }
-
-
-          const celda =
-            celdas[indexHab + 2];
-
-
-          const inicio =
-            celda.querySelector(
+        const inicio =
+          celdas[i]
+            .querySelector(
               ".inicio"
             );
 
 
-          const fin =
-            celda.querySelector(
+        const fin =
+          celdas[i]
+            .querySelector(
               ".fin"
             );
 
 
-          const dias =
-            celda.querySelector(
+        const diasDiv =
+          celdas[i]
+            .querySelector(
               ".dias"
             );
 
 
-          const inicioVal =
-            normalizarFecha(
-              h.inicio
-            );
-
-
-          const finVal =
-            normalizarFecha(
-              h.fin
-            );
-
-
-          inicio.value =
-            inicioVal;
-
-
-          fin.value =
-            finVal;
-
+        function calcular() {
 
           if (
-            inicioVal &&
-            finVal
+            inicio.value &&
+            fin.value
           ) {
 
             const f1 =
               new Date(
-                inicioVal +
+                inicio.value +
                 "T00:00:00"
               );
 
 
             const f2 =
               new Date(
-                finVal +
+                fin.value +
                 "T00:00:00"
               );
 
 
-            if (
-              !isNaN(f1.getTime()) &&
-              !isNaN(f2.getTime())
-            ) {
+            const diff =
+              Math.floor(
+                (
+                  f2 - f1
+                ) /
+                (
+                  1000 *
+                  60 *
+                  60 *
+                  24
+                )
+              );
 
-              const diff =
-                Math.floor(
-                  (f2 - f1) /
-                  (1000 * 60 * 60 * 24)
-                );
 
-
-              dias.innerText =
-                diff > 0
-                  ? diff
-                  : 0;
-
-            } else {
-
-              dias.innerText = 0;
-
-            }
+            diasDiv.innerText =
+              diff > 0
+                ? diff
+                : 0;
 
           } else {
 
-            dias.innerText = 0;
+            diasDiv.innerText =
+              0;
+
+          }
+
+
+          calcularTotalFila(
+            fila
+          );
+
+        }
+
+
+        inicio.addEventListener(
+          "change",
+          calcular
+        );
+
+
+        fin.addEventListener(
+          "change",
+          calcular
+        );
+
+      }
+
+    }
+
+
+    /* =========================================================
+       TOTAL
+    ========================================================= */
+
+    function calcularTotalFila(fila) {
+
+      let total = 0;
+
+
+      fila
+        .querySelectorAll(
+          ".dias"
+        )
+        .forEach(dia => {
+
+          if (
+            parseInt(
+              dia.innerText
+            ) > 0
+          ) {
+
+            total++;
 
           }
 
         });
 
 
-        activarEventos(fila);
+      fila
+        .querySelector(
+          ".total"
+        )
+        .innerText =
+        total;
 
-        calcularTotalFila(fila);
-
-      });
-
-
-    actualizarInfoFecha();
-
-  } catch (error) {
-
-    console.error(
-      "Error cargando habitaciones:",
-      error
-    );
-
-    alert(
-      "No se pudieron cargar las habitaciones ❌"
-    );
-
-  }
-
-}
+    }
 
 
-/* =========================================================
-   🔎 FILTRAR POR FECHA
-   ========================================================= */
+    /* =========================================================
+       GUARDAR
+    ========================================================= */
 
-function filtrarPorFecha() {
+    async function guardarFila(btn) {
 
-  const input =
-    document.getElementById(
-      "filtroFecha"
-    );
+      const fila =
+        btn.closest("tr");
 
 
-  fechaSeleccionada =
-    input.value;
+      const encargado =
+        fila
+          .querySelector(
+            ".encargado"
+          )
+          .value
+          .trim();
 
 
-  cargarFilasGuardadas();
-
-}
-
-
-/* =========================================================
-   👁️ MOSTRAR TODOS
-   ========================================================= */
-
-function mostrarTodos() {
-
-  fechaSeleccionada = "";
+      const fecha =
+        fila
+          .querySelector(
+            ".fechaPrincipal"
+          )
+          .value;
 
 
-  document.getElementById(
-    "filtroFecha"
-  ).value = "";
+      const color =
+        fila
+          .querySelector(
+            ".color"
+          )
+          .value;
 
 
-  cargarFilasGuardadas();
+      if (
+        !encargado ||
+        !fecha
+      ) {
 
-}
+        alert(
+          "Falta encargado o fecha"
+        );
 
+        return;
 
-/* =========================================================
-   ℹ️ INFORMACIÓN DEL FILTRO
-   ========================================================= */
-
-function actualizarInfoFecha() {
-
-  const info =
-    document.getElementById(
-      "infoFecha"
-    );
+      }
 
 
-  if (!fechaSeleccionada) {
-
-    info.innerText =
-      "Mostrando todos los días";
-
-    return;
-
-  }
+      const celdas =
+        fila.querySelectorAll(
+          "td"
+        );
 
 
-  const partes =
-    fechaSeleccionada.split("-");
+      const requests = [];
 
 
-  if (partes.length === 3) {
+      for (
+        let i = 2;
+        i <= 21;
+        i++
+      ) {
 
-    info.innerText =
-      `Mostrando habitaciones del día ${partes[2]}/${partes[1]}/${partes[0]}`;
-
-  } else {
-
-    info.innerText =
-      `Mostrando habitaciones del día ${fechaSeleccionada}`;
-
-  }
-
-}
-
-
-/* =========================================================
-   🛡️ EVITAR HTML ROTO
-   ========================================================= */
-
-function escapeHTML(valor) {
-
-  return String(valor ?? "")
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-
-}
+        const inicio =
+          celdas[i]
+            .querySelector(
+              ".inicio"
+            )
+            .value;
 
 
-/* =========================================================
-   🚀 INICIAR
-   ========================================================= */
+        const fin =
+          celdas[i]
+            .querySelector(
+              ".fin"
+            )
+            .value;
 
-cargarFilasGuardadas();
 
-</script>
+        if (
+          inicio &&
+          fin
+        ) {
+
+          const req =
+            fetch(
+              `${API}/habitaciones`,
+              {
+
+                method:
+                  "POST",
+
+                headers: {
+
+                  "Content-Type":
+                    "application/json"
+
+                },
+
+                body:
+                  JSON.stringify({
+
+                    habitacion:
+                      habitaciones[
+                        i - 2
+                      ],
+
+                    encargado,
+
+                    fecha,
+
+                    color,
+
+                    inicio,
+
+                    fin
+
+                  })
+
+              }
+            );
+
+
+          requests.push(
+            req
+          );
+
+        }
+
+      }
+
+
+      if (
+        requests.length === 0
+      ) {
+
+        alert(
+          "No llenaste ninguna habitación"
+        );
+
+        return;
+
+      }
+
+
+      try {
+
+        await Promise.all(
+          requests
+        );
+
+
+        alert(
+          "Fila guardada ✅"
+        );
+
+
+        await cargarFilasGuardadas();
+
+
+      } catch (e) {
+
+        console.error(e);
+
+
+        alert(
+          "Error guardando ❌"
+        );
+
+      }
+
+    }
+
+
+    /* =========================================================
+       ELIMINAR
+    ========================================================= */
+
+    async function eliminarFila(btn) {
+
+      if (
+        !confirm(
+          "¿Eliminar fila?"
+        )
+      ) {
+
+        return;
+
+      }
+
+
+      const fila =
+        btn.closest("tr");
+
+
+      try {
+
+        const res =
+          await fetch(
+            `${API}/habitaciones`
+          );
+
+
+        const data =
+          await res.json();
+
+
+        const encargado =
+          fila
+            .querySelector(
+              ".encargado"
+            )
+            .value
+            .trim();
+
+
+        const fecha =
+          normalizarFecha(
+            fila
+              .querySelector(
+                ".fechaPrincipal"
+              )
+              .value
+          );
+
+
+        const eliminar =
+          data.filter(
+            item => {
+
+              return (
+
+                item.encargado?.trim() ===
+                  encargado &&
+
+                normalizarFecha(
+                  item.fecha
+                ) === fecha
+
+              );
+
+            }
+          );
+
+
+        if (
+          eliminar.length === 0
+        ) {
+
+          alert(
+            "No se encontró nada para eliminar ❌"
+          );
+
+          return;
+
+        }
+
+
+        for (
+          const item of eliminar
+        ) {
+
+          await fetch(
+            `${API}/habitaciones/${item.id}`,
+            {
+              method:
+                "DELETE"
+            }
+          );
+
+        }
+
+
+        alert(
+          "Eliminado correctamente ✅"
+        );
+
+
+        await cargarFilasGuardadas();
+
+
+      } catch (err) {
+
+        console.error(err);
+
+
+        alert(
+          "Error eliminando ❌"
+        );
+
+      }
+
+    }
+
+
+    /* =========================================================
+       CARGAR DATOS
+    ========================================================= */
+
+    async function cargarFilasGuardadas() {
+
+      try {
+
+        const res =
+          await fetch(
+            `${API}/habitaciones`
+          );
+
+
+        if (!res.ok) {
+
+          throw new Error(
+            `Error servidor: ${res.status}`
+          );
+
+        }
+
+
+        const data =
+          await res.json();
+
+
+        const grupos = {};
+
+
+        data.forEach(item => {
+
+          const fecha =
+            normalizarFecha(
+              item.fecha
+            );
+
+
+          const encargado =
+            item.encargado || "";
+
+
+          const key =
+            `${encargado}_${fecha}`;
+
+
+          if (!grupos[key]) {
+
+            grupos[key] = {
+
+              encargado,
+
+              fecha,
+
+              color:
+                item.color ||
+                "#2563eb",
+
+              habitaciones: []
+
+            };
+
+          }
+
+
+          grupos[key]
+            .habitaciones
+            .push(item);
+
+        });
+
+
+        const ordenados =
+          Object.values(
+            grupos
+          )
+          .sort(
+            (a, b) =>
+              new Date(
+                b.fecha
+              ) -
+              new Date(
+                a.fecha
+              )
+          );
+
+
+        const tabla =
+          document.getElementById(
+            "cuerpo"
+          );
+
+
+        tabla.innerHTML =
+          "";
+
+
+        let gruposMostrados =
+          ordenados;
+
+
+        if (
+          fechaSeleccionada
+        ) {
+
+          gruposMostrados =
+            ordenados.filter(
+              grupo =>
+                normalizarFecha(
+                  grupo.fecha
+                ) ===
+                fechaSeleccionada
+            );
+
+        }
+
+
+        gruposMostrados.forEach(
+          (grupo, index) => {
+
+            const idVisual =
+              gruposMostrados.length -
+              index;
+
+
+            const fila =
+              document.createElement(
+                "tr"
+              );
+
+
+            if (
+              fechaSeleccionada &&
+              grupo.fecha ===
+                fechaSeleccionada
+            ) {
+
+              fila.classList.add(
+                "fila-fecha-activa"
+              );
+
+            }
+
+
+            let html = `
+
+              <td>
+                ${idVisual}
+              </td>
+
+
+              <td>
+
+                <input
+                  class="encargado"
+                  value="${escapeHTML(
+                    grupo.encargado
+                  )}"
+                  style="
+                    color:${escapeHTML(
+                      grupo.color
+                    )}
+                  "
+                ><br>
+
+                <input
+                  type="color"
+                  class="color"
+                  value="${escapeHTML(
+                    grupo.color
+                  )}"
+                ><br>
+
+                <input
+                  type="date"
+                  class="fechaPrincipal"
+                  value="${grupo.fecha}"
+                >
+
+              </td>
+
+            `;
+
+
+            habitaciones.forEach(
+              () => {
+
+                html += `
+
+                  <td>
+
+                    <input
+                      type="date"
+                      class="inicio"
+                    ><br>
+
+                    <input
+                      type="date"
+                      class="fin"
+                    ><br>
+
+                    <div class="dias">
+                      0
+                    </div>
+
+                  </td>
+
+                `;
+
+              }
+            );
+
+
+            html += `
+
+              <td class="total">
+                0
+              </td>
+
+            `;
+
+
+            html += `
+
+              <td>
+
+                <button
+                  class="btn-guardar"
+                  onclick="guardarFila(this)"
+                >
+                  💾
+                </button>
+
+                <button
+                  class="btn-editar"
+                  onclick="editarFila(this)"
+                >
+                  ✏️
+                </button>
+
+                <button
+                  class="btn-eliminar"
+                  onclick="eliminarFila(this)"
+                >
+                  ❌
+                </button>
+
+              </td>
+
+            `;
+
+
+            fila.innerHTML =
+              html;
+
+
+            tabla.appendChild(
+              fila
+            );
+
+
+            const celdas =
+              fila.querySelectorAll(
+                "td"
+              );
+
+
+            grupo
+              .habitaciones
+              .forEach(h => {
+
+                const indexHab =
+                  habitaciones.indexOf(
+                    Number(
+                      h.habitacion
+                    )
+                  );
+
+
+                if (
+                  indexHab === -1
+                ) {
+
+                  return;
+
+                }
+
+
+                const celda =
+                  celdas[
+                    indexHab + 2
+                  ];
+
+
+                const inicio =
+                  celda.querySelector(
+                    ".inicio"
+                  );
+
+
+                const fin =
+                  celda.querySelector(
+                    ".fin"
+                  );
+
+
+                const dias =
+                  celda.querySelector(
+                    ".dias"
+                  );
+
+
+                const inicioVal =
+                  normalizarFecha(
+                    h.inicio
+                  );
+
+
+                const finVal =
+                  normalizarFecha(
+                    h.fin
+                  );
+
+
+                inicio.value =
+                  inicioVal;
+
+
+                fin.value =
+                  finVal;
+
+
+                if (
+                  inicioVal &&
+                  finVal
+                ) {
+
+                  const f1 =
+                    new Date(
+                      inicioVal +
+                      "T00:00:00"
+                    );
+
+
+                  const f2 =
+                    new Date(
+                      finVal +
+                      "T00:00:00"
+                    );
+
+
+                  if (
+                    !isNaN(
+                      f1.getTime()
+                    ) &&
+                    !isNaN(
+                      f2.getTime()
+                    )
+                  ) {
+
+                    const diff =
+                      Math.floor(
+                        (
+                          f2 - f1
+                        ) /
+                        (
+                          1000 *
+                          60 *
+                          60 *
+                          24
+                        )
+                      );
+
+
+                    dias.innerText =
+                      diff > 0
+                        ? diff
+                        : 0;
+
+                  } else {
+
+                    dias.innerText =
+                      0;
+
+                  }
+
+                } else {
+
+                  dias.innerText =
+                    0;
+
+                }
+
+              });
+
+
+            activarEventos(
+              fila
+            );
+
+
+            calcularTotalFila(
+              fila
+            );
+
+          }
+        );
+
+
+        actualizarInfoFecha();
+
+
+      } catch (error) {
+
+        console.error(
+          "Error cargando habitaciones:",
+          error
+        );
+
+
+        alert(
+          "No se pudieron cargar las habitaciones ❌"
+        );
+
+      }
+
+    }
+
+
+    /* =========================================================
+       FILTRAR
+    ========================================================= */
+
+    function filtrarPorFecha() {
+
+      const input =
+        document.getElementById(
+          "filtroFecha"
+        );
+
+
+      fechaSeleccionada =
+        input.value;
+
+
+      cargarFilasGuardadas();
+
+    }
+
+
+    /* =========================================================
+       MOSTRAR TODOS
+    ========================================================= */
+
+    function mostrarTodos() {
+
+      fechaSeleccionada =
+        "";
+
+
+      document.getElementById(
+        "filtroFecha"
+      ).value =
+        "";
+
+
+      cargarFilasGuardadas();
+
+    }
+
+
+    /* =========================================================
+       INFORMACIÓN DEL FILTRO
+    ========================================================= */
+
+    function actualizarInfoFecha() {
+
+      const info =
+        document.getElementById(
+          "infoFecha"
+        );
+
+
+      if (
+        !fechaSeleccionada
+      ) {
+
+        info.innerText =
+          "Mostrando todos los días";
+
+        return;
+
+      }
+
+
+      const partes =
+        fechaSeleccionada.split(
+          "-"
+        );
+
+
+      if (
+        partes.length === 3
+      ) {
+
+        info.innerText =
+          `Mostrando habitaciones del día ${partes[2]}/${partes[1]}/${partes[0]}`;
+
+      } else {
+
+        info.innerText =
+          `Mostrando habitaciones del día ${fechaSeleccionada}`;
+
+      }
+
+    }
+
+
+    /* =========================================================
+       SEGURIDAD HTML
+    ========================================================= */
+
+    function escapeHTML(valor) {
+
+      return String(
+        valor ?? ""
+      )
+
+        .replace(
+          /&/g,
+          "&amp;"
+        )
+
+        .replace(
+          /</g,
+          "&lt;"
+        )
+
+        .replace(
+          />/g,
+          "&gt;"
+        )
+
+        .replace(
+          /"/g,
+          "&quot;"
+        )
+
+        .replace(
+          /'/g,
+          "&#039;"
+        );
+
+    }
+
+
+    /* =========================================================
+       INICIAR
+    ========================================================= */
+
+    cargarFilasGuardadas();
+
+  </script>
 
 </body>
+
 </html>

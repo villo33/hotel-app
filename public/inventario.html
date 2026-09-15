@@ -1,283 +1,2622 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<title>Inventario</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#071a3a">
+  <title>Inventario | CASA NOA</title>
 
-<style>
-body {
-  font-family: Arial;
-  background: #f4f6f9;
-  text-align: center;
-}
+  <link rel="icon" type="image/png" href="/logo192.png">
 
-/* 🔥 BARRA SUPERIOR */
-.top-bar {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-}
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-.top-bar button {
-  margin-right: 5px;
-}
+    :root {
+      --navy: #071a3a;
+      --navy-2: #0b2b5c;
+      --blue: #2563eb;
+      --text: #172033;
+      --muted: #64748b;
+      --border: #e4eaf2;
+      --bg: #f4f7fb;
+      --white: #ffffff;
+      --green: #16a34a;
+      --orange: #d97706;
+      --red: #dc2626;
+    }
 
-.btn-inicio {
-  background: #28a745;
-  color: white;
-  border-radius: 5px;
-}
+    body {
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+      background:
+        radial-gradient(
+          circle at top right,
+          rgba(37, 99, 235, .08),
+          transparent 30%
+        ),
+        linear-gradient(
+          135deg,
+          #f5f8fc 0%,
+          #eaf0f7 100%
+        );
+      color: var(--text);
+      min-height: 100vh;
+    }
 
-.btn-logout {
-  background: #dc3545;
-  color: white;
-  border-radius: 5px;
-}
+    button,
+    input,
+    select {
+      font: inherit;
+    }
 
-.container {
-  width: 80%;
-  margin: auto;
-}
+    button {
+      cursor: pointer;
+    }
 
-h2 {
-  margin-top: 60px;
-}
+    /* =========================
+       HEADER
+    ========================== */
 
-.form {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
-  margin: 20px;
-}
+    .topbar {
+      min-height: 76px;
+      background:
+        linear-gradient(
+          135deg,
+          #071a3a 0%,
+          #0b2b5c 100%
+        );
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      box-shadow:
+        0 8px 28px rgba(7, 26, 58, .18);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
 
-input {
-  padding: 8px;
-  width: 150px;
-}
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+    }
 
-button {
-  padding: 8px 15px;
-  border: none;
-  cursor: pointer;
-  color: white;
-}
+    .brand img {
+      width: 45px;
+      height: 45px;
+      object-fit: contain;
+      border-radius: 12px;
+      background: white;
+      padding: 3px;
+    }
 
-.btn-guardar { background: #007BFF; }
-.btn-editar { background: orange; }
-.btn-eliminar { background: red; }
+    .brand-text h1 {
+      font-size: 20px;
+      letter-spacing: .5px;
+      font-weight: 800;
+    }
 
-table {
-  width: 100%;
-  background: white;
-  border-collapse: collapse;
-}
+    .brand-text span {
+      display: block;
+      font-size: 12px;
+      color: #b9c9df;
+      margin-top: 2px;
+    }
 
-th {
-  background: #007BFF;
-  color: white;
-}
+    .top-actions {
+      display: flex;
+      gap: 10px;
+    }
 
-th, td {
-  padding: 10px;
-  border: 1px solid #ccc;
-}
-</style>
+    .top-btn {
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(255,255,255,.08);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 10px;
+      transition: .2s ease;
+    }
+
+    .top-btn:hover {
+      background: rgba(255,255,255,.16);
+      transform: translateY(-1px);
+    }
+
+    /* =========================
+       PAGE
+    ========================== */
+
+    .page {
+      width: min(1450px, calc(100% - 40px));
+      margin: auto;
+      padding: 34px 0 65px;
+    }
+
+    .page-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+      margin-bottom: 28px;
+    }
+
+    .page-title h2 {
+      font-size: 31px;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .page-title p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 11px;
+      padding: 12px 17px;
+      font-weight: 700;
+      transition: .2s ease;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--navy-2);
+      color: white;
+      box-shadow: 0 7px 18px rgba(11,43,92,.18);
+    }
+
+    .btn-primary:hover {
+      background: #123b76;
+    }
+
+    .btn-pdf {
+      background: #b91c1c;
+      color: white;
+      box-shadow: 0 7px 18px rgba(185,28,28,.18);
+    }
+
+    .btn-pdf:hover {
+      background: #991b1b;
+    }
+
+    .btn:disabled {
+      opacity: .65;
+      cursor: wait;
+      transform: none;
+    }
+
+    /* =========================
+       RESUMEN
+    ========================== */
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      position: relative;
+      overflow: hidden;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 21px;
+      box-shadow: 0 8px 28px rgba(15,23,42,.055);
+    }
+
+    .stat-card::after {
+      content: "";
+      position: absolute;
+      right: -28px;
+      top: -28px;
+      width: 95px;
+      height: 95px;
+      border-radius: 50%;
+      background: rgba(37,99,235,.055);
+    }
+
+    .stat-label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 9px;
+    }
+
+    .stat-value {
+      color: var(--navy);
+      font-size: 29px;
+      font-weight: 800;
+    }
+
+    .stat-warning .stat-value {
+      color: var(--orange);
+    }
+
+    .stat-danger .stat-value {
+      color: var(--red);
+    }
+
+    /* =========================
+       TARJETAS DE CATEGORÍAS
+    ========================== */
+
+    .categories-section {
+      background: rgba(255,255,255,.72);
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 35px rgba(15,23,42,.055);
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .section-header h3 {
+      color: var(--navy);
+      font-size: 19px;
+    }
+
+    .section-header p {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 5px;
+    }
+
+    .category-grid {
+      display: grid;
+      grid-template-columns:
+        repeat(auto-fill, minmax(245px, 1fr));
+      gap: 16px;
+    }
+
+    .category-card {
+      position: relative;
+      background: white;
+      border: 1px solid #e1e8f1;
+      border-radius: 18px;
+      padding: 19px;
+      min-height: 185px;
+      box-shadow:
+        0 7px 22px rgba(15,23,42,.05);
+      transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+      overflow: hidden;
+    }
+
+    .category-card:hover {
+      transform: translateY(-3px);
+      border-color: #c8d7e9;
+      box-shadow:
+        0 13px 30px rgba(15,23,42,.09);
+    }
+
+    .category-card.active {
+      border-color: #315b8f;
+      box-shadow:
+        0 0 0 3px rgba(49,91,143,.09),
+        0 13px 30px rgba(15,23,42,.08);
+    }
+
+    .category-card::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 4px;
+      background:
+        linear-gradient(
+          90deg,
+          #071a3a,
+          #3b82f6
+        );
+    }
+
+    .category-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 17px;
+    }
+
+    .category-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 13px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #edf4fc;
+      color: #17457c;
+      font-size: 21px;
+    }
+
+    .category-name {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .category-name h4 {
+      color: var(--navy);
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 4px;
+      word-break: break-word;
+    }
+
+    .category-name span {
+      color: #94a3b8;
+      font-size: 11px;
+    }
+
+    .category-selected {
+      display: none;
+      background: #071a3a;
+      color: white;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 5px 8px;
+      border-radius: 999px;
+    }
+
+    .category-card.active .category-selected {
+      display: inline-flex;
+    }
+
+    .category-info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-bottom: 17px;
+    }
+
+    .category-stat {
+      background: #f7f9fc;
+      border: 1px solid #edf1f5;
+      border-radius: 10px;
+      padding: 9px 10px;
+    }
+
+    .category-stat span {
+      display: block;
+      color: #94a3b8;
+      font-size: 10px;
+      margin-bottom: 3px;
+    }
+
+    .category-stat strong {
+      color: #334155;
+      font-size: 14px;
+    }
+
+    .category-actions {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+
+    .category-view {
+      border: none;
+      background: #071a3a;
+      color: white;
+      border-radius: 9px;
+      padding: 9px 11px;
+      font-size: 12px;
+      font-weight: 700;
+      transition: .2s ease;
+    }
+
+    .category-view:hover {
+      background: #123b76;
+    }
+
+    .category-delete {
+      width: 39px;
+      border: 1px solid #e5e7eb;
+      background: white;
+      color: #64748b;
+      border-radius: 9px;
+      transition: .2s ease;
+    }
+
+    .category-delete:hover {
+      color: #dc2626;
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+
+    .all-category {
+      border-style: dashed;
+    }
+
+    .all-category .category-icon {
+      background: #071a3a;
+      color: white;
+    }
+
+    /* =========================
+       SECTION GENERAL
+    ========================== */
+
+    .section-card {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 19px;
+      padding: 23px;
+      box-shadow: 0 8px 30px rgba(15,23,42,.055);
+      margin-bottom: 22px;
+    }
+
+    /* =========================
+       FORM
+    ========================== */
+
+    .form-grid {
+      display: grid;
+      grid-template-columns:
+        2fr 1fr 1fr 1.3fr 1.2fr 1fr;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      border: 1px solid #d9e2ed;
+      background: #fbfdff;
+      color: var(--text);
+      border-radius: 10px;
+      padding: 11px 12px;
+      outline: none;
+      transition: .2s ease;
+    }
+
+    .field input:focus,
+    .field select:focus {
+      border-color: #4779b7;
+      box-shadow:
+        0 0 0 3px rgba(71,121,183,.1);
+    }
+
+    .form-actions {
+      display: flex;
+      gap: 8px;
+      grid-column: span 6;
+    }
+
+    .btn-cancel {
+      background: #eef2f7;
+      color: #475569;
+    }
+
+    /* =========================
+       SEARCH
+    ========================== */
+
+    .search-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      margin-bottom: 16px;
+    }
+
+    .search-box {
+      position: relative;
+      width: min(430px, 100%);
+    }
+
+    .search-box input {
+      width: 100%;
+      border: 1px solid #dce4ee;
+      border-radius: 11px;
+      padding: 12px 14px 12px 40px;
+      background: white;
+      outline: none;
+    }
+
+    .search-box span {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #94a3b8;
+    }
+
+    /* =========================
+       TABLA
+    ========================== */
+
+    .table-wrapper {
+      overflow-x: auto;
+      border: 1px solid #e4eaf0;
+      border-radius: 13px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1050px;
+    }
+
+    thead {
+      background: #f5f8fc;
+    }
+
+    th {
+      text-align: left;
+      padding: 13px 14px;
+      font-size: 11px;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: .4px;
+      border-bottom: 1px solid #e3e9f0;
+    }
+
+    td {
+      padding: 14px;
+      font-size: 13px;
+      border-bottom: 1px solid #edf1f5;
+      color: #334155;
+    }
+
+    tbody tr:hover {
+      background: #fafcff;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    .product-name {
+      color: var(--navy);
+      font-weight: 750;
+    }
+
+    .category-label {
+      display: inline-flex;
+      background: #eef4fb;
+      color: #315b8f;
+      padding: 5px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .status {
+      display: inline-flex;
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .status-disponible {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .status-bajo {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .status-agotado {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .actions-cell {
+      display: flex;
+      gap: 7px;
+    }
+
+    .icon-btn {
+      border: 1px solid #dce4ed;
+      background: white;
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      transition: .2s ease;
+    }
+
+    .icon-btn:hover {
+      background: #f1f5f9;
+      transform: translateY(-1px);
+    }
+
+    .icon-btn.delete:hover {
+      background: #fef2f2;
+      border-color: #fecaca;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 42px 20px;
+      color: #94a3b8;
+    }
+
+    .empty strong {
+      display: block;
+      color: #64748b;
+      margin-bottom: 5px;
+    }
+
+    /* =========================
+       MODAL
+    ========================== */
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(7,26,58,.48);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      z-index: 100;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-card {
+      width: min(440px, 100%);
+      background: white;
+      border-radius: 18px;
+      padding: 24px;
+      box-shadow: 0 25px 80px rgba(0,0,0,.2);
+    }
+
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h3 {
+      color: var(--navy);
+    }
+
+    .close-modal {
+      border: none;
+      background: #f1f5f9;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      font-size: 18px;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 9px;
+      margin-top: 17px;
+    }
+
+    /* =========================
+       RESPONSIVE
+    ========================== */
+
+    @media (max-width: 1100px) {
+      .form-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .form-actions {
+        grid-column: span 3;
+      }
+    }
+
+    @media (max-width: 850px) {
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .page-title {
+        flex-direction: column;
+      }
+
+      .form-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .form-actions {
+        grid-column: span 2;
+      }
+
+      .topbar {
+        padding: 0 18px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .page {
+        width: calc(100% - 24px);
+        padding-top: 20px;
+      }
+
+      .topbar {
+        min-height: 68px;
+      }
+
+      .brand-text h1 {
+        font-size: 17px;
+      }
+
+      .brand-text span {
+        display: none;
+      }
+
+      .top-btn {
+        padding: 9px 11px;
+        font-size: 12px;
+      }
+
+      .page-title h2 {
+        font-size: 25px;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .form-actions {
+        grid-column: auto;
+      }
+
+      .search-row {
+        flex-direction: column;
+      }
+
+      .search-box {
+        width: 100%;
+      }
+
+      .categories-section,
+      .section-card {
+        padding: 17px;
+      }
+
+      .category-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        width: 100%;
+      }
+
+      .actions .btn {
+        flex: 1;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<!-- 🔥 BARRA SUPERIOR -->
-<div class="top-bar">
-  <button class="btn-inicio" onclick="irInicio()">🏠 Inicio</button>
-  <button class="btn-logout" onclick="logout()">🚪 Cerrar sesión</button>
-</div>
+  <header class="topbar">
+    <div class="brand">
+      <img src="/logo192.png" alt="CASA NOA">
 
-<script>
+      <div class="brand-text">
+        <h1>CASA NOA</h1>
+        <span>Gestión de inventario</span>
+      </div>
+    </div>
 
-// 🔥 API DINÁMICA (LOCAL + WEB)
-const API = window.location.origin;
+    <div class="top-actions">
+      <button
+        class="top-btn"
+        type="button"
+        onclick="window.location.href='index.html'"
+      >
+        ← Inicio
+      </button>
 
-// 🔥 NAVEGACIÓN
-function irInicio() {
-  window.location.href = "/";
-}
+      <button
+        class="top-btn"
+        type="button"
+        onclick="cerrarSesion()"
+      >
+        Cerrar sesión
+      </button>
+    </div>
+  </header>
 
-function logout() {
-  localStorage.removeItem('logueado');
-  window.location.href = '/';
-}
-</script>
+  <main class="page">
 
-<div class="container">
-  <h2>📦 Inventario CASA NOA</h2>
+    <div class="page-title">
 
-  <div class="form">
-    <input id="producto" placeholder="Producto">
-    <input id="cantidad" type="number" placeholder="Cantidad">
-    <input id="encargado" placeholder="Encargado">
-    <input id="fecha" type="date">
-    <button class="btn-guardar" onclick="guardar()">Guardar</button>
+      <div>
+        <h2>Inventario</h2>
+
+        <p>
+          Organiza, controla y consulta todos los productos de CASA NOA.
+        </p>
+      </div>
+
+      <div class="actions">
+
+        <button
+          id="btnGenerarPDF"
+          class="btn btn-pdf"
+          type="button"
+        >
+          📄 Generar PDF
+        </button>
+
+        <button
+          id="btnNuevaCategoria"
+          class="btn btn-primary"
+          type="button"
+        >
+          ＋ Nueva categoría
+        </button>
+
+      </div>
+
+    </div>
+
+    <!-- =========================
+         RESUMEN
+    ========================== -->
+
+    <section class="stats">
+
+      <div class="stat-card">
+        <div class="stat-label">Productos</div>
+        <div id="totalProductos" class="stat-value">0</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Unidades disponibles</div>
+        <div id="totalUnidades" class="stat-value">0</div>
+      </div>
+
+      <div class="stat-card stat-warning">
+        <div class="stat-label">Stock bajo</div>
+        <div id="totalBajo" class="stat-value">0</div>
+      </div>
+
+      <div class="stat-card stat-danger">
+        <div class="stat-label">Agotados</div>
+        <div id="totalAgotado" class="stat-value">0</div>
+      </div>
+
+    </section>
+
+    <!-- =========================
+         CATEGORÍAS
+    ========================== -->
+
+    <section class="categories-section">
+
+      <div class="section-header">
+
+        <div>
+          <h3>Categorías de inventario</h3>
+
+          <p>
+            Selecciona una categoría para consultar sus productos.
+          </p>
+        </div>
+
+      </div>
+
+      <div
+        id="categorias"
+        class="category-grid"
+      ></div>
+
+    </section>
+
+    <!-- =========================
+         FORMULARIO
+    ========================== -->
+
+    <section class="section-card">
+
+      <div class="section-header">
+
+        <div>
+          <h3 id="formTitulo">Agregar producto</h3>
+
+          <p>
+            Registra las existencias y el responsable.
+          </p>
+        </div>
+
+      </div>
+
+      <form id="formInventario">
+
+        <div class="form-grid">
+
+          <div class="field">
+            <label for="nombre">Producto</label>
+
+            <input
+              id="nombre"
+              type="text"
+              placeholder="Ej. Jabón líquido"
+              required
+            >
+          </div>
+
+          <div class="field">
+            <label for="cantidad">Stock actual</label>
+
+            <input
+              id="cantidad"
+              type="number"
+              min="0"
+              step="1"
+              placeholder="0"
+              required
+            >
+          </div>
+
+          <div class="field">
+            <label for="stock_minimo">Stock mínimo</label>
+
+            <input
+              id="stock_minimo"
+              type="number"
+              min="0"
+              step="1"
+              value="1"
+            >
+          </div>
+
+          <div class="field">
+            <label for="categoria_id">Categoría</label>
+
+            <select id="categoria_id" required>
+              <option value="">
+                Seleccionar categoría
+              </option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="encargado">Encargado</label>
+
+            <input
+              id="encargado"
+              type="text"
+              placeholder="Nombre"
+            >
+          </div>
+
+          <div class="field">
+            <label for="fecha">Fecha</label>
+
+            <input
+              id="fecha"
+              type="date"
+            >
+          </div>
+
+          <div class="form-actions">
+
+            <button
+              id="btnGuardar"
+              class="btn btn-primary"
+              type="submit"
+            >
+              Guardar producto
+            </button>
+
+            <button
+              id="btnCancelar"
+              class="btn btn-cancel"
+              type="button"
+              style="display:none;"
+            >
+              Cancelar
+            </button>
+
+          </div>
+
+        </div>
+
+      </form>
+
+    </section>
+
+    <!-- =========================
+         PRODUCTOS
+    ========================== -->
+
+    <section class="section-card">
+
+      <div class="section-header">
+
+        <div>
+          <h3>Productos</h3>
+
+          <p id="filtroTexto">
+            Mostrando todo el inventario.
+          </p>
+        </div>
+
+      </div>
+
+      <div class="search-row">
+
+        <div class="search-box">
+
+          <span>🔎</span>
+
+          <input
+            id="buscar"
+            type="search"
+            placeholder="Buscar producto..."
+          >
+
+        </div>
+
+      </div>
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Producto</th>
+              <th>Categoría</th>
+              <th>Stock</th>
+              <th>Mínimo</th>
+              <th>Faltan</th>
+              <th>Estado</th>
+              <th>Encargado</th>
+              <th>Fecha</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody id="tablaInventario"></tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- =========================
+       MODAL CATEGORÍA
+  ========================== -->
+
+  <div id="modalCategoria" class="modal">
+
+    <div class="modal-card">
+
+      <div class="modal-header">
+
+        <h3>Nueva categoría</h3>
+
+        <button
+          id="cerrarModal"
+          class="close-modal"
+          type="button"
+        >
+          ×
+        </button>
+
+      </div>
+
+      <div class="field">
+
+        <label for="nombreCategoria">
+          Nombre de la categoría
+        </label>
+
+        <input
+          id="nombreCategoria"
+          type="text"
+          placeholder="Ej. Cocina"
+          maxlength="80"
+        >
+
+      </div>
+
+      <div class="modal-actions">
+
+        <button
+          id="cancelarCategoria"
+          class="btn btn-cancel"
+          type="button"
+        >
+          Cancelar
+        </button>
+
+        <button
+          id="guardarCategoria"
+          class="btn btn-primary"
+          type="button"
+        >
+          Crear categoría
+        </button>
+
+      </div>
+
+    </div>
+
   </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Producto</th>
-        <th>Cantidad</th>
-        <th>Encargado</th>
-        <th>Fecha</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody id="tabla"></tbody>
-  </table>
-</div>
+  <script>
 
-<script>
+    const API = window.location.origin;
 
-let editId = null;
+    let categorias = [];
+    let inventario = [];
+    let categoriaActual = null;
+    let editId = null;
 
-// 🔥 CARGAR (CORREGIDO)
-async function cargar() {
-  try {
-    const res = await fetch(`${API}/inventario`);
+    const formInventario =
+      document.getElementById("formInventario");
 
-    // 🔴 VALIDAR RESPUESTA
-    if (!res.ok) {
-      const text = await res.text();
-      console.error("Error servidor:", text);
-      alert("Error del servidor ❌ (ver consola)");
-      return;
+    const nombre =
+      document.getElementById("nombre");
+
+    const cantidad =
+      document.getElementById("cantidad");
+
+    const stockMinimo =
+      document.getElementById("stock_minimo");
+
+    const categoriaSelect =
+      document.getElementById("categoria_id");
+
+    const encargado =
+      document.getElementById("encargado");
+
+    const fecha =
+      document.getElementById("fecha");
+
+    const buscar =
+      document.getElementById("buscar");
+
+    const tablaInventario =
+      document.getElementById("tablaInventario");
+
+    const categoriasContainer =
+      document.getElementById("categorias");
+
+    const modalCategoria =
+      document.getElementById("modalCategoria");
+
+    const nombreCategoria =
+      document.getElementById("nombreCategoria");
+
+    const btnGuardar =
+      document.getElementById("btnGuardar");
+
+    const btnCancelar =
+      document.getElementById("btnCancelar");
+
+    const formTitulo =
+      document.getElementById("formTitulo");
+
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      async () => {
+
+        fecha.value = obtenerFechaActual();
+
+        await cargarCategorias();
+
+        await cargarInventario();
+
+      }
+    );
+
+
+    function obtenerFechaActual() {
+
+      const ahora = new Date();
+
+      const año = ahora.getFullYear();
+
+      const mes =
+        String(ahora.getMonth() + 1)
+          .padStart(2, "0");
+
+      const dia =
+        String(ahora.getDate())
+          .padStart(2, "0");
+
+      return `${año}-${mes}-${dia}`;
     }
 
-    const data = await res.json();
 
-    // 🔴 VALIDAR QUE SEA ARRAY
-    if (!Array.isArray(data)) {
-      console.error("Respuesta inválida:", data);
-      alert("Error: respuesta no válida ❌");
-      return;
+    async function cargarCategorias() {
+
+      try {
+
+        const respuesta =
+          await fetch(
+            `${API}/categorias-inventario`
+          );
+
+        if (!respuesta.ok) {
+          throw new Error(
+            "No se pudieron cargar las categorías"
+          );
+        }
+
+        categorias = await respuesta.json();
+
+        mostrarCategorias();
+
+        llenarSelectCategorias();
+
+      } catch (error) {
+
+        console.error(
+          "❌ Error categorías:",
+          error
+        );
+
+        alert(
+          "No se pudieron cargar las categorías."
+        );
+      }
     }
 
-    let html = '';
 
-    if (data.length === 0) {
-      html = '<tr><td colspan="6">Sin datos</td></tr>';
-    }
+    /*
+      NUEVO DISEÑO:
+      Las categorías ahora son
+      TARJETAS independientes.
+    */
 
-    data.forEach(item => {
+    function mostrarCategorias() {
 
-      // 🔥 ESCAPAR TEXTO
-      const nombre = (item.nombre || '').replace(/'/g, "\\'");
-      const encargado = (item.encargado || '').replace(/'/g, "\\'");
+      categoriasContainer.innerHTML = "";
 
-      html += `
-        <tr>
-          <td>${item.id}</td>
-          <td>${item.nombre}</td>
-          <td>${item.cantidad}</td>
-          <td>${item.encargado || ''}</td>
-          <td>${item.fecha ? item.fecha.split('T')[0] : ''}</td>
-          <td>
-            <button class="btn-editar"
-              onclick="editar(${item.id}, '${nombre}', ${item.cantidad}, '${encargado}', '${item.fecha}')">
-              ✏️
-            </button>
-            <button class="btn-eliminar" onclick="eliminar(${item.id})">
-              ❌
-            </button>
-          </td>
-        </tr>
+      /*
+        TARJETA "TODAS"
+      */
+
+      const productosTotales =
+        inventario.length;
+
+      const unidadesTotales =
+        inventario.reduce(
+          (total, item) =>
+            total + Number(item.cantidad || 0),
+          0
+        );
+
+      const todas =
+        document.createElement("div");
+
+      todas.className =
+        "category-card all-category" +
+        (categoriaActual === null
+          ? " active"
+          : "");
+
+      todas.innerHTML = `
+        <div class="category-top">
+
+          <div class="category-icon">
+            📦
+          </div>
+
+          <span class="category-selected">
+            SELECCIONADA
+          </span>
+
+        </div>
+
+        <div class="category-name">
+          <h4>Todo el inventario</h4>
+          <span>Vista general de CASA NOA</span>
+        </div>
+
+        <div class="category-info">
+
+          <div class="category-stat">
+            <span>Productos</span>
+            <strong>${productosTotales}</strong>
+          </div>
+
+          <div class="category-stat">
+            <span>Unidades</span>
+            <strong>${unidadesTotales}</strong>
+          </div>
+
+        </div>
+
+        <div class="category-actions">
+
+          <button
+            class="category-view"
+            type="button"
+          >
+            👁 Ver inventario
+          </button>
+
+          <button
+            class="category-delete"
+            type="button"
+            title="No aplica"
+            disabled
+            style="opacity:.45;cursor:not-allowed;"
+          >
+            🔒
+          </button>
+
+        </div>
       `;
-    });
 
-    document.getElementById('tabla').innerHTML = html;
+      todas
+        .querySelector(".category-view")
+        .onclick = () => {
 
-  } catch (error) {
-    alert("Error cargando datos ❌");
-    console.log(error);
-  }
-}
+          categoriaActual = null;
 
-// 🔥 GUARDAR / EDITAR
-async function guardar() {
+          mostrarCategorias();
 
-  const nombre = document.getElementById('producto').value;
-  const cantidad = document.getElementById('cantidad').value;
-  const encargado = document.getElementById('encargado').value;
-  const fecha = document.getElementById('fecha').value;
+          mostrarProductos();
 
-  if (!nombre || !cantidad) {
-    alert("Completa los campos obligatorios");
-    return;
-  }
+        };
 
-  try {
-    const res = await fetch(`${API}/inventario`, {
-      method: editId ? 'PUT' : 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: editId,
-        nombre,
-        cantidad,
-        encargado,
-        fecha
-      })
-    });
+      categoriasContainer.appendChild(todas);
 
-    alert(await res.text());
 
-    editId = null;
-    limpiar();
-    cargar();
+      /*
+        TARJETAS DE CATEGORÍAS
+      */
 
-  } catch (error) {
-    alert("Error guardando ❌");
-    console.log(error);
-  }
-}
+      categorias.forEach(categoria => {
 
-// 🔥 ELIMINAR
-async function eliminar(id) {
-  if (!confirm("¿Eliminar?")) return;
+        const productosCategoria =
+          inventario.filter(
+            item =>
+              Number(item.categoria_id) ===
+              Number(categoria.id)
+          );
 
-  try {
-    const res = await fetch(`${API}/inventario/` + id, {
-      method: 'DELETE'
-    });
+        const unidadesCategoria =
+          productosCategoria.reduce(
+            (total, item) =>
+              total + Number(item.cantidad || 0),
+            0
+          );
 
-    alert(await res.text());
-    cargar();
+        const card =
+          document.createElement("div");
 
-  } catch (error) {
-    alert("Error eliminando ❌");
-    console.log(error);
-  }
-}
+        card.className =
+          "category-card" +
+          (
+            Number(categoriaActual) ===
+            Number(categoria.id)
+              ? " active"
+              : ""
+          );
 
-// 🔥 EDITAR
-function editar(id, nombre, cantidad, encargado, fecha) {
-  document.getElementById('producto').value = nombre;
-  document.getElementById('cantidad').value = cantidad;
-  document.getElementById('encargado').value = encargado;
-  document.getElementById('fecha').value = fecha ? fecha.split('T')[0] : '';
+        card.innerHTML = `
+          <div class="category-top">
 
-  editId = id;
-}
+            <div class="category-icon">
+              🏷️
+            </div>
 
-// 🔥 LIMPIAR
-function limpiar() {
-  document.getElementById('producto').value = '';
-  document.getElementById('cantidad').value = '';
-  document.getElementById('encargado').value = '';
-  document.getElementById('fecha').value = '';
-}
+            <span class="category-selected">
+              SELECCIONADA
+            </span>
 
-// 🔥 INICIO
-cargar();
+          </div>
 
-</script>
+          <div class="category-name">
+
+            <h4>
+              ${escaparHTML(categoria.nombre)}
+            </h4>
+
+            <span>
+              Categoría de inventario
+            </span>
+
+          </div>
+
+          <div class="category-info">
+
+            <div class="category-stat">
+
+              <span>Productos</span>
+
+              <strong>
+                ${productosCategoria.length}
+              </strong>
+
+            </div>
+
+            <div class="category-stat">
+
+              <span>Unidades</span>
+
+              <strong>
+                ${unidadesCategoria}
+              </strong>
+
+            </div>
+
+          </div>
+
+          <div class="category-actions">
+
+            <button
+              class="category-view"
+              type="button"
+            >
+              👁 Ver productos
+            </button>
+
+            <button
+              class="category-delete"
+              type="button"
+              title="Eliminar categoría"
+            >
+              🗑️
+            </button>
+
+          </div>
+        `;
+
+
+        card
+          .querySelector(".category-view")
+          .onclick = () => {
+
+            categoriaActual =
+              Number(categoria.id);
+
+            mostrarCategorias();
+
+            mostrarProductos();
+
+            document
+              .querySelector(".section-card:last-child")
+              ?.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+              });
+
+          };
+
+
+        card
+          .querySelector(".category-delete")
+          .onclick = () => {
+
+            eliminarCategoria(
+              categoria.id,
+              categoria.nombre
+            );
+
+          };
+
+
+        categoriasContainer.appendChild(card);
+
+      });
+
+    }
+
+
+    function llenarSelectCategorias(
+      categoriaSeleccionada = null
+    ) {
+
+      categoriaSelect.innerHTML = `
+        <option value="">
+          Seleccionar categoría
+        </option>
+      `;
+
+      categorias.forEach(categoria => {
+
+        const option =
+          document.createElement("option");
+
+        option.value = categoria.id;
+
+        option.textContent =
+          categoria.nombre;
+
+        if (
+          categoriaSeleccionada !== null &&
+          Number(categoriaSeleccionada) ===
+          Number(categoria.id)
+        ) {
+          option.selected = true;
+        }
+
+        categoriaSelect.appendChild(option);
+
+      });
+    }
+
+
+    async function cargarInventario() {
+
+      try {
+
+        const respuesta =
+          await fetch(
+            `${API}/inventario`
+          );
+
+        if (!respuesta.ok) {
+          throw new Error(
+            "No se pudo cargar el inventario"
+          );
+        }
+
+        inventario =
+          await respuesta.json();
+
+        actualizarResumen();
+
+        mostrarCategorias();
+
+        mostrarProductos();
+
+      } catch (error) {
+
+        console.error(
+          "❌ Error inventario:",
+          error
+        );
+
+        tablaInventario.innerHTML = `
+          <tr>
+            <td colspan="9" class="empty">
+
+              <strong>
+                No se pudo cargar el inventario
+              </strong>
+
+              Verifica la conexión con el servidor.
+
+            </td>
+          </tr>
+        `;
+
+      }
+    }
+
+
+    function actualizarResumen() {
+
+      const totalProductos =
+        inventario.length;
+
+      const totalUnidades =
+        inventario.reduce(
+          (total, item) =>
+            total + Number(item.cantidad || 0),
+          0
+        );
+
+      const totalBajo =
+        inventario.filter(
+          item =>
+            Number(item.cantidad || 0) > 0 &&
+            Number(item.cantidad || 0) <=
+            Number(item.stock_minimo || 0)
+        ).length;
+
+      const totalAgotado =
+        inventario.filter(
+          item =>
+            Number(item.cantidad || 0) <= 0
+        ).length;
+
+
+      document.getElementById(
+        "totalProductos"
+      ).textContent =
+        totalProductos;
+
+      document.getElementById(
+        "totalUnidades"
+      ).textContent =
+        totalUnidades;
+
+      document.getElementById(
+        "totalBajo"
+      ).textContent =
+        totalBajo;
+
+      document.getElementById(
+        "totalAgotado"
+      ).textContent =
+        totalAgotado;
+    }
+
+
+    function obtenerEstado(
+      cantidadActual,
+      minimo
+    ) {
+
+      const cantidadNumero =
+        Number(cantidadActual || 0);
+
+      const minimoNumero =
+        Number(minimo || 0);
+
+      if (cantidadNumero <= 0) {
+
+        return {
+          texto: "Agotado",
+          clase: "status-agotado"
+        };
+
+      }
+
+      if (
+        cantidadNumero <= minimoNumero
+      ) {
+
+        return {
+          texto: "Stock bajo",
+          clase: "status-bajo"
+        };
+
+      }
+
+      return {
+        texto: "Disponible",
+        clase: "status-disponible"
+      };
+    }
+
+
+    function mostrarProductos() {
+
+      const texto =
+        buscar.value
+          .trim()
+          .toLowerCase();
+
+      const productos =
+        inventario.filter(item => {
+
+          const perteneceCategoria =
+            categoriaActual === null ||
+            Number(item.categoria_id) ===
+            Number(categoriaActual);
+
+          const coincideBusqueda =
+            (item.nombre || "")
+              .toLowerCase()
+              .includes(texto);
+
+          return (
+            perteneceCategoria &&
+            coincideBusqueda
+          );
+        });
+
+
+      actualizarTextoFiltro(
+        productos.length
+      );
+
+      tablaInventario.innerHTML = "";
+
+
+      if (!productos.length) {
+
+        tablaInventario.innerHTML = `
+          <tr>
+            <td colspan="9" class="empty">
+
+              <strong>
+                No hay productos
+              </strong>
+
+              No encontramos productos
+              con los filtros seleccionados.
+
+            </td>
+          </tr>
+        `;
+
+        return;
+      }
+
+
+      productos.forEach(item => {
+
+        const cantidadActual =
+          Number(item.cantidad || 0);
+
+        const minimo =
+          Number(item.stock_minimo || 0);
+
+        const faltan =
+          Math.max(
+            minimo - cantidadActual,
+            0
+          );
+
+        const estado =
+          obtenerEstado(
+            cantidadActual,
+            minimo
+          );
+
+
+        const tr =
+          document.createElement("tr");
+
+
+        tr.innerHTML = `
+
+          <td>
+            <div class="product-name">
+              ${escaparHTML(item.nombre || "")}
+            </div>
+          </td>
+
+          <td>
+            <span class="category-label">
+              ${escaparHTML(
+                item.categoria || "General"
+              )}
+            </span>
+          </td>
+
+          <td>
+            <strong>
+              ${cantidadActual}
+            </strong>
+          </td>
+
+          <td>
+            ${minimo}
+          </td>
+
+          <td>
+            ${
+              faltan > 0
+                ? `<strong>${faltan}</strong>`
+                : "—"
+            }
+          </td>
+
+          <td>
+            <span class="status ${estado.clase}">
+              ${estado.texto}
+            </span>
+          </td>
+
+          <td>
+            ${escaparHTML(
+              item.encargado || "—"
+            )}
+          </td>
+
+          <td>
+            ${formatearFecha(item.fecha)}
+          </td>
+
+          <td>
+
+            <div class="actions-cell">
+
+              <button
+                class="icon-btn"
+                type="button"
+                title="Editar"
+                onclick="editarProducto(${Number(item.id)})"
+              >
+                ✏️
+              </button>
+
+              <button
+                class="icon-btn delete"
+                type="button"
+                title="Eliminar"
+                onclick="eliminarProducto(${Number(item.id)})"
+              >
+                🗑️
+              </button>
+
+            </div>
+
+          </td>
+        `;
+
+        tablaInventario.appendChild(tr);
+
+      });
+    }
+
+
+    function actualizarTextoFiltro(
+      cantidadResultados
+    ) {
+
+      const elemento =
+        document.getElementById(
+          "filtroTexto"
+        );
+
+      if (categoriaActual === null) {
+
+        elemento.textContent =
+          `Mostrando ${cantidadResultados} producto(s) del inventario.`;
+
+        return;
+      }
+
+
+      const categoria =
+        categorias.find(
+          item =>
+            Number(item.id) ===
+            Number(categoriaActual)
+        );
+
+
+      elemento.textContent =
+        `Categoría: ${
+          categoria
+            ? categoria.nombre
+            : "Seleccionada"
+        } · ${cantidadResultados} producto(s).`;
+    }
+
+
+    /* =========================
+       GUARDAR / EDITAR
+    ========================== */
+
+    formInventario.addEventListener(
+      "submit",
+      async event => {
+
+        event.preventDefault();
+
+        const datos = {
+
+          nombre:
+            nombre.value.trim(),
+
+          cantidad:
+            Number(cantidad.value),
+
+          categoria_id:
+            Number(categoriaSelect.value),
+
+          stock_minimo:
+            Number(stockMinimo.value || 0),
+
+          encargado:
+            encargado.value.trim(),
+
+          fecha:
+            fecha.value || null
+        };
+
+
+        if (!datos.nombre) {
+
+          alert(
+            "Escribe el nombre del producto."
+          );
+
+          return;
+        }
+
+
+        if (!categoriaSelect.value) {
+
+          alert(
+            "Selecciona una categoría."
+          );
+
+          return;
+        }
+
+
+        const metodo =
+          editId ? "PUT" : "POST";
+
+
+        if (editId) {
+          datos.id = editId;
+        }
+
+
+        try {
+
+          btnGuardar.disabled = true;
+
+          btnGuardar.textContent =
+            editId
+              ? "Actualizando..."
+              : "Guardando...";
+
+
+          const respuesta =
+            await fetch(
+              `${API}/inventario`,
+              {
+                method: metodo,
+
+                headers: {
+                  "Content-Type":
+                    "application/json"
+                },
+
+                body:
+                  JSON.stringify(datos)
+              }
+            );
+
+
+          const texto =
+            await respuesta.text();
+
+
+          if (!respuesta.ok) {
+
+            throw new Error(
+              texto ||
+              "No se pudo guardar el producto."
+            );
+          }
+
+
+          alert(
+            editId
+              ? "Producto actualizado correctamente."
+              : "Producto guardado correctamente."
+          );
+
+
+          cancelarEdicion();
+
+          await cargarInventario();
+
+        } catch (error) {
+
+          console.error(
+            "❌ Error guardando:",
+            error
+          );
+
+          alert(error.message);
+
+        } finally {
+
+          btnGuardar.disabled = false;
+
+          btnGuardar.textContent =
+            editId
+              ? "Actualizar producto"
+              : "Guardar producto";
+        }
+
+      }
+    );
+
+
+    window.editarProducto =
+      function(id) {
+
+        const producto =
+          inventario.find(
+            item =>
+              Number(item.id) ===
+              Number(id)
+          );
+
+
+        if (!producto) {
+
+          alert(
+            "No se encontró el producto."
+          );
+
+          return;
+        }
+
+
+        editId = Number(id);
+
+        nombre.value =
+          producto.nombre || "";
+
+        cantidad.value =
+          Number(producto.cantidad || 0);
+
+        stockMinimo.value =
+          Number(
+            producto.stock_minimo || 0
+          );
+
+        encargado.value =
+          producto.encargado || "";
+
+        fecha.value =
+          producto.fecha
+            ? String(producto.fecha)
+                .substring(0, 10)
+            : "";
+
+
+        llenarSelectCategorias(
+          producto.categoria_id
+        );
+
+
+        formTitulo.textContent =
+          "Editar producto";
+
+        btnGuardar.textContent =
+          "Actualizar producto";
+
+        btnCancelar.style.display =
+          "inline-flex";
+
+
+        window.scrollTo({
+          top: 0,
+          behavior: "smooth"
+        });
+      };
+
+
+    btnCancelar.addEventListener(
+      "click",
+      cancelarEdicion
+    );
+
+
+    function cancelarEdicion() {
+
+      editId = null;
+
+      formInventario.reset();
+
+      fecha.value =
+        obtenerFechaActual();
+
+      formTitulo.textContent =
+        "Agregar producto";
+
+      btnGuardar.textContent =
+        "Guardar producto";
+
+      btnCancelar.style.display =
+        "none";
+
+      llenarSelectCategorias();
+    }
+
+
+    window.eliminarProducto =
+      async function(id) {
+
+        const producto =
+          inventario.find(
+            item =>
+              Number(item.id) ===
+              Number(id)
+          );
+
+
+        if (!producto) {
+          return;
+        }
+
+
+        const confirmar =
+          confirm(
+            `¿Seguro que deseas eliminar "${producto.nombre}"?`
+          );
+
+
+        if (!confirmar) {
+          return;
+        }
+
+
+        try {
+
+          const respuesta =
+            await fetch(
+              `${API}/inventario/${id}`,
+              {
+                method: "DELETE"
+              }
+            );
+
+
+          const texto =
+            await respuesta.text();
+
+
+          if (!respuesta.ok) {
+
+            throw new Error(
+              texto ||
+              "No se pudo eliminar."
+            );
+          }
+
+
+          await cargarInventario();
+
+        } catch (error) {
+
+          console.error(
+            "❌ Error eliminando:",
+            error
+          );
+
+          alert(error.message);
+        }
+      };
+
+
+    /* =========================
+       ELIMINAR CATEGORÍA
+    ========================== */
+
+    async function eliminarCategoria(
+      id,
+      nombreCategoria
+    ) {
+
+      const productos =
+        inventario.filter(
+          item =>
+            Number(item.categoria_id) ===
+            Number(id)
+        );
+
+
+      if (productos.length > 0) {
+
+        alert(
+          `No puedes eliminar "${nombreCategoria}" porque tiene ${productos.length} producto(s) asociado(s).`
+        );
+
+        return;
+      }
+
+
+      const confirmar =
+        confirm(
+          `¿Deseas eliminar la categoría "${nombreCategoria}"?`
+        );
+
+
+      if (!confirmar) {
+        return;
+      }
+
+
+      try {
+
+        const respuesta =
+          await fetch(
+            `${API}/categorias-inventario/${id}`,
+            {
+              method: "DELETE"
+            }
+          );
+
+
+        const texto =
+          await respuesta.text();
+
+
+        if (!respuesta.ok) {
+
+          throw new Error(
+            texto ||
+            "No se pudo eliminar la categoría."
+          );
+        }
+
+
+        if (
+          Number(categoriaActual) ===
+          Number(id)
+        ) {
+
+          categoriaActual = null;
+        }
+
+
+        await cargarCategorias();
+
+        alert(
+          "Categoría eliminada correctamente."
+        );
+
+      } catch (error) {
+
+        console.error(
+          "❌ Error categoría:",
+          error
+        );
+
+        alert(error.message);
+      }
+    }
+
+
+    buscar.addEventListener(
+      "input",
+      mostrarProductos
+    );
+
+
+    /* =========================
+       MODAL
+    ========================== */
+
+    document
+      .getElementById("btnNuevaCategoria")
+      .addEventListener(
+        "click",
+        abrirModalCategoria
+      );
+
+
+    document
+      .getElementById("cerrarModal")
+      .addEventListener(
+        "click",
+        cerrarModalCategoria
+      );
+
+
+    document
+      .getElementById("cancelarCategoria")
+      .addEventListener(
+        "click",
+        cerrarModalCategoria
+      );
+
+
+    modalCategoria.addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target ===
+          modalCategoria
+        ) {
+
+          cerrarModalCategoria();
+        }
+      }
+    );
+
+
+    function abrirModalCategoria() {
+
+      nombreCategoria.value = "";
+
+      modalCategoria.classList.add(
+        "active"
+      );
+
+      setTimeout(
+        () =>
+          nombreCategoria.focus(),
+        50
+      );
+    }
+
+
+    function cerrarModalCategoria() {
+
+      modalCategoria.classList.remove(
+        "active"
+      );
+    }
+
+
+    document
+      .getElementById("guardarCategoria")
+      .addEventListener(
+        "click",
+        crearCategoria
+      );
+
+
+    nombreCategoria.addEventListener(
+      "keydown",
+      event => {
+
+        if (event.key === "Enter") {
+
+          event.preventDefault();
+
+          crearCategoria();
+        }
+      }
+    );
+
+
+    async function crearCategoria() {
+
+      const nombreNuevo =
+        nombreCategoria.value.trim();
+
+
+      if (!nombreNuevo) {
+
+        alert(
+          "Escribe el nombre de la categoría."
+        );
+
+        return;
+      }
+
+
+      try {
+
+        const respuesta =
+          await fetch(
+            `${API}/categorias-inventario`,
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body:
+                JSON.stringify({
+                  nombre: nombreNuevo
+                })
+            }
+          );
+
+
+        const texto =
+          await respuesta.text();
+
+
+        if (!respuesta.ok) {
+
+          throw new Error(
+            texto ||
+            "No se pudo crear la categoría."
+          );
+        }
+
+
+        cerrarModalCategoria();
+
+        await cargarCategorias();
+
+        alert(
+          "Categoría creada correctamente."
+        );
+
+      } catch (error) {
+
+        console.error(
+          "❌ Error categoría:",
+          error
+        );
+
+        alert(error.message);
+      }
+    }
+
+
+    /* =========================
+       PDF
+    ========================== */
+
+    document
+      .getElementById("btnGenerarPDF")
+      .addEventListener(
+        "click",
+        async function() {
+
+          const boton = this;
+
+          try {
+
+            boton.disabled = true;
+
+            boton.textContent =
+              "⏳ Generando PDF...";
+
+
+            const modulo =
+              await import(
+                "./inventario-pdf.js"
+              );
+
+
+            await modulo.generarPDFInventario(
+              inventario,
+              categorias
+            );
+
+
+          } catch (error) {
+
+            console.error(
+              "❌ Error PDF:",
+              error
+            );
+
+            alert(
+              "No se pudo generar el PDF ❌\n\n" +
+              error.message
+            );
+
+          } finally {
+
+            boton.disabled = false;
+
+            boton.textContent =
+              "📄 Generar PDF";
+          }
+        }
+      );
+
+
+    /* =========================
+       UTILIDADES
+    ========================== */
+
+    function formatearFecha(valor) {
+
+      if (!valor) {
+        return "—";
+      }
+
+
+      const fechaTexto =
+        String(valor)
+          .substring(0, 10);
+
+
+      const partes =
+        fechaTexto.split("-");
+
+
+      if (partes.length !== 3) {
+        return fechaTexto;
+      }
+
+
+      return `${partes[2]}/${partes[1]}/${partes[0]}`;
+    }
+
+
+    function escaparHTML(texto) {
+
+      return String(texto ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+
+    /* =========================
+       SESIÓN
+    ========================== */
+
+    function cerrarSesion() {
+
+      if (
+        typeof window.logout ===
+        "function"
+      ) {
+
+        window.logout();
+
+        return;
+      }
+
+
+      if (
+        typeof window.cerrarSesionReal ===
+        "function"
+      ) {
+
+        window.cerrarSesionReal();
+
+        return;
+      }
+
+
+      localStorage.removeItem(
+        "usuario"
+      );
+
+      sessionStorage.clear();
+
+      window.location.href =
+        "index.html";
+    }
+
+  </script>
 
 </body>
+
 </html>
