@@ -1,222 +1,1507 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="manifest" href="/manifest.json">
-<meta name="theme-color" content="#1e1e2f">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>CASA NOA - PANEL PRINCIPAL</title>
-<link rel="icon" type="image/png" sizes="32x32" href="/logo.png">
-<link rel="icon" type="image/png" sizes="192x192" href="/logo-192.png">
-<link rel="apple-touch-icon" href="/logo-192.png">
+  <title>CASA NOA | Panel Principal</title>
 
-<style>
+  <link rel="manifest" href="/manifest.json">
 
-/* 🔥 RESET */
-* {
-    box-sizing: border-box;
-}
+  <meta name="theme-color" content="#0f172a">
 
-/* 🔥 FONDO GENERAL */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    min-height: 100vh;
-    background: linear-gradient(135deg, #1e1e2f, #007BFF);
-    display: flex;
-}
+  <link rel="icon" type="image/png" href="/logo.png">
+  <link rel="apple-touch-icon" href="/logo-192.png">
 
-/* 🔥 CONTENEDOR */
-.wrapper {
-    width: 100%;
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
+  <style>
+    :root {
+      --primary: #2563eb;
+      --dark: #0f172a;
+      --background: #f4f7fb;
+      --white: #ffffff;
+      --text: #172033;
+      --text-soft: #64748b;
+      --border: #e2e8f0;
+      --green: #16a34a;
+      --orange: #ea580c;
+      --purple: #7c3aed;
+      --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+    }
 
-.container {
-    background: white;
-    padding: 40px;
-    border-radius: 15px;
-    width: 400px;
-    max-width: 90%;
-    text-align: center;
-    box-shadow: 0px 10px 30px rgba(0,0,0,0.3);
-}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-h1 {
-    margin-bottom: 30px;
-    color: #1e1e2f;
-}
+    body {
+      min-height: 100vh;
+      font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Arial,
+        sans-serif;
 
-.menu a {
-    display: block;
-    margin: 12px 0;
-    padding: 12px;
-    background: linear-gradient(to right, #007BFF, #0dcaf0);
-    color: white;
-    text-decoration: none;
-    border-radius: 10px;
-}
+      color: var(--text);
 
-.footer {
-    margin-top: 20px;
-    font-size: 12px;
-    color: #777;
-}
+      background:
+        radial-gradient(
+          circle at 90% 0%,
+          rgba(37, 99, 235, 0.09),
+          transparent 28%
+        ),
+        linear-gradient(
+          180deg,
+          #f8fafc 0%,
+          #f4f7fb 100%
+        );
+    }
 
-button {
-    margin-top: 15px;
-    padding: 10px;
-    border: none;
-    background: #007BFF;
-    color: white;
-    border-radius: 8px;
-    cursor: pointer;
-}
+    a {
+      color: inherit;
+    }
 
-button:hover {
-    opacity: 0.9;
-}
+    button {
+      font-family: inherit;
+    }
 
-</style>
+    .app {
+      width: 100%;
+      max-width: 1280px;
+      margin: auto;
+      padding: 28px 22px 50px;
+    }
+
+    /* HEADER */
+
+    .header {
+      position: relative;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 25px;
+
+      min-height: 150px;
+
+      padding: 30px 34px;
+
+      overflow: hidden;
+
+      color: white;
+
+      border-radius: 26px;
+
+      background:
+        linear-gradient(
+          135deg,
+          #0f172a 0%,
+          #172554 50%,
+          #2563eb 100%
+        );
+
+      box-shadow:
+        0 20px 45px rgba(15, 23, 42, 0.20);
+    }
+
+    .header::before {
+      content: "";
+
+      position: absolute;
+
+      width: 280px;
+      height: 280px;
+
+      right: -90px;
+      top: -140px;
+
+      border-radius: 50%;
+
+      background:
+        rgba(255, 255, 255, 0.07);
+    }
+
+    .brand {
+      position: relative;
+      z-index: 2;
+
+      display: flex;
+      align-items: center;
+
+      gap: 18px;
+    }
+
+    .brand-logo {
+      width: 70px;
+      height: 70px;
+
+      padding: 8px;
+
+      object-fit: contain;
+
+      border-radius: 18px;
+
+      background: white;
+
+      box-shadow:
+        0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .brand-info h1 {
+      margin-bottom: 8px;
+
+      font-size: 31px;
+
+      line-height: 1;
+
+      letter-spacing: -1px;
+    }
+
+    .brand-info p {
+      color: #cbd5e1;
+      font-size: 14px;
+    }
+
+    .header-actions {
+      position: relative;
+      z-index: 2;
+
+      display: flex;
+      align-items: center;
+
+      gap: 10px;
+    }
+
+    .header-button {
+      padding: 12px 16px;
+
+      border: 0;
+      border-radius: 12px;
+
+      font-size: 13px;
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition:
+        transform 0.2s ease,
+        opacity 0.2s ease;
+    }
+
+    .header-button:hover {
+      opacity: 0.92;
+      transform: translateY(-2px);
+    }
+
+    .notification-button {
+      color: white;
+
+      border:
+        1px solid rgba(255, 255, 255, 0.15);
+
+      background:
+        rgba(255, 255, 255, 0.13);
+    }
+
+    .install-button {
+      display: none;
+
+      color: var(--primary);
+
+      background: white;
+    }
+
+    /* WELCOME */
+
+    .welcome {
+      padding: 30px 3px 20px;
+    }
+
+    .welcome h2 {
+      margin-bottom: 7px;
+
+      color: var(--dark);
+
+      font-size: 23px;
+
+      letter-spacing: -0.4px;
+    }
+
+    .welcome p {
+      color: var(--text-soft);
+      font-size: 14px;
+    }
+
+    /* ESTADÍSTICAS */
+
+    .statistics {
+      display: grid;
+
+      grid-template-columns:
+        repeat(4, 1fr);
+
+      gap: 16px;
+
+      margin-bottom: 34px;
+    }
+
+    .stat-card {
+      padding: 21px;
+
+      border:
+        1px solid var(--border);
+
+      border-radius: 18px;
+
+      background: var(--white);
+
+      box-shadow: var(--shadow);
+
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-4px);
+
+      box-shadow:
+        0 18px 40px rgba(15, 23, 42, 0.13);
+    }
+
+    .stat-header {
+      display: flex;
+
+      align-items: center;
+      justify-content: space-between;
+
+      margin-bottom: 17px;
+    }
+
+    .stat-title {
+      color: var(--text-soft);
+
+      font-size: 13px;
+
+      font-weight: 700;
+    }
+
+    .stat-icon {
+      width: 43px;
+      height: 43px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      border-radius: 13px;
+
+      font-size: 21px;
+    }
+
+    .stat-blue .stat-icon {
+      background: #eff6ff;
+    }
+
+    .stat-green .stat-icon {
+      background: #ecfdf5;
+    }
+
+    .stat-orange .stat-icon {
+      background: #fff7ed;
+    }
+
+    .stat-purple .stat-icon {
+      background: #f5f3ff;
+    }
+
+    .stat-number {
+      color: var(--dark);
+
+      font-size: 30px;
+
+      font-weight: 800;
+
+      line-height: 1;
+    }
+
+    /* SECCIÓN */
+
+    .section-header {
+      display: flex;
+
+      align-items: flex-end;
+      justify-content: space-between;
+
+      margin-bottom: 16px;
+    }
+
+    .section-header h2 {
+      margin-bottom: 5px;
+
+      color: var(--dark);
+
+      font-size: 20px;
+    }
+
+    .section-header p {
+      color: var(--text-soft);
+      font-size: 13px;
+    }
+
+    /* MÓDULOS */
+
+    .modules {
+      display: grid;
+
+      grid-template-columns:
+        repeat(2, 1fr);
+
+      gap: 16px;
+    }
+
+    .module {
+      display: flex;
+
+      align-items: center;
+
+      gap: 17px;
+
+      min-height: 112px;
+
+      padding: 20px;
+
+      text-decoration: none;
+
+      border:
+        1px solid var(--border);
+
+      border-radius: 19px;
+
+      background: white;
+
+      box-shadow: var(--shadow);
+
+      transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+    }
+
+    .module:hover {
+      transform: translateY(-4px);
+
+      border-color: #bfdbfe;
+
+      box-shadow:
+        0 18px 40px rgba(15, 23, 42, 0.13);
+    }
+
+    .module-icon {
+      width: 58px;
+      height: 58px;
+
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      flex-shrink: 0;
+
+      border-radius: 16px;
+
+      font-size: 27px;
+    }
+
+    .module-info {
+      flex: 1;
+    }
+
+    .module-info h3 {
+      margin-bottom: 6px;
+
+      color: var(--dark);
+
+      font-size: 16px;
+    }
+
+    .module-info p {
+      color: var(--text-soft);
+
+      font-size: 13px;
+
+      line-height: 1.45;
+    }
+
+    .module-arrow {
+      color: #94a3b8;
+
+      font-size: 22px;
+
+      transition:
+        transform 0.2s ease,
+        color 0.2s ease;
+    }
+
+    .module:hover .module-arrow {
+      color: var(--primary);
+
+      transform:
+        translateX(5px);
+    }
+
+    .module-habitaciones .module-icon {
+      background: #eff6ff;
+    }
+
+    .module-limpieza .module-icon {
+      background: #ecfdf5;
+    }
+
+    .module-mantenimiento .module-icon {
+      background: #fff7ed;
+    }
+
+    .module-inventario .module-icon {
+      background: #fef2f2;
+    }
+
+    .module-tareas .module-icon {
+      background: #f5f3ff;
+    }
+
+    /* ACCESO RÁPIDO */
+
+    .quick-access {
+      margin-top: 32px;
+
+      padding: 23px;
+
+      border:
+        1px solid var(--border);
+
+      border-radius: 20px;
+
+      background: white;
+
+      box-shadow: var(--shadow);
+    }
+
+    .quick-access h2 {
+      margin-bottom: 16px;
+
+      color: var(--dark);
+
+      font-size: 18px;
+    }
+
+    .quick-list {
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 10px;
+    }
+
+    .quick-link {
+      display: inline-flex;
+
+      align-items: center;
+
+      gap: 7px;
+
+      padding: 10px 14px;
+
+      color: #334155;
+
+      font-size: 13px;
+
+      font-weight: 700;
+
+      text-decoration: none;
+
+      border:
+        1px solid var(--border);
+
+      border-radius: 11px;
+
+      background: #f8fafc;
+
+      transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        border-color 0.2s ease;
+    }
+
+    .quick-link:hover {
+      color: var(--primary);
+
+      border-color: #bfdbfe;
+
+      background: #eff6ff;
+    }
+
+    /* NOTIFICACIONES */
+
+    .notification-status {
+      display: flex;
+
+      align-items: center;
+
+      gap: 10px;
+
+      margin-top: 18px;
+
+      padding: 13px 16px;
+
+      color: #475569;
+
+      font-size: 13px;
+
+      border:
+        1px solid var(--border);
+
+      border-radius: 13px;
+
+      background: #f8fafc;
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+
+      border-radius: 50%;
+
+      background: #94a3b8;
+    }
+
+    .status-dot.active {
+      background: #16a34a;
+
+      box-shadow:
+        0 0 0 4px rgba(22, 163, 74, 0.12);
+    }
+
+    /* FOOTER */
+
+    .footer {
+      padding-top: 35px;
+
+      text-align: center;
+
+      color: #94a3b8;
+
+      font-size: 12px;
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 900px) {
+
+      .statistics {
+        grid-template-columns:
+          repeat(2, 1fr);
+      }
+
+      .header {
+        padding: 26px;
+      }
+    }
+
+    @media (max-width: 680px) {
+
+      .app {
+        padding:
+          14px
+          12px
+          35px;
+      }
+
+      .header {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        padding: 22px;
+
+        border-radius: 21px;
+      }
+
+      .brand-logo {
+        width: 58px;
+        height: 58px;
+      }
+
+      .brand-info h1 {
+        font-size: 25px;
+      }
+
+      .header-actions {
+        width: 100%;
+      }
+
+      .header-button {
+        flex: 1;
+      }
+
+      .statistics {
+        grid-template-columns:
+          1fr 1fr;
+
+        gap: 10px;
+      }
+
+      .stat-card {
+        padding: 17px;
+      }
+
+      .stat-number {
+        font-size: 25px;
+      }
+
+      .modules {
+        grid-template-columns: 1fr;
+      }
+
+      .module {
+        min-height: 100px;
+      }
+    }
+
+    @media (max-width: 430px) {
+
+      .statistics {
+        grid-template-columns: 1fr;
+      }
+
+      .brand-info p {
+        font-size: 12px;
+      }
+
+      .quick-access {
+        padding: 18px;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="wrapper">
-  <div class="container">
+  <main class="app">
 
-    <h1>🏨 CASA NOA</h1>
+    <header class="header">
 
-    <div class="menu">
-      <a href="/inventario.html">📦 Inventario</a>
-      <a href="/mantenimiento.html">🛠️ Mantenimiento</a>
-      <a href="/habitaciones.html">🏨 Habitaciones</a>
-      <a href="/limpieza.html">🧹 Limpieza</a>
-      <a href="/tareas.html">📋 Tareas</a>
-    </div>
+      <div class="brand">
 
-    <!-- 🔔 BOTÓN -->
-    <button onclick="activarNotificaciones()">
-      🔔 Activar notificaciones
-    </button>
+        <img
+          src="/logo.png"
+          alt="CASA NOA"
+          class="brand-logo"
+        >
 
-    <div class="footer">
-      <p>Creado por Ovidio Camaño</p>
-    </div>
+        <div class="brand-info">
 
-  </div>
-</div>
+          <h1>CASA NOA</h1>
 
-<script>
+          <p>
+            Gestión hotelera
+          </p>
 
-/* ================= SERVICE WORKER ================= */
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/service-worker.js");
-}
+        </div>
 
-/* ================= PUBLIC KEY ================= */
-const PUBLIC_KEY = 'BJ9e4DSpEVY0_Nq_FJ6py3oGRBKFl7BCh5wunz4q5bDjA87IaJP2vw902IOj4rNllyV0B8ddg52vwrA5gXq0DSw';
+      </div>
 
-/* ================= CONVERTIDOR ================= */
-function urlBase64ToUint8Array(base64String) {
-  const padding = '='.repeat((4 - base64String.length % 4) % 4);
-  const base64 = (base64String + padding)
-    .replace(/-/g, '+')
-    .replace(/_/g, '/');
+      <div class="header-actions">
 
-  const rawData = atob(base64);
-  return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
-}
-/* ================= PWA INSTALL EVENT ================= */
+        <button
+          id="btnNotificaciones"
+          class="header-button notification-button"
+          onclick="activarNotificaciones()"
+        >
+          🔔 Activar notificaciones
+        </button>
+
+        <button
+          id="btnInstalar"
+          class="header-button install-button"
+        >
+          📱 Instalar app
+        </button>
+
+      </div>
+
+    </header>
 
 
-/* ================= ACTIVAR NOTIFICACIONES ================= */
-async function activarNotificaciones() {
+    <section class="welcome">
 
-  const permiso = await Notification.requestPermission();
+      <h2>
+        Panel principal
+      </h2>
 
-  if (permiso !== "granted") {
-    alert("Debes permitir notificaciones");
-    return;
-  }
+      <p>
+        Administra de forma sencilla las operaciones diarias de CASA NOA.
+      </p>
 
-  const registro = await navigator.serviceWorker.ready;
+    </section>
 
-  // 🔥 BORRAR SUSCRIPCIÓN VIEJA (CLAVE)
-  let suscripcion = await registro.pushManager.getSubscription();
 
-  if (suscripcion) {
-    await suscripcion.unsubscribe();
-  }
+    <section class="statistics">
 
-  // 🔥 CREAR NUEVA LIMPIA
-  suscripcion = await registro.pushManager.subscribe({
-    userVisibleOnly: true,
-    applicationServerKey: urlBase64ToUint8Array(PUBLIC_KEY)
-  });
+      <article class="stat-card stat-blue">
 
-  console.log("SUSCRIPCIÓN NUEVA:", suscripcion);
+        <div class="stat-header">
 
-  await fetch("/suscribir", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(suscripcion)
-  });
+          <span class="stat-title">
+            Habitaciones
+          </span>
 
-  alert("🔔 Notificaciones activadas correctamente");
-}
-</script>
-<!-- 🔥 BOTÓN -->
-<button id="btnInstalar" style="display:none; position:fixed; bottom:20px; right:20px; padding:12px 16px; border-radius:10px; background:#007BFF; color:white; border:none;">
-📲 Instalar App
-</button>
+          <div class="stat-icon">
+            🛏️
+          </div>
 
-<!-- 🔥 SCRIPT DE INSTALACIÓN -->
-<script>
+        </div>
 
-let deferredPrompt;
-const btn = document.getElementById("btnInstalar");
+        <div
+          id="totalHabitaciones"
+          class="stat-number"
+        >
+          —
+        </div>
 
-// 🔥 EVENTO PRINCIPAL
-window.addEventListener("beforeinstallprompt", (e) => {
-  e.preventDefault();
-  deferredPrompt = e;
+      </article>
 
-  btn.style.display = "block";
-});
 
-// 🔥 CLICK INSTALAR
-btn.addEventListener("click", async () => {
-  if (!deferredPrompt) return;
+      <article class="stat-card stat-green">
 
-  deferredPrompt.prompt();
+        <div class="stat-header">
 
-  const result = await deferredPrompt.userChoice;
+          <span class="stat-title">
+            Limpiezas
+          </span>
 
-  if (result.outcome === "accepted") {
-    console.log("Instalada");
-  }
+          <div class="stat-icon">
+            🧹
+          </div>
 
-  deferredPrompt = null;
-  btn.style.display = "none";
-});
+        </div>
 
-// 🔥 CUANDO YA ESTA INSTALADA
-window.addEventListener("appinstalled", () => {
-  console.log("App instalada correctamente");
-  btn.style.display = "none";
-  deferredPrompt = null;
-});
+        <div
+          id="totalLimpiezas"
+          class="stat-number"
+        >
+          —
+        </div>
 
-</script>
+      </article>
+
+
+      <article class="stat-card stat-orange">
+
+        <div class="stat-header">
+
+          <span class="stat-title">
+            Mantenimientos
+          </span>
+
+          <div class="stat-icon">
+            🔧
+          </div>
+
+        </div>
+
+        <div
+          id="totalMantenimientos"
+          class="stat-number"
+        >
+          —
+        </div>
+
+      </article>
+
+
+      <article class="stat-card stat-purple">
+
+        <div class="stat-header">
+
+          <span class="stat-title">
+            Tareas
+          </span>
+
+          <div class="stat-icon">
+            📋
+          </div>
+
+        </div>
+
+        <div
+          id="totalTareas"
+          class="stat-number"
+        >
+          —
+        </div>
+
+      </article>
+
+    </section>
+
+
+    <section>
+
+      <div class="section-header">
+
+        <div>
+
+          <h2>
+            Gestión del hotel
+          </h2>
+
+          <p>
+            Accede rápidamente a cada módulo.
+          </p>
+
+        </div>
+
+      </div>
+
+
+      <div class="modules">
+
+        <a
+          href="/habitaciones.html"
+          class="module module-habitaciones"
+        >
+
+          <div class="module-icon">
+            🛏️
+          </div>
+
+          <div class="module-info">
+
+            <h3>
+              Habitaciones
+            </h3>
+
+            <p>
+              Consulta y administra las habitaciones del hotel.
+            </p>
+
+          </div>
+
+          <span class="module-arrow">
+            →
+          </span>
+
+        </a>
+
+
+        <a
+          href="/limpieza.html"
+          class="module module-limpieza"
+        >
+
+          <div class="module-icon">
+            🧹
+          </div>
+
+          <div class="module-info">
+
+            <h3>
+              Limpieza
+            </h3>
+
+            <p>
+              Controla el estado y las actividades de limpieza.
+            </p>
+
+          </div>
+
+          <span class="module-arrow">
+            →
+          </span>
+
+        </a>
+
+
+        <a
+          href="/mantenimiento.html"
+          class="module module-mantenimiento"
+        >
+
+          <div class="module-icon">
+            🔧
+          </div>
+
+          <div class="module-info">
+
+            <h3>
+              Mantenimiento
+            </h3>
+
+            <p>
+              Registra y controla reparaciones y mantenimientos.
+            </p>
+
+          </div>
+
+          <span class="module-arrow">
+            →
+          </span>
+
+        </a>
+
+
+        <a
+          href="/inventario.html"
+          class="module module-inventario"
+        >
+
+          <div class="module-icon">
+            📦
+          </div>
+
+          <div class="module-info">
+
+            <h3>
+              Inventario
+            </h3>
+
+            <p>
+              Administra productos, existencias y movimientos.
+            </p>
+
+          </div>
+
+          <span class="module-arrow">
+            →
+          </span>
+
+        </a>
+
+
+        <a
+          href="/tareas.html"
+          class="module module-tareas"
+        >
+
+          <div class="module-icon">
+            📋
+          </div>
+
+          <div class="module-info">
+
+            <h3>
+              Tareas
+            </h3>
+
+            <p>
+              Organiza, consulta y controla las tareas pendientes.
+            </p>
+
+          </div>
+
+          <span class="module-arrow">
+            →
+          </span>
+
+        </a>
+
+      </div>
+
+    </section>
+
+
+    <section class="quick-access">
+
+      <h2>
+        Acceso rápido
+      </h2>
+
+      <div class="quick-list">
+
+        <a
+          href="/habitaciones.html"
+          class="quick-link"
+        >
+          🛏️ Habitaciones
+        </a>
+
+        <a
+          href="/limpieza.html"
+          class="quick-link"
+        >
+          🧹 Limpieza
+        </a>
+
+        <a
+          href="/mantenimiento.html"
+          class="quick-link"
+        >
+          🔧 Mantenimiento
+        </a>
+
+        <a
+          href="/inventario.html"
+          class="quick-link"
+        >
+          📦 Inventario
+        </a>
+
+        <a
+          href="/tareas.html"
+          class="quick-link"
+        >
+          📋 Tareas
+        </a>
+
+      </div>
+
+
+      <div class="notification-status">
+
+        <span
+          id="statusDot"
+          class="status-dot"
+        ></span>
+
+        <span id="notificationStatus">
+          Las notificaciones están desactivadas.
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <footer class="footer">
+
+      CASA NOA · Panel de gestión hotelera
+
+    </footer>
+
+  </main>
+
+
+  <script>
+
+    async function cargarEstadisticas() {
+
+      const elementos = {
+
+        habitaciones:
+          document.getElementById(
+            "totalHabitaciones"
+          ),
+
+        limpieza:
+          document.getElementById(
+            "totalLimpiezas"
+          ),
+
+        mantenimiento:
+          document.getElementById(
+            "totalMantenimientos"
+          ),
+
+        tareas:
+          document.getElementById(
+            "totalTareas"
+          )
+
+      };
+
+
+      const endpoints = {
+
+        habitaciones:
+          "/habitaciones",
+
+        limpieza:
+          "/limpieza",
+
+        mantenimiento:
+          "/mantenimiento",
+
+        tareas:
+          "/tareas"
+
+      };
+
+
+      for (const tipo in endpoints) {
+
+        try {
+
+          const respuesta =
+            await fetch(
+              endpoints[tipo]
+            );
+
+          if (!respuesta.ok) {
+            throw new Error(
+              "Error HTTP"
+            );
+          }
+
+          const datos =
+            await respuesta.json();
+
+
+          elementos[tipo].textContent =
+            Array.isArray(datos)
+              ? datos.length
+              : 0;
+
+        } catch (error) {
+
+          console.error(
+            `Error cargando ${tipo}:`,
+            error
+          );
+
+          elementos[tipo].textContent =
+            "—";
+        }
+      }
+    }
+
+
+    const VAPID_PUBLIC_KEY =
+      "BJ9e4DSpEVY0_Nq_FJ6py3oGRBKFl7BCh5wunz4q5bDjA87IaJP2vw902IOj4rNllyV0B8ddg52vwrA5gXq0DSw";
+
+
+    function urlBase64ToUint8Array(
+      base64String
+    ) {
+
+      const padding =
+        "=".repeat(
+          (4 -
+            base64String.length % 4) % 4
+        );
+
+      const base64 =
+        (
+          base64String
+            .replace(/-/g, "+")
+            .replace(/_/g, "/")
+          + padding
+        );
+
+      const rawData =
+        window.atob(base64);
+
+      return Uint8Array.from(
+        [...rawData].map(
+          char =>
+            char.charCodeAt(0)
+        )
+      );
+    }
+
+
+    async function activarNotificaciones() {
+
+      const boton =
+        document.getElementById(
+          "btnNotificaciones"
+        );
+
+      const estado =
+        document.getElementById(
+          "notificationStatus"
+        );
+
+      const punto =
+        document.getElementById(
+          "statusDot"
+        );
+
+
+      if (
+        !("Notification" in window)
+      ) {
+
+        estado.textContent =
+          "Este navegador no admite notificaciones.";
+
+        return;
+      }
+
+
+      if (
+        !("serviceWorker" in navigator)
+      ) {
+
+        estado.textContent =
+          "Este navegador no admite Service Worker.";
+
+        return;
+      }
+
+
+      try {
+
+        boton.disabled = true;
+
+        boton.textContent =
+          "Activando...";
+
+
+        const permiso =
+          await Notification.requestPermission();
+
+
+        if (permiso !== "granted") {
+
+          estado.textContent =
+            "Permiso de notificaciones no concedido.";
+
+          boton.disabled = false;
+
+          boton.textContent =
+            "🔔 Activar notificaciones";
+
+          return;
+        }
+
+
+        const registro =
+          await navigator.serviceWorker.ready;
+
+
+        let suscripcion =
+          await registro.pushManager
+            .getSubscription();
+
+
+        if (!suscripcion) {
+
+          suscripcion =
+            await registro.pushManager.subscribe({
+
+              userVisibleOnly: true,
+
+              applicationServerKey:
+                urlBase64ToUint8Array(
+                  VAPID_PUBLIC_KEY
+                )
+
+            });
+        }
+
+
+        const respuesta =
+          await fetch(
+            "/suscribir",
+            {
+              method: "POST",
+
+              headers: {
+                "Content-Type":
+                  "application/json"
+              },
+
+              body:
+                JSON.stringify(
+                  suscripcion
+                )
+            }
+          );
+
+
+        if (!respuesta.ok) {
+
+          throw new Error(
+            "No se pudo registrar la suscripción."
+          );
+        }
+
+
+        estado.textContent =
+          "Notificaciones activadas correctamente.";
+
+        punto.classList.add(
+          "active"
+        );
+
+        boton.textContent =
+          "✓ Notificaciones activas";
+
+        boton.disabled = true;
+
+
+      } catch (error) {
+
+        console.error(
+          "Error activando notificaciones:",
+          error
+        );
+
+        estado.textContent =
+          "No fue posible activar las notificaciones.";
+
+        boton.disabled = false;
+
+        boton.textContent =
+          "🔔 Activar notificaciones";
+      }
+    }
+
+
+    async function comprobarNotificaciones() {
+
+      const estado =
+        document.getElementById(
+          "notificationStatus"
+        );
+
+      const punto =
+        document.getElementById(
+          "statusDot"
+        );
+
+      const boton =
+        document.getElementById(
+          "btnNotificaciones"
+        );
+
+
+      if (
+        !("Notification" in window)
+      ) {
+        return;
+      }
+
+
+      if (
+        Notification.permission ===
+        "granted"
+      ) {
+
+        estado.textContent =
+          "Las notificaciones están activadas.";
+
+        punto.classList.add(
+          "active"
+        );
+
+        boton.textContent =
+          "✓ Notificaciones activas";
+      }
+    }
+
+
+    let deferredPrompt = null;
+
+
+    window.addEventListener(
+      "beforeinstallprompt",
+      event => {
+
+        event.preventDefault();
+
+        deferredPrompt = event;
+
+        document
+          .getElementById(
+            "btnInstalar"
+          )
+          .style.display = "block";
+      }
+    );
+
+
+    document
+      .getElementById(
+        "btnInstalar"
+      )
+      .addEventListener(
+        "click",
+        async () => {
+
+          if (!deferredPrompt) {
+            return;
+          }
+
+          deferredPrompt.prompt();
+
+          await deferredPrompt.userChoice;
+
+          deferredPrompt = null;
+
+          document
+            .getElementById(
+              "btnInstalar"
+            )
+            .style.display = "none";
+        }
+      );
+
+
+    window.addEventListener(
+      "appinstalled",
+      () => {
+
+        deferredPrompt = null;
+
+        document
+          .getElementById(
+            "btnInstalar"
+          )
+          .style.display = "none";
+      }
+    );
+
+
+    if (
+      "serviceWorker" in navigator
+    ) {
+
+      window.addEventListener(
+        "load",
+        async () => {
+
+          try {
+
+            await navigator.serviceWorker.register(
+              "/service-worker.js"
+            );
+
+            console.log(
+              "Service Worker registrado correctamente."
+            );
+
+          } catch (error) {
+
+            console.error(
+              "Error registrando Service Worker:",
+              error
+            );
+          }
+        }
+      );
+    }
+
+
+    document.addEventListener(
+      "DOMContentLoaded",
+      () => {
+
+        cargarEstadisticas();
+
+        comprobarNotificaciones();
+
+      }
+    );
+
+  </script>
+
 </body>
+
 </html>
