@@ -9,17 +9,18 @@ const webpush = require('web-push');
 app.use(cors());
 app.use(express.json());
 
-
-const PUBLIC_KEY = 'BJ9e4DSpEVY0_Nq_FJ6py3oGRBKFl7BCh5wunz4q5bDjA87IaJP2vw902IOj4rNllyV0B8ddg52vwrA5gXq0DSw';
-const PRIVATE_KEY = 'UF2t6HaUoxPp33coN4MVWxS82cjPBNh3w0gHrKXdZEc';
+const PUBLIC_KEY = process.env.VAPID_PUBLIC_KEY;
+const PRIVATE_KEY = process.env.VAPID_PRIVATE_KEY;
+const VAPID_EMAIL = process.env.VAPID_EMAIL;
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 webpush.setVapidDetails(
-  'mailto:tu@email.com',
+  VAPID_EMAIL,
   PUBLIC_KEY,
   PRIVATE_KEY
 );
+
 const db = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
