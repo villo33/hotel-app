@@ -5,35 +5,40 @@
 
 <style>
 
-
-
-/* 🔥 RESET IMPORTANTE */
+/* 🔥 RESET */
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow-x: auto; /* permite scroll horizontal sin romper fondo */
+  overflow-x: auto;
 }
 
-/* 🌈 FONDO COMPLETO SIN CORTES */
+/* 🌈 FONDO */
 body {
-  font-family: Arial;
-
+  font-family: Arial, sans-serif;
   background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-  background-attachment: fixed; /* 🔥 clave para que no se corte */
-
+  background-attachment: fixed;
   color: #333;
 }
 
-/* ✨ EFECTO VISUAL SUAVE */
+/* ✨ EFECTO VISUAL */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
 
-  background: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.08), transparent),
-              radial-gradient(circle at 80% 70%, rgba(0,123,255,0.15), transparent);
+  background:
+    radial-gradient(
+      circle at 20% 30%,
+      rgba(255,255,255,0.08),
+      transparent
+    ),
+    radial-gradient(
+      circle at 80% 70%,
+      rgba(0,123,255,0.15),
+      transparent
+    );
 
   z-index: 0;
   pointer-events: none;
@@ -47,12 +52,12 @@ body::before {
   z-index: 1000;
 }
 
-/* 📦 CONTENEDOR (CLAVE) */
+/* 📦 CONTENEDOR */
 .container {
   position: relative;
   z-index: 1;
 
-  width: max-content; /* 🔥 evita que se corte con tablas grandes */
+  width: max-content;
   min-width: 100%;
 
   margin: 80px auto 20px;
@@ -64,17 +69,18 @@ body::before {
   border-radius: 15px;
 
   box-shadow: 0px 15px 40px rgba(0,0,0,0.4);
+  box-sizing: border-box;
 }
 
 /* 📊 TABLA */
 table {
   border-collapse: collapse;
-  width: max-content; /* 🔥 importante para muchas columnas */
+  width: max-content;
   min-width: 100%;
   background: white;
 }
 
-/* 🔝 ENCABEZADO FIJO */
+/* 🔝 ENCABEZADO */
 th {
   background: linear-gradient(90deg, #2563eb, #1d4ed8);
   color: white;
@@ -99,6 +105,13 @@ input {
   padding: 3px;
   border-radius: 5px;
   border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+input[type="color"] {
+  width: 45px;
+  height: 25px;
+  padding: 1px;
 }
 
 /* 🔘 BOTONES */
@@ -117,15 +130,30 @@ button:hover {
   transform: scale(1.05);
 }
 
-/* COLORES */
-.btn-inicio { background: #22c55e; }
-.btn-logout { background: #ef4444; }
-.btn-guardar { background: #3b82f6; }
-.btn-editar { background: #facc15; color: black; }
-.btn-eliminar { background: #ef4444; }
+/* 🎨 COLORES */
+.btn-inicio {
+  background: #22c55e;
+}
+
+.btn-logout {
+  background: #ef4444;
+}
+
+.btn-guardar {
+  background: #3b82f6;
+}
+
+.btn-editar {
+  background: #facc15;
+  color: black;
+}
+
+.btn-eliminar {
+  background: #ef4444;
+}
 
 /* ➕ BOTÓN AGREGAR */
-button[onclick="agregarFila()"] {
+.btn-agregar {
   background: #22c55e;
   font-weight: bold;
 }
@@ -141,9 +169,64 @@ tr:hover {
   background: #f1f5f9;
 }
 
+/* 📅 FILA ACTIVA SEGÚN FECHA */
+.fila-fecha-activa {
+  background: #eff6ff;
+}
 
+/* 🔎 SELECTOR DE FECHA */
+.filtro-fecha {
+  margin: 15px 0;
+  padding: 12px;
+  background: #f8fafc;
+  border: 1px solid #dbeafe;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
 
+.filtro-fecha label {
+  font-weight: bold;
+  color: #1e3a8a;
+}
 
+.filtro-fecha input {
+  width: 150px;
+  font-size: 13px;
+  padding: 7px;
+}
+
+.btn-mostrar-todo {
+  background: #64748b;
+}
+
+.info-fecha {
+  color: #475569;
+  font-size: 13px;
+  font-weight: bold;
+}
+
+/* 📱 RESPONSIVE */
+@media (max-width: 700px) {
+
+  .container {
+    margin-top: 75px;
+    padding: 12px;
+  }
+
+  .top-bar {
+    top: 8px;
+    left: 8px;
+  }
+
+  button {
+    font-size: 11px;
+    padding: 6px 9px;
+  }
+
+}
 
 </style>
 </head>
@@ -157,27 +240,81 @@ tr:hover {
 
 <div class="container">
 
-<h2>🏨 CONTROL DE HABITACIONES</h2>
+  <h2>🏨 CONTROL DE HABITACIONES</h2>
 
-<button class="btn-agregar" onclick="agregarFila()">➕ Agregar Día</button>
+  <button class="btn-agregar" onclick="agregarFila()">
+    ➕ Agregar Día
+  </button>
 
-<table>
-<thead>
-<tr>
-  <th>ID</th>
-  <th>Encargado / Fecha</th>
+  <!-- 🔎 FILTRO POR FECHA -->
+  <div class="filtro-fecha">
 
-  <th>101</th><th>102</th><th>103</th><th>104</th><th>105</th><th>106</th><th>107</th>
-  <th>201</th><th>202</th><th>203</th><th>204</th><th>205</th><th>206</th><th>207</th>
-  <th>301</th><th>302</th><th>303</th><th>304</th><th>305</th><th>306</th>
+    <label for="filtroFecha">
+      📅 Ver habitaciones del día:
+    </label>
 
-  <th>Total</th>
-  <th>Acciones</th>
-</tr>
-</thead>
+    <input
+      type="date"
+      id="filtroFecha"
+      onchange="filtrarPorFecha()"
+    >
 
-<tbody id="cuerpo"></tbody>
-</table>
+    <button
+      class="btn-mostrar-todo"
+      onclick="mostrarTodos()"
+    >
+      👁️ Mostrar todos
+    </button>
+
+    <span
+      class="info-fecha"
+      id="infoFecha"
+    >
+      Mostrando todos los días
+    </span>
+
+  </div>
+
+  <table>
+
+    <thead>
+      <tr>
+
+        <th>ID</th>
+        <th>Encargado / Fecha</th>
+
+        <th>101</th>
+        <th>102</th>
+        <th>103</th>
+        <th>104</th>
+        <th>105</th>
+        <th>106</th>
+        <th>107</th>
+
+        <th>201</th>
+        <th>202</th>
+        <th>203</th>
+        <th>204</th>
+        <th>205</th>
+        <th>206</th>
+        <th>207</th>
+
+        <th>301</th>
+        <th>302</th>
+        <th>303</th>
+        <th>304</th>
+        <th>305</th>
+        <th>306</th>
+
+        <th>Total</th>
+        <th>Acciones</th>
+
+      </tr>
+    </thead>
+
+    <tbody id="cuerpo"></tbody>
+
+  </table>
 
 </div>
 
@@ -185,10 +322,13 @@ tr:hover {
 
 const API = window.location.origin;
 
-function irInicio(){ window.location.href = "/"; }
-function logout(){
-  localStorage.removeItem('logueado');
-  window.location.href = '/';
+function irInicio() {
+  window.location.href = "/";
+}
+
+function logout() {
+  localStorage.removeItem("logueado");
+  window.location.href = "/";
 }
 
 const habitaciones = [
@@ -197,317 +337,969 @@ const habitaciones = [
   301,302,303,304,305,306
 ];
 
-// 🔥 CONTROL ID CORRECTO
 let contadorId = 1;
 
-// 🔥 AGREGAR FILA ARRIBA (ID CRECE HACIA ARRIBA)
-function agregarFila(){
+/* =========================================================
+   🔥 VARIABLE PRINCIPAL DEL FILTRO
+   ========================================================= */
+
+let fechaSeleccionada = "";
+
+
+/* =========================================================
+   📅 NORMALIZAR FECHAS
+   Evita problemas si PostgreSQL devuelve:
+   2026-09-10
+   2026-09-10T00:00:00.000Z
+   ========================================================= */
+
+function normalizarFecha(fecha) {
+
+  if (!fecha) {
+    return "";
+  }
+
+  return String(fecha)
+    .split("T")[0]
+    .split(" ")[0]
+    .trim();
+
+}
+
+
+/* =========================================================
+   ➕ AGREGAR FILA
+   ========================================================= */
+
+function agregarFila() {
 
   const tabla = document.getElementById("cuerpo");
+
   const fila = document.createElement("tr");
 
   let html = `
     <td>${contadorId++}</td>
+
     <td>
-      <input class="encargado" placeholder="Encargado"><br>
-      <input type="color" class="color"><br>
-      <input type="date" class="fechaPrincipal">
+
+      <input
+        class="encargado"
+        placeholder="Encargado"
+      ><br>
+
+      <input
+        type="color"
+        class="color"
+        value="#2563eb"
+      ><br>
+
+      <input
+        type="date"
+        class="fechaPrincipal"
+      >
+
     </td>
   `;
 
-  habitaciones.forEach(()=>{
+
+  habitaciones.forEach(() => {
+
     html += `
       <td>
-        <input type="date" class="inicio"><br>
-        <input type="date" class="fin"><br>
+
+        <input
+          type="date"
+          class="inicio"
+        ><br>
+
+        <input
+          type="date"
+          class="fin"
+        ><br>
+
         <div class="dias">0</div>
+
       </td>
     `;
+
   });
 
-  html += `<td class="total">0</td>`;
+
+  html += `
+    <td class="total">
+      0
+    </td>
+  `;
+
 
   html += `
     <td>
-      <button class="btn-guardar" onclick="guardarFila(this)">💾</button>
-      <button class="btn-editar" onclick="editarFila(this)">✏️</button>
-      <button class="btn-eliminar" onclick="eliminarFila(this)">❌</button>
+
+      <button
+        class="btn-guardar"
+        onclick="guardarFila(this)"
+      >
+        💾
+      </button>
+
+      <button
+        class="btn-editar"
+        onclick="editarFila(this)"
+      >
+        ✏️
+      </button>
+
+      <button
+        class="btn-eliminar"
+        onclick="eliminarFila(this)"
+      >
+        ❌
+      </button>
+
     </td>
   `;
 
+
   fila.innerHTML = html;
 
-  // 🔥 SIEMPRE ARRIBA
-  tabla.insertBefore(fila, tabla.firstChild);
+  tabla.insertBefore(
+    fila,
+    tabla.firstChild
+  );
 
   activarEventos(fila);
+
 }
 
-// 🔥 EDITAR
-function editarFila(btn){
+
+/* =========================================================
+   ✏️ EDITAR
+   ========================================================= */
+
+function editarFila(btn) {
+
   const fila = btn.closest("tr");
 
-  fila.querySelectorAll("input").forEach(i=>{
-    i.disabled = !i.disabled;
+  fila.querySelectorAll("input").forEach(input => {
+
+    input.disabled = !input.disabled;
+
   });
+
 }
 
-// 🔥 EVENTOS
-function activarEventos(fila){
+
+/* =========================================================
+   📅 EVENTOS
+   ========================================================= */
+
+function activarEventos(fila) {
 
   const celdas = fila.querySelectorAll("td");
 
-  for(let i=2;i<=21;i++){
+  for (let i = 2; i <= 21; i++) {
 
-    const inicio = celdas[i].querySelector(".inicio");
-    const fin = celdas[i].querySelector(".fin");
-    const diasDiv = celdas[i].querySelector(".dias");
+    const inicio =
+      celdas[i].querySelector(".inicio");
 
-    function calcular(){
-      if(inicio.value && fin.value){
-        const diff = (new Date(fin.value) - new Date(inicio.value))/(1000*60*60*24);
-        diasDiv.innerText = diff>0?diff:0;
+    const fin =
+      celdas[i].querySelector(".fin");
+
+    const diasDiv =
+      celdas[i].querySelector(".dias");
+
+
+    function calcular() {
+
+      if (inicio.value && fin.value) {
+
+        const f1 =
+          new Date(inicio.value + "T00:00:00");
+
+        const f2 =
+          new Date(fin.value + "T00:00:00");
+
+        const diff =
+          Math.floor(
+            (f2 - f1) /
+            (1000 * 60 * 60 * 24)
+          );
+
+        diasDiv.innerText =
+          diff > 0 ? diff : 0;
+
+      } else {
+
+        diasDiv.innerText = 0;
+
       }
+
       calcularTotalFila(fila);
+
     }
 
-    inicio.addEventListener("change", calcular);
-    fin.addEventListener("change", calcular);
-  }
-}
 
-// 🔥 TOTAL
-function calcularTotalFila(fila){
-  let total = 0;
-  fila.querySelectorAll(".dias").forEach(d=>{
-    if(parseInt(d.innerText)>0) total++;
-  });
-  fila.querySelector(".total").innerText = total;
-}
-
-// 🔥 GUARDAR (ESTÁ BIEN, SOLO LO DEJO IGUAL)
-async function guardarFila(btn){
-
-  const fila = btn.closest("tr");
-
-  const encargado = fila.querySelector(".encargado").value;
-  const fecha = fila.querySelector(".fechaPrincipal").value;
-  const color = fila.querySelector(".color").value;
-
-  if(!encargado || !fecha){
-    alert("Falta encargado o fecha");
-    return;
-  }
-
-  const celdas = fila.querySelectorAll("td");
-  const requests = [];
-
-  for(let i=2;i<=21;i++){
-
-    const inicio = celdas[i].querySelector(".inicio").value;
-    const fin = celdas[i].querySelector(".fin").value;
-
-    if(inicio && fin){
-
-      const req = fetch(`${API}/habitaciones`,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          habitacion: habitaciones[i-2],
-          encargado,
-          fecha,
-          color,
-          inicio,
-          fin
-        })
-      });
-
-      requests.push(req);
-    }
-  }
-
-  if(requests.length === 0){
-    alert("No llenaste ninguna habitación");
-    return;
-  }
-
-  try{
-    await Promise.all(requests);
-
-    alert("Fila guardada ✅");
-
-    cargarFilasGuardadas();
-
-  }catch(e){
-    console.error(e);
-    alert("Error guardando ❌");
-  }
-}
-// 🔥 ELIMINAR (VERSIÓN PRO - POR ID REAL)
-async function eliminarFila(btn){
-
-  if(!confirm("¿Eliminar fila?")) return;
-
-  const fila = btn.closest("tr");
-
-  try{
-
-    const res = await fetch(`${API}/habitaciones`);
-    const data = await res.json();
-
-    // 🔥 OBTENER DATOS DE LA FILA
-    const encargado = fila.querySelector(".encargado").value.trim();
-    const fecha = fila.querySelector(".fechaPrincipal").value;
-
-    // 🔥 BUSCAR IDs REALES (SIN FALLAR POR ESPACIOS)
-    const eliminar = data.filter(d =>
-      d.encargado?.trim() === encargado &&
-      d.fecha?.split('T')[0]?.replace(/\s/g,'') === fecha
+    inicio.addEventListener(
+      "change",
+      calcular
     );
 
-    if(eliminar.length === 0){
-      alert("No se encontró nada para eliminar ❌");
-      return;
-    }
+    fin.addEventListener(
+      "change",
+      calcular
+    );
 
-    // 🔥 BORRAR UNO POR UNO ESPERANDO
-    for(const item of eliminar){
-      await fetch(`${API}/habitaciones/${item.id}`,{
-        method:'DELETE'
-      });
-    }
-
-    alert("Eliminado correctamente ✅");
-
-    // 🔥 RECARGA REAL
-    await cargarFilasGuardadas();
-
-  }catch(err){
-    console.error(err);
-    alert("Error eliminando ❌");
   }
+
 }
 
 
-// 🔥 CARGAR CORREGIDO 100%
-function cargarFilasGuardadas(){
+/* =========================================================
+   🔢 TOTAL DE HABITACIONES DE LA FILA
+   ========================================================= */
 
-  fetch(`${API}/habitaciones`)
-  .then(r=>r.json())
-  .then(data=>{
+function calcularTotalFila(fila) {
+
+  let total = 0;
+
+  fila.querySelectorAll(".dias").forEach(dia => {
+
+    if (parseInt(dia.innerText) > 0) {
+      total++;
+    }
+
+  });
+
+  fila.querySelector(".total").innerText = total;
+
+}
+
+
+/* =========================================================
+   💾 GUARDAR
+   ========================================================= */
+
+async function guardarFila(btn) {
+
+  const fila = btn.closest("tr");
+
+  const encargado =
+    fila.querySelector(".encargado").value.trim();
+
+  const fecha =
+    fila.querySelector(".fechaPrincipal").value;
+
+  const color =
+    fila.querySelector(".color").value;
+
+
+  if (!encargado || !fecha) {
+
+    alert("Falta encargado o fecha");
+
+    return;
+
+  }
+
+
+  const celdas =
+    fila.querySelectorAll("td");
+
+  const requests = [];
+
+
+  for (let i = 2; i <= 21; i++) {
+
+    const inicio =
+      celdas[i].querySelector(".inicio").value;
+
+    const fin =
+      celdas[i].querySelector(".fin").value;
+
+
+    if (inicio && fin) {
+
+      const req = fetch(
+        `${API}/habitaciones`,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "application/json"
+          },
+
+          body: JSON.stringify({
+
+            habitacion:
+              habitaciones[i - 2],
+
+            encargado,
+
+            fecha,
+
+            color,
+
+            inicio,
+
+            fin
+
+          })
+
+        }
+      );
+
+      requests.push(req);
+
+    }
+
+  }
+
+
+  if (requests.length === 0) {
+
+    alert(
+      "No llenaste ninguna habitación"
+    );
+
+    return;
+
+  }
+
+
+  try {
+
+    await Promise.all(requests);
+
+    alert(
+      "Fila guardada ✅"
+    );
+
+    await cargarFilasGuardadas();
+
+  } catch (e) {
+
+    console.error(e);
+
+    alert(
+      "Error guardando ❌"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   ❌ ELIMINAR FILA
+   ========================================================= */
+
+async function eliminarFila(btn) {
+
+  if (
+    !confirm(
+      "¿Eliminar fila?"
+    )
+  ) {
+    return;
+  }
+
+
+  const fila =
+    btn.closest("tr");
+
+
+  try {
+
+    const res =
+      await fetch(
+        `${API}/habitaciones`
+      );
+
+    const data =
+      await res.json();
+
+
+    const encargado =
+      fila
+        .querySelector(".encargado")
+        .value
+        .trim();
+
+
+    const fecha =
+      normalizarFecha(
+        fila
+          .querySelector(
+            ".fechaPrincipal"
+          )
+          .value
+      );
+
+
+    const eliminar =
+      data.filter(item => {
+
+        return (
+          item.encargado?.trim() ===
+            encargado &&
+
+          normalizarFecha(
+            item.fecha
+          ) === fecha
+        );
+
+      });
+
+
+    if (
+      eliminar.length === 0
+    ) {
+
+      alert(
+        "No se encontró nada para eliminar ❌"
+      );
+
+      return;
+
+    }
+
+
+    for (
+      const item of eliminar
+    ) {
+
+      await fetch(
+        `${API}/habitaciones/${item.id}`,
+        {
+          method: "DELETE"
+        }
+      );
+
+    }
+
+
+    alert(
+      "Eliminado correctamente ✅"
+    );
+
+
+    await cargarFilasGuardadas();
+
+
+  } catch (err) {
+
+    console.error(err);
+
+    alert(
+      "Error eliminando ❌"
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   📥 CARGAR DATOS
+   ========================================================= */
+
+async function cargarFilasGuardadas() {
+
+  try {
+
+    const res =
+      await fetch(
+        `${API}/habitaciones`
+      );
+
+
+    if (!res.ok) {
+
+      throw new Error(
+        `Error servidor: ${res.status}`
+      );
+
+    }
+
+
+    const data =
+      await res.json();
+
 
     const grupos = {};
 
-    data.forEach(item=>{
-      const key = item.encargado+"_"+item.fecha;
 
-      if(!grupos[key]){
-        grupos[key]={
-          encargado:item.encargado,
-          fecha:item.fecha,
-          color:item.color||"#000",
-          habitaciones:[]
+    /* =====================================================
+       🔥 AGRUPAR POR ENCARGADO + FECHA
+       ===================================================== */
+
+    data.forEach(item => {
+
+      const fecha =
+        normalizarFecha(
+          item.fecha
+        );
+
+
+      const encargado =
+        item.encargado || "";
+
+
+      const key =
+        `${encargado}_${fecha}`;
+
+
+      if (!grupos[key]) {
+
+        grupos[key] = {
+
+          encargado,
+
+          fecha,
+
+          color:
+            item.color ||
+            "#2563eb",
+
+          habitaciones: []
+
         };
+
       }
 
-      grupos[key].habitaciones.push(item);
+
+      grupos[key]
+        .habitaciones
+        .push(item);
+
     });
 
-    const ordenados = Object.values(grupos)
-      .sort((a,b)=> new Date(b.fecha) - new Date(a.fecha));
 
-    const tabla = document.getElementById("cuerpo");
-    tabla.innerHTML="";
+    /* =====================================================
+       📅 ORDENAR POR FECHA
+       ===================================================== */
 
-    ordenados.forEach((grupo, index)=>{
+    const ordenados =
+      Object.values(grupos)
+        .sort(
+          (a, b) =>
+            new Date(b.fecha) -
+            new Date(a.fecha)
+        );
 
-      const idVisual = ordenados.length - index;
 
-      const fila = document.createElement("tr");
+    const tabla =
+      document.getElementById(
+        "cuerpo"
+      );
 
-      let html = `
-        <td>${idVisual}</td>
-        <td>
-          <input class="encargado" value="${grupo.encargado}" style="color:${grupo.color}"><br>
-          <input type="color" class="color" value="${grupo.color}"><br>
-          <input type="date" class="fechaPrincipal" value="${grupo.fecha.split('T')[0].replace(/\s/g,'')}">
-        </td>
-      `;
 
-      habitaciones.forEach(()=>{
-        html+=`
+    tabla.innerHTML = "";
+
+
+    /* =====================================================
+       🔥 MOSTRAR SOLAMENTE LA FECHA SELECCIONADA
+       ===================================================== */
+
+    let gruposMostrados =
+      ordenados;
+
+
+    if (fechaSeleccionada) {
+
+      gruposMostrados =
+        ordenados.filter(
+          grupo =>
+            normalizarFecha(
+              grupo.fecha
+            ) === fechaSeleccionada
+        );
+
+    }
+
+
+    /* =====================================================
+       🔢 ID VISUAL
+       ===================================================== */
+
+    gruposMostrados.forEach(
+      (grupo, index) => {
+
+        const idVisual =
+          gruposMostrados.length -
+          index;
+
+
+        const fila =
+          document.createElement("tr");
+
+
+        if (
+          fechaSeleccionada &&
+          grupo.fecha ===
+            fechaSeleccionada
+        ) {
+
+          fila.classList.add(
+            "fila-fecha-activa"
+          );
+
+        }
+
+
+        let html = `
+
           <td>
-            <input type="date" class="inicio"><br>
-            <input type="date" class="fin"><br>
-            <div class="dias">0</div>
+            ${idVisual}
           </td>
+
+          <td>
+
+            <input
+              class="encargado"
+              value="${escapeHTML(
+                grupo.encargado
+              )}"
+              style="
+                color:${escapeHTML(
+                  grupo.color
+                )}
+              "
+            ><br>
+
+            <input
+              type="color"
+              class="color"
+              value="${escapeHTML(
+                grupo.color
+              )}"
+            ><br>
+
+            <input
+              type="date"
+              class="fechaPrincipal"
+              value="${grupo.fecha}"
+            >
+
+          </td>
+
         `;
-      });
 
-      html+=`<td class="total">0</td>`;
 
-      html+=`
-        <td>
-          <button class="btn-guardar" onclick="guardarFila(this)">💾</button>
-          <button class="btn-editar" onclick="editarFila(this)">✏️</button>
-          <button class="btn-eliminar" onclick="eliminarFila(this)">❌</button>
-        </td>
-      `;
+        habitaciones.forEach(() => {
 
-      fila.innerHTML = html;
-      tabla.appendChild(fila);
+          html += `
 
-      const celdas = fila.querySelectorAll("td");
+            <td>
 
-      // 🔥 AQUÍ ESTABA TODO EL PROBLEMA
-      grupo.habitaciones.forEach(h=>{
+              <input
+                type="date"
+                class="inicio"
+              ><br>
 
-        const indexHab = habitaciones.indexOf(Number(h.habitacion));
+              <input
+                type="date"
+                class="fin"
+              ><br>
 
-        if(indexHab !== -1){
+              <div class="dias">
+                0
+              </div>
 
-          const celda = celdas[indexHab + 2];
-          const inicio = celda.querySelector(".inicio");
-          const fin = celda.querySelector(".fin");
-          const dias = celda.querySelector(".dias");
+            </td>
 
-          // 🔥 LIMPIEZA REAL (CLAVE)
-          const inicioVal = h.inicio ? h.inicio.split('T')[0].replace(/\s+/g,'') : "";
-          const finVal = h.fin ? h.fin.split('T')[0].replace(/\s+/g,'') : "";
+          `;
 
-          inicio.value = inicioVal;
-          fin.value = finVal;
+        });
 
-          if(inicioVal && finVal){
 
-            const f1 = new Date(inicioVal + "T00:00:00");
-            const f2 = new Date(finVal + "T00:00:00");
+        html += `
 
-            if(!isNaN(f1) && !isNaN(f2)){
-              const diff = Math.floor((f2 - f1)/(1000*60*60*24));
-              dias.innerText = diff > 0 ? diff : 0;
+          <td class="total">
+            0
+          </td>
+
+        `;
+
+
+        html += `
+
+          <td>
+
+            <button
+              class="btn-guardar"
+              onclick="guardarFila(this)"
+            >
+              💾
+            </button>
+
+            <button
+              class="btn-editar"
+              onclick="editarFila(this)"
+            >
+              ✏️
+            </button>
+
+            <button
+              class="btn-eliminar"
+              onclick="eliminarFila(this)"
+            >
+              ❌
+            </button>
+
+          </td>
+
+        `;
+
+
+        fila.innerHTML = html;
+
+        tabla.appendChild(fila);
+
+
+        const celdas =
+          fila.querySelectorAll("td");
+
+
+        /* =================================================
+           🔥 CARGAR HABITACIONES DEL GRUPO
+           ================================================= */
+
+        grupo.habitaciones.forEach(h => {
+
+          const indexHab =
+            habitaciones.indexOf(
+              Number(h.habitacion)
+            );
+
+
+          if (indexHab === -1) {
+            return;
+          }
+
+
+          const celda =
+            celdas[indexHab + 2];
+
+
+          const inicio =
+            celda.querySelector(
+              ".inicio"
+            );
+
+
+          const fin =
+            celda.querySelector(
+              ".fin"
+            );
+
+
+          const dias =
+            celda.querySelector(
+              ".dias"
+            );
+
+
+          const inicioVal =
+            normalizarFecha(
+              h.inicio
+            );
+
+
+          const finVal =
+            normalizarFecha(
+              h.fin
+            );
+
+
+          inicio.value =
+            inicioVal;
+
+
+          fin.value =
+            finVal;
+
+
+          if (
+            inicioVal &&
+            finVal
+          ) {
+
+            const f1 =
+              new Date(
+                inicioVal +
+                "T00:00:00"
+              );
+
+
+            const f2 =
+              new Date(
+                finVal +
+                "T00:00:00"
+              );
+
+
+            if (
+              !isNaN(f1.getTime()) &&
+              !isNaN(f2.getTime())
+            ) {
+
+              const diff =
+                Math.floor(
+                  (f2 - f1) /
+                  (1000 * 60 * 60 * 24)
+                );
+
+
+              dias.innerText =
+                diff > 0
+                  ? diff
+                  : 0;
+
             } else {
+
               dias.innerText = 0;
+
             }
 
           } else {
+
             dias.innerText = 0;
+
           }
-        }
+
+        });
+
+
+        activarEventos(fila);
+
+        calcularTotalFila(fila);
 
       });
 
-      activarEventos(fila);
 
-      // 🔥 ESTO FALTABA (ACTUALIZA TOTAL REAL)
-      calcularTotalFila(fila);
+    actualizarInfoFecha();
 
-    });
+  } catch (error) {
 
-  });
+    console.error(
+      "Error cargando habitaciones:",
+      error
+    );
+
+    alert(
+      "No se pudieron cargar las habitaciones ❌"
+    );
+
+  }
+
 }
 
+
+/* =========================================================
+   🔎 FILTRAR POR FECHA
+   ========================================================= */
+
+function filtrarPorFecha() {
+
+  const input =
+    document.getElementById(
+      "filtroFecha"
+    );
+
+
+  fechaSeleccionada =
+    input.value;
+
+
+  cargarFilasGuardadas();
+
+}
+
+
+/* =========================================================
+   👁️ MOSTRAR TODOS
+   ========================================================= */
+
+function mostrarTodos() {
+
+  fechaSeleccionada = "";
+
+
+  document.getElementById(
+    "filtroFecha"
+  ).value = "";
+
+
+  cargarFilasGuardadas();
+
+}
+
+
+/* =========================================================
+   ℹ️ INFORMACIÓN DEL FILTRO
+   ========================================================= */
+
+function actualizarInfoFecha() {
+
+  const info =
+    document.getElementById(
+      "infoFecha"
+    );
+
+
+  if (!fechaSeleccionada) {
+
+    info.innerText =
+      "Mostrando todos los días";
+
+    return;
+
+  }
+
+
+  const partes =
+    fechaSeleccionada.split("-");
+
+
+  if (partes.length === 3) {
+
+    info.innerText =
+      `Mostrando habitaciones del día ${partes[2]}/${partes[1]}/${partes[0]}`;
+
+  } else {
+
+    info.innerText =
+      `Mostrando habitaciones del día ${fechaSeleccionada}`;
+
+  }
+
+}
+
+
+/* =========================================================
+   🛡️ EVITAR HTML ROTO
+   ========================================================= */
+
+function escapeHTML(valor) {
+
+  return String(valor ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
+}
+
+
+/* =========================================================
+   🚀 INICIAR
+   ========================================================= */
+
 cargarFilasGuardadas();
+
 </script>
 
 </body>
